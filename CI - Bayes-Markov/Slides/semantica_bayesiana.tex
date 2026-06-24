@@ -1,0 +1,584 @@
+\documentclass[12pt, aspectratio=169]{beamer}
+
+% ── Tema y colores ──────────────────────────────────────────────────────────
+\usetheme{Madrid}
+\usecolortheme{default}
+\setbeamercolor{palette primary}{bg=black!85, fg=white}
+\setbeamercolor{palette secondary}{bg=black!70, fg=white}
+\setbeamercolor{palette tertiary}{bg=black!55, fg=white}
+\setbeamercolor{palette quaternary}{bg=black!40, fg=white}
+\setbeamercolor{structure}{fg=black!80}
+\setbeamercolor{block title}{bg=black!80, fg=white}
+\setbeamercolor{block body}{bg=black!5, fg=black}
+\setbeamercolor{block title alerted}{bg=red!70!black, fg=white}
+\setbeamercolor{block body alerted}{bg=red!5, fg=black}
+\setbeamercolor{block title example}{bg=black!50, fg=white}
+\setbeamercolor{block body example}{bg=black!3, fg=black}
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{footline}{}
+
+% ── Paquetes ────────────────────────────────────────────────────────────────
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{mathtools}
+\usefonttheme{professionalfonts}
+
+% ── Comandos ─────────────────────────────────────────────────────────────────
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Dn}{\Delta_n}
+\newcommand{\Dni}{\Delta_n^\circ}
+\newcommand{\Glob}{C_{\mathrm{glob}}}
+\providecommand{\textsubscript}[1]{$_{\text{#1}}$}
+
+% ── Metadatos ────────────────────────────────────────────────────────────────
+\title[Control Informacional]{Semántica Bayesiana en Control Informacional}
+\subtitle{Proposiciones, demostraciones y estructura}
+\author[Cruz López]{Alejandro Cruz López}
+\institute[UAM-I]{%
+  Universidad Autónoma Metropolitana -- Unidad Iztapalapa\\[4pt]
+  \textit{Asesores:} Dr.\ Asael F.\ Martínez M. \quad Dr.\ Joaquín Delgado F.}
+\date{2026}
+
+% ══════════════════════════════════════════════════════════════════════════════
+\begin{document}
+% ══════════════════════════════════════════════════════════════════════════════
+
+% ── Portada ──────────────────────────────────────────────────────────────────
+\begin{frame}
+  \titlepage
+\end{frame}
+
+% ── Índice ───────────────────────────────────────────────────────────────────
+\begin{frame}{Contenido}
+  \tableofcontents
+\end{frame}
+
+% ══════════════════════════════════════════════════════════════════════════════
+\section{Contexto: ¿qué es Control Informacional?}
+% ══════════════════════════════════════════════════════════════════════════════
+
+\begin{frame}{¿De dónde venimos?}
+  \begin{block}{La ruta lógica del marco CI}
+    \begin{enumerate}
+      \item \textbf{Sección A.} Espacios de probabilidad, particiones finitas
+            y el \emph{símplex} $\Dn$ como dominio.
+      \item \textbf{Sección B.} Correcciones locales: cambio de medida discreto.
+      \item \textbf{Sección C.} Operador global multiplicativo $T_Y$ y su grupo $\mathcal{G}$.
+      \item \textbf{Sección D.} Divergencia KL, métrica de Fisher y dinámica inducida.
+      \item \textbf{Sección E\textsubscript{0}.} \alert{Semántica bayesiana} como caso
+            particular de $T_Y$. \(\leftarrow\) \textbf{Esto es lo que veremos hoy.}
+    \end{enumerate}
+  \end{block}
+
+  \vspace{6pt}
+  \begin{alertblock}{Idea central}
+    Bayes no es un axioma externo: es el operador $T_Y$ aplicado
+    con la verosimilitud como corrección global.
+  \end{alertblock}
+\end{frame}
+
+% ── Recordatorio: símplex y operador global ───────────────────────────────────
+\begin{frame}{Recordatorio esencial (Secciones A y C)}
+
+  \begin{columns}[T]
+    \column{0.48\textwidth}
+    \begin{block}{Símplex de probabilidad}
+      \[
+        \Dn = \Bigl\{ X \in \R^n : X_i \ge 0,\;
+              \textstyle\sum_{i=1}^n X_i = 1 \Bigr\}
+      \]
+      El \emph{interior} $\Dni$ es el subconjunto donde $X_i > 0$ para todo $i$.\\[4pt]
+      Un estado informacional es un punto $X \in \Dni$.
+    \end{block}
+
+    \column{0.48\textwidth}
+    \begin{block}{Operador global $T_Y$ (Secc.\ C)}
+      Dado un vector $Y \in \R^n$ con $1 + Y_i > 0$,
+      \[
+        T_Y(X)_i
+        = \frac{X_i\,(1+Y_i)}{\displaystyle\sum_{k=1}^n X_k\,(1+Y_k)}.
+      \]
+      El grupo de estos operadores se llama $\mathcal{G}$.\\[4pt]
+      \textbf{Propiedad clave:} $T_Y(X) \in \Dni$ si $X \in \Dni$.
+    \end{block}
+  \end{columns}
+\end{frame}
+
+% ══════════════════════════════════════════════════════════════════════════════
+\section{Espacio conjunto hipótesis-observaciones}
+% ══════════════════════════════════════════════════════════════════════════════
+
+\begin{frame}{Definición: espacio conjunto}
+
+  \begin{block}{Definición (Espacio conjunto hipótesis-observaciones)}
+    Sea $(\Omega, \mathcal{F}, P)$ un espacio de probabilidad.
+    Se fijan \textbf{dos particiones medibles finitas no degeneradas}:
+    \[
+      \Pi_H = \{H_1, \dots, H_n\} \subset \mathcal{F}
+      \quad \text{(hipótesis)}
+    \]
+    \[
+      \Pi_E = \{E_1, \dots, E_m\} \subset \mathcal{F}
+      \quad \text{(observaciones)}
+    \]
+    El \textbf{estado informacional previo} (prior) es el vector
+    \[
+      X_i := P(H_i), \quad i = 1, \dots, n,
+    \]
+    que pertenece a $\Dni$ porque $P(H_i) > 0$ para todo $i$
+    (partición no degenerada).
+  \end{block}
+
+  \begin{exampleblock}{¿Por qué una sola medida $P$?}
+    El mismo $P$ determina $P(H_i \cap E_j)$ y $P(E_j \mid H_i)$;
+    no se necesitan medidas adicionales.
+  \end{exampleblock}
+\end{frame}
+
+% ── Verosimilitud ─────────────────────────────────────────────────────────────
+\begin{frame}{Definición: verosimilitud como corrección global}
+
+  \begin{block}{Probabilidad condicional (recordatorio)}
+    Si $P(H_i) > 0$, la probabilidad condicional de observar $E_j$ dado $H_i$ es
+    \[
+      P(E_j \mid H_i) = \frac{P(H_i \cap E_j)}{P(H_i)}.
+    \]
+  \end{block}
+
+  \begin{block}{Definición (Verosimilitud)}
+    Fijada la observación $E_j$ (con $P(E_j) > 0$), la
+    \textbf{verosimilitud de $E_j$ bajo $H_i$} es
+    \[
+      \ell_i^{(j)} := P(E_j \mid H_i), \quad i = 1, \dots, n.
+    \]
+    Cuando $\ell_i^{(j)} > 0$ para todo $i$, se define la corrección global
+    $Y^{\ell^{(j)}} \in \Glob$ mediante
+    \[
+      1 + Y_i^{\ell^{(j)}} := \ell_i^{(j)}.
+    \]
+  \end{block}
+\end{frame}
+
+% ══════════════════════════════════════════════════════════════════════════════
+\section{Proposición principal: Bayes como $T_Y$}
+% ══════════════════════════════════════════════════════════════════════════════
+
+\begin{frame}{Proposición: el operador bayesiano como $T_Y$}
+
+  \begin{alertblock}{Proposición (Bayes como caso particular de $T_Y$)}
+    Sea $X \in \Dni$ el prior con $X_i = P(H_i)$, y sea $\ell^{(j)}$
+    la verosimilitud de $E_j$. Entonces
+    \[
+      T_{Y^{\ell^{(j)}}}(X)_i
+      = \frac{X_i \, \ell_i^{(j)}}{\displaystyle\sum_{k=1}^n X_k \, \ell_k^{(j)}}
+      = P(H_i \mid E_j).
+    \]
+    Es decir, \textbf{$T_{Y^{\ell^{(j)}}}(X)$ es exactamente el posterior de Bayes}.
+  \end{alertblock}
+
+  \vspace{4pt}
+  \small La actualización bayesiana no es un axioma aparte: es la acción
+  del operador global $T_Y$ de la Sección C, con $1 + Y_i = \ell_i^{(j)}$.
+\end{frame}
+
+% ── Demostración: paso 1 ───────────────────────────────────────────────────────
+\begin{frame}{Demostración (Parte 1 de 3): aplicar $T_Y$}
+
+  \textbf{Punto de partida:} la definición del operador global $T_Y$ (Sección C).
+
+  \vspace{8pt}
+  Para cualquier corrección global $Y$ con $1 + Y_i > 0$,
+  \[
+    T_Y(X)_i = \frac{X_i\,(1+Y_i)}{\displaystyle\sum_{k=1}^n X_k\,(1+Y_k)}.
+  \]
+
+  \vspace{6pt}
+  Sustituimos $1 + Y_i^{\ell^{(j)}} = \ell_i^{(j)}$:
+  \[
+    T_{Y^{\ell^{(j)}}}(X)_i
+    = \frac{X_i \, \ell_i^{(j)}}{\displaystyle\sum_{k=1}^n X_k \, \ell_k^{(j)}}.
+  \]
+
+\end{frame}
+
+% ── Demostración: paso 2 ───────────────────────────────────────────────────────
+\begin{frame}{Demostración (Parte 2 de 3): identificar numerador y denominador}
+
+  \textbf{El numerador.}
+  Recordamos que $X_i = P(H_i)$ y $\ell_i^{(j)} = P(E_j \mid H_i)$.
+  Por la regla del producto:
+  \[
+    X_i \, \ell_i^{(j)}
+    = P(H_i) \cdot P(E_j \mid H_i)
+    = P(H_i \cap E_j).
+  \]
+
+  \vspace{10pt}
+  \textbf{El denominador.}
+  Como $\Pi_H = \{H_1, \dots, H_n\}$ es una \emph{partición} de $\Omega$,
+  los eventos $H_k$ son disjuntos y su unión es $\Omega$.
+  Por la ley de probabilidad total:
+  \[
+    \sum_{k=1}^n X_k \, \ell_k^{(j)}
+    = \sum_{k=1}^n P(H_k \cap E_j)
+    = P(E_j).
+  \]
+\end{frame}
+
+% ── Demostración: paso 3 ───────────────────────────────────────────────────────
+\begin{frame}{Demostración (Parte 3 de 3): concluir con Bayes}
+
+  Reuniendo los dos pasos anteriores:
+  \[
+    T_{Y^{\ell^{(j)}}}(X)_i
+    = \frac{X_i \, \ell_i^{(j)}}{\displaystyle\sum_{k=1}^n X_k \, \ell_k^{(j)}}
+    = \frac{P(H_i \cap E_j)}{P(E_j)}.
+  \]
+
+  \vspace{6pt}
+  Por la \textbf{definición de probabilidad condicional}:
+  \[
+    \frac{P(H_i \cap E_j)}{P(E_j)} = P(H_i \mid E_j).
+  \]
+
+  \vspace{8pt}
+  \begin{alertblock}{Conclusión}
+    \[
+      \boxed{T_{Y^{\ell^{(j)}}}(X)_i = P(H_i \mid E_j).}
+    \]
+  \end{alertblock}
+\end{frame}
+
+% ══════════════════════════════════════════════════════════════════════════════
+\section{Unicidad del operador bayesiano}
+% ══════════════════════════════════════════════════════════════════════════════
+
+\begin{frame}{Proposición: unicidad en $\mathcal{G}$}
+
+  \begin{alertblock}{Proposición (Unicidad)}
+    Supóngase que $P(H_i \cap E_j) > 0$ para todo $i$.
+    Un operador $T \in \mathcal{G}$ satisface
+    \[
+      T(X)_i = P(H_i \mid E_j) \quad \text{para todo } i
+    \]
+    \textbf{si y sólo si} $T = T_{Y^{\ell^{(j)}}}$.
+  \end{alertblock}
+
+  \vspace{4pt}
+  \small Dentro de $\mathcal{G}$, la actualización bayesiana no tiene alternativas:
+  el posterior determinado por $P$ es producido por un único operador global.
+\end{frame}
+
+% ── Demostración unicidad ─────────────────────────────────────────────────────
+\begin{frame}{Demostración: unicidad}
+
+  \textbf{($\Leftarrow$)} La Proposición anterior ya prueba la suficiencia. \\[8pt]
+
+  \textbf{($\Rightarrow$) Necesidad.}
+  Si $T_Y(X)_i = P(H_i \mid E_j)$ para todo $i$, entonces
+  \[
+    \frac{X_i(1+Y_i)}{\sum_{k=1}^n X_k(1+Y_k)}
+    = \frac{X_i\,\ell_i^{(j)}}{\sum_{k=1}^n X_k\,\ell_k^{(j)}}.
+  \]
+  Como $X_i > 0$, existe $c>0$ tal que
+  \[
+    1+Y_i = c\,\ell_i^{(j)} \quad \text{para todo } i.
+  \]
+  La normalización absorbe $c$, luego $T_Y = T_{Y^{\ell^{(j)}}}$. \qed
+\end{frame}
+
+% ══════════════════════════════════════════════════════════════════════════════
+\section{Actualización secuencial}
+% ══════════════════════════════════════════════════════════════════════════════
+
+\begin{frame}{Corolario: actualización secuencial como composición en $\mathcal{G}$}
+
+  \begin{alertblock}{Corolario (Actualización secuencial)}
+    Sean $E_{j_1}, \dots, E_{j_m}$ observaciones sucesivas con
+    $P(H_i \cap E_{j_s}) > 0$ para todo $i, s$.
+    Sea $X_0 \in \Dni$ el prior inicial.\\[6pt]
+    El posterior tras las $m$ observaciones es
+    \[
+      X_m = T_{Y^{\ell^{(j_m)}}} \circ \cdots \circ T_{Y^{\ell^{(j_1)}}}(X_0).
+    \]
+    El operador compuesto tiene factores coordenados
+    \[
+      1 + (Y^{\mathrm{tot}})_i = \prod_{s=1}^m \ell_i^{(j_s)}.
+    \]
+  \end{alertblock}
+
+  \vspace{4pt}
+  \small Si los datos son condicionalmente independientes dadas las hipótesis,
+  la actualización secuencial coincide con la simultánea.
+\end{frame}
+
+% ── Demostración corolario ────────────────────────────────────────────────────
+\begin{frame}{Demostración: composición de operadores globales}
+
+  \textbf{Ley de composición de $\mathcal{G}$ (Sección C).}
+  Para dos correcciones globales $Y^{(1)}$ y $Y^{(2)}$:
+  \[
+    T_{Y^{(2)}} \circ T_{Y^{(1)}}(X)_i
+    = \frac{X_i\,(1+Y_i^{(1)})(1+Y_i^{(2)})}{\displaystyle\sum_{k} X_k\,(1+Y_k^{(1)})(1+Y_k^{(2)})}.
+  \]
+  Los factores se \textbf{multiplican coordenada a coordenada}.
+
+  \vspace{10pt}
+  Aplicando $m$ veces con $1 + Y_i^{(s)} = \ell_i^{(j_s)}$:
+  \[
+    X_m = T_{Y^{\ell^{(j_m)}}} \circ \cdots \circ T_{Y^{\ell^{(j_1)}}}(X_0),
+    \quad
+    1 + (Y^{\mathrm{tot}})_i = \prod_{s=1}^m \ell_i^{(j_s)}.
+  \]
+
+  \vspace{4pt}
+  \small Si $P(E_{j_1} \cap \cdots \cap E_{j_m} \mid H_i) = \prod_s P(E_{j_s} \mid H_i)$,
+  el factor total del dato conjunto es $\prod_s \ell_i^{(j_s)}$,
+  que coincide con el operador compuesto. \qed
+\end{frame}
+
+% ══════════════════════════════════════════════════════════════════════════════
+\section{Corrección óptima hacia el posterior}
+% ══════════════════════════════════════════════════════════════════════════════
+
+\begin{frame}{Proposición: corrección óptima}
+
+  \begin{alertblock}{Proposición (Corrección óptima hacia el posterior)}
+    Sean $X, \pi \in \Dni$. El único elemento de $\mathcal{G}$
+    que lleva $X$ a $\pi$ en un paso, salvo escala proyectiva, es $T_{Y^*}$ con
+    \[
+      1 + Y_i^* = c\,\frac{\pi_i}{X_i}, \quad c > 0.
+    \]
+    Si $\pi = P(H_i \mid E_j)$ es el posterior bayesiano,
+    entonces por la Proposición de Unicidad,
+    \[
+      \ell_i^{(j)} \propto \frac{\pi_i}{X_i}.
+    \]
+  \end{alertblock}
+
+  \vspace{6pt}
+  \begin{block}{Lectura geométrica (Sección D)}
+    La corrección óptima $Y^*$ coincide con el gradiente de la divergencia KL
+    $E_\pi(X) = D_{\mathrm{KL}}(\pi \| X)$ en $\Dni$.
+    Llegar al posterior es descender en $E_\pi$.
+  \end{block}
+\end{frame}
+
+% ── Demostración corrección óptima ─────────────────────────────────────────────
+\begin{frame}{Demostración: corrección óptima}
+
+  \textbf{Existencia.}
+  Queremos $T_Y(X) = \pi$, es decir:
+  \[
+    \frac{X_i\,(1+Y_i)}{\displaystyle\sum_{k} X_k\,(1+Y_k)} = \pi_i
+    \quad \text{para todo } i.
+  \]
+  Esto se cumple si y sólo si $X_i\,(1+Y_i) = c\,\pi_i$ para alguna constante $c > 0$.
+  Despejando:
+  \[
+    1 + Y_i^* = c\,\frac{\pi_i}{X_i}.
+  \]
+
+  \vspace{8pt}
+  \textbf{Unicidad salvo escala proyectiva.}
+  Si $1 + Y_i = c'\,\pi_i/X_i$ para cualquier $c' > 0$, la normalización absorbe $c'$
+  y el operador resultante es el mismo.
+  Por la estructura de grupo de $\mathcal{G}$, no existe otra solución.
+
+  \vspace{8pt}
+  \textbf{Identificación con $\ell^{(j)}$.}
+  Cuando $\pi = P(H_i \mid E_j)$, la Proposición de Unicidad garantiza que
+  $T_{Y^*} = T_{Y^{\ell^{(j)}}}$, luego $\ell_i^{(j)} \propto \pi_i/X_i$. \qed
+\end{frame}
+
+% ══════════════════════════════════════════════════════════════════════════════
+\section{Modelos continuos: partición paramétrica}
+% ══════════════════════════════════════════════════════════════════════════════
+
+\begin{frame}{Definición: partición paramétrica uniforme}
+
+  \begin{block}{Definición (Partición paramétrica uniforme)}
+    Sea $\Omega = (a, b) \subset \R$ con medida $P_0$ de densidad continua $f > 0$.\\[4pt]
+    Para $n \ge 1$, sea $h := (b-a)/n$ y defínase
+    \[
+      E_i := \bigl(a + (i-1)h,\; a + ih\bigr], \quad i = 1, \dots, n.
+    \]
+    El \textbf{punto representativo} de $E_i$ es el punto medio $\theta_i := a + (i - \tfrac{1}{2})h$.\\[6pt]
+    El \textbf{estado informacional previo exacto} es
+    \[
+      X_{0,i} := P_0(E_i) = \int_{E_i} f(\theta)\,d\theta \in \Dni.
+    \]
+    En la práctica, $\widetilde X_{0,i} \propto f(\theta_i)$.
+  \end{block}
+\end{frame}
+
+% ── Proposición: actualización paramétrica ────────────────────────────────────
+\begin{frame}{Proposición: actualización bayesiana paramétrica}
+
+  \begin{alertblock}{Proposición (Actualización bayesiana paramétrica en CI)}
+    Sea $X_0 \in \Dni$ el estado previo sobre $\Pi_n$, y sea
+    $Y^\ell \in \Glob$ la corrección de verosimilitud con
+    $1 + Y_i^\ell := \ell(\theta_i)$.  Entonces
+    \[
+      T_{Y^\ell}(X_0)_i
+      = \frac{P_0(E_i)\,\ell(\theta_i)}{\displaystyle\sum_{k=1}^n P_0(E_k)\,\ell(\theta_k)}.
+    \]
+    Cuando $n \to \infty$ (con $h \to 0$), esta suma converge a
+    $\int_a^b f(\theta)\,\ell(\theta)\,d\theta$, y el estado converge
+    al posterior continuo con densidad proporcional a $f(\theta)\,\ell(\theta)$.
+  \end{alertblock}
+
+  \vspace{4pt}
+  \small Se sustituye $X_{0,i} = P_0(E_i)$ en la fórmula de $T_{Y^\ell}$;
+  la convergencia es una suma de Riemann estándar. \qed
+\end{frame}
+
+% ══════════════════════════════════════════════════════════════════════════════
+\section{Familia exponencial conjugada}
+% ══════════════════════════════════════════════════════════════════════════════
+
+\begin{frame}{Proposición: modelo conjugado exponencial}
+
+  \begin{alertblock}{Proposición (Modelo conjugado exponencial como caso particular)}
+    Sea el prior de la familia exponencial con parámetro natural $\eta_0$:
+    \[
+      f(\theta) \propto \exp\bigl(\eta_0 \cdot T(\theta)\bigr).
+    \]
+    Sea la verosimilitud de la forma exponencial con contribución $\eta_\ell$:
+    \[
+      \ell(\theta) \propto \exp\bigl(\eta_\ell \cdot T(\theta)\bigr).
+    \]
+    Entonces el operador $T_{Y^\ell}$ produce un posterior en la \textbf{misma familia}
+    con parámetro natural actualizado
+    \[
+      \boxed{\eta_n := \eta_0 + \eta_\ell.}
+    \]
+  \end{alertblock}
+
+  \vspace{4pt}
+  \small Casos clásicos: Beta-Binomial y Normal-Normal.
+\end{frame}
+
+% ── Demostración familia exponencial: paso 1 ──────────────────────────────────
+\begin{frame}{Demostración (Parte 1 de 2): el producto de exponenciales}
+
+  \textbf{Prior por punto medio:}
+  \[
+    \widetilde X_{0,i} \propto f(\theta_i)
+    = \exp\bigl(\eta_0 \cdot T(\theta_i)\bigr).
+  \]
+
+  \textbf{Verosimilitud evaluada en $\theta_i$:}
+  \[
+    \ell_i = \ell(\theta_i) = \exp\bigl(\eta_\ell \cdot T(\theta_i)\bigr).
+  \]
+
+  \vspace{8pt}
+  El operador $T_{Y^\ell}$ multiplica prior y verosimilitud coordenada a coordenada:
+  \[
+    T_{Y^\ell}(\widetilde X_0)_i
+    \propto \widetilde X_{0,i} \cdot \ell_i
+    = \exp\bigl(\eta_0 \cdot T(\theta_i)\bigr)
+      \cdot \exp\bigl(\eta_\ell \cdot T(\theta_i)\bigr).
+  \]
+
+  \vspace{6pt}
+  Usando la propiedad de exponenciales $e^a \cdot e^b = e^{a+b}$:
+  \[
+    T_{Y^\ell}(\widetilde X_0)_i
+    \propto \exp\bigl((\eta_0 + \eta_\ell) \cdot T(\theta_i)\bigr).
+  \]
+\end{frame}
+
+% ── Demostración familia exponencial: paso 2 ──────────────────────────────────
+\begin{frame}{Demostración (Parte 2 de 2): identificar el posterior}
+
+  Del paso anterior:
+  \[
+    T_{Y^\ell}(\widetilde X_0)_i
+    \propto \exp\bigl(\eta_n \cdot T(\theta_i)\bigr),
+    \quad \eta_n := \eta_0 + \eta_\ell.
+  \]
+
+  \vspace{6pt}
+  Esto es exactamente la \textbf{evaluación en la cuadrícula} de una densidad
+  de la misma familia exponencial con parámetro natural $\eta_n$.
+
+  \vspace{6pt}
+  La constante de proporcionalidad se cancela en la normalización de $T_{Y^\ell}$
+  (invariancia de escala de $\mathcal{G}$, Sección C).
+
+  \vspace{8pt}
+  \begin{alertblock}{Conclusión}
+    La actualización conjugada ---sumar parámetros naturales--- emerge
+    automáticamente de la ley multiplicativa del operador $T_{Y^\ell}$.
+    No se impone: \textbf{se deduce del marco}. \qed
+  \end{alertblock}
+\end{frame}
+
+% ══════════════════════════════════════════════════════════════════════════════
+\section{Resumen estructural}
+% ══════════════════════════════════════════════════════════════════════════════
+
+\begin{frame}{Mapa de proposiciones de la semántica bayesiana}
+
+  \begin{columns}[T]
+    \column{0.52\textwidth}
+    \begin{block}{Proposiciones nucleares}
+      \begin{enumerate}
+        \item \textbf{Bayes como $T_Y$:}
+              $T_{Y^{\ell^{(j)}}}(X)_i = P(H_i \mid E_j)$
+        \item \textbf{Unicidad en $\mathcal{G}$:}
+              solo $T_{Y^{\ell^{(j)}}}$ produce el posterior correcto
+        \item \textbf{Actualización secuencial:}
+              composición en $\mathcal{G}$, factores se multiplican
+        \item \textbf{Corrección óptima:}
+              $1+Y_i^* = c\,\pi_i/X_i$, ligada a $E_\pi$ (Secc.\ D)
+      \end{enumerate}
+    \end{block}
+
+    \column{0.44\textwidth}
+    \begin{block}{Extensión a modelos continuos}
+      \begin{enumerate}
+        \setcounter{enumi}{4}
+        \item \textbf{Partición paramétrica:}
+              discretizar $(\Omega, P_0)$ con $\Pi_n$
+        \item \textbf{Actualización paramétrica:}
+              $T_{Y^\ell}(X_0)$ converge al posterior continuo
+        \item \textbf{Familia exponencial:}
+              $\eta_n = \eta_0 + \eta_\ell$
+              (Beta-Binomial, Normal-Normal, \dots)
+      \end{enumerate}
+    \end{block}
+  \end{columns}
+\end{frame}
+
+% ── Diapositiva de cierre ─────────────────────────────────────────────────────
+\begin{frame}{Conclusión}
+
+  \begin{block}{Lo que se mostró}
+    \begin{itemize}
+      \item La regla de Bayes no es un axioma externo: es el operador global
+            $T_Y$ de la Sección C con $1 + Y_i = \ell_i$.
+      \item Dentro del grupo $\mathcal{G}$, la actualización bayesiana es
+            \textbf{única}: no hay alternativa coherente con $P$.
+      \item La actualización secuencial es \textbf{composición} en $\mathcal{G}$;
+            los factores se multiplican coordenada a coordenada.
+      \item Los modelos conjugados (Beta-Binomial, Normal-Normal) emergen
+            de la ley multiplicativa de $T_{Y^\ell}$: sumar parámetros naturales
+            es consecuencia, no supuesto.
+    \end{itemize}
+  \end{block}
+
+  \vspace{8pt}
+  \begin{alertblock}{Próximo paso}
+    Con esta semántica bayesiana establecida, el marco CI puede combinarse
+    con la semántica markoviana (Sección B).
+  \end{alertblock}
+\end{frame}
+
+% ══════════════════════════════════════════════════════════════════════════════
+\end{document}

@@ -1,0 +1,42 @@
+\documentclass[10pt]{article}
+\usepackage[margin=2.1cm]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amssymb,booktabs}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.35em}
+\pagestyle{empty}
+
+\begin{document}
+\small
+\begin{center}
+{\Large Conclusiones del Experimento 1}\
+Trayectoria discreta admisible en $\Delta_3$
+\end{center}
+
+\textbf{Configuraci\'on.} Se fij\'o $X_0=(0.72,0.18,0.10)$, $P=(0.15,0.30,0.55)$, $\varepsilon=0.03$, $\alpha=0.35$, $R=0.60$ y horizonte $T=40$. El paso usado fue
+\[
+X_{t+1}=B_{L_t}(X_t K_{\varepsilon}^{\mathrm{sm}}),
+\qquad
+L_t=\exp\!\bigl(\alpha(\log P-\log Y_t)\bigr),
+\quad Y_t=X_tK_{\varepsilon}^{\mathrm{sm}}.
+\]
+
+\textbf{Resultado num\'erico.} El potencial KL pas\'o de
+\[
+E_P(X_0)=0.8555667502
+\]
+a
+\[
+E_P(X_{40})=0.0027135384,
+\]
+con trayectoria mon\'otona para la pol\'itica elegida. El estado final fue
+\[
+X_{40}=(0.1744046671,\,0.3058505994,\,0.5197447335).
+\]
+
+\textbf{Lectura.} La suavizaci\'on markoviana no expuls\'o la trayectoria del interior del s\'implex y la correcci\'on bayesiana redujo de manera fuerte la divergencia respecto del objetivo. Num\'ericamente, este experimento muestra que el paso compuesto es operativo como mecanismo de control discreto y que el potencial KL funciona como observable natural de descenso.
+
+\textbf{Conclusi\'on.} Bajo estos par\'ametros, el esquema discreto produce una trayectoria admisible estable, interior y fuertemente orientada hacia $P$. Es un buen candidato para la figura principal de la exposici\'on porque hace visible la composici\'on Markov + Bayes y su efecto geom\'etrico.
+
+\end{document}

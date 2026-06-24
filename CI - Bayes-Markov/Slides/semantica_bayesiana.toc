@@ -1,0 +1,9 @@
+\beamer@sectionintoc {1}{Contexto: ¿qué es Control Informacional?}{3}{0}{1}
+\beamer@sectionintoc {2}{Espacio conjunto hipótesis-observaciones}{5}{0}{2}
+\beamer@sectionintoc {3}{Proposición principal: Bayes como $T_Y$}{7}{0}{3}
+\beamer@sectionintoc {4}{Unicidad del operador bayesiano}{11}{0}{4}
+\beamer@sectionintoc {5}{Actualización secuencial}{13}{0}{5}
+\beamer@sectionintoc {6}{Corrección óptima hacia el posterior}{15}{0}{6}
+\beamer@sectionintoc {7}{Modelos continuos: partición paramétrica}{17}{0}{7}
+\beamer@sectionintoc {8}{Familia exponencial conjugada}{19}{0}{8}
+\beamer@sectionintoc {9}{Resumen estructural}{22}{0}{9}

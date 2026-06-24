@@ -1,0 +1,587 @@
+Sí. La rama que te gustó puede volverse un bloque sólido, pero hay que cuidarla mucho para que no parezca una dinámica artificial disfrazada de Bayes.
+
+La idea central debe ser:
+
+[
+\boxed{
+\text{una trayectoria bayesiana controlada es una sucesión de actualizaciones globales por verosimilitudes diseñadas para mover }X_t\text{ hacia un blanco }P.
+}
+]
+
+No es Markov. No es una cadena autónoma. Es Bayes usado como mecanismo de corrección informacional.
+
+---
+
+# 1. Esquema de ítems y estatus
+
+Propongo estructurarlo como una subsección nueva dentro de la semántica bayesiana:
+
+[
+\subsection{Trayectorias bayesianas controladas hacia un blanco informacional}
+]
+
+La arquitectura sería esta.
+
+| Orden | Ítem                                              | Estatus                    | Función                                                                                                                                  |
+| ----- | ------------------------------------------------- | -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| 1     | Observación inicial                               | Observación                | Explicar que Bayes no tiene estacionaria autónoma como Markov; necesita una sucesión de evidencias o un blanco controlado.               |
+| 2     | Blanco bayesiano interior                         | Definición                 | Fijar (P\in\Delta_n^\circ) como distribución objetivo sobre la misma partición de hipótesis.                                             |
+| 3     | Verosimilitud dirigida (X\to P)                   | Proposición                | Demostrar que para todo (X,P\in\Delta_n^\circ) existe una verosimilitud positiva (\ell^{X\to P}) tal que (T_{\ell^{X\to P}}(X)=P).       |
+| 4     | Realizabilidad probabilística de la verosimilitud | Observación técnica o lema | Aclarar cuándo esa verosimilitud puede venir de una observación (E^\star) con (P(E^\star\mid H_i)).                                      |
+| 5     | Campo de corrección bayesiana hacia (P)           | Definición                 | Definir (Y^*(X,P)_i=P_i/X_i-1).                                                                                                          |
+| 6     | Corrección nula en el blanco                      | Observación                | Mostrar que (Y^*(P,P)=0). Es el análogo bayesiano de “en el equilibrio no hay corrección”.                                               |
+| 7     | Paso bayesiano relajado                           | Definición                 | Definir una actualización parcial con intensidad (\alpha\in[0,1]).                                                                       |
+| 8     | Identidad de relajación convexa                   | Proposición                | Probar que el paso relajado satisface (X^+=(1-\alpha)X+\alpha P).                                                                        |
+| 9     | Trayectoria bayesiana controlada                  | Definición                 | Definir (X_{t+1}=(1-\alpha_t)X_t+\alpha_tP), pero interpretada como sucesión de actualizaciones bayesianas globales.                     |
+| 10    | Convergencia hacia (P)                            | Proposición                | Probar que si (\prod_t(1-\alpha_t)=0), entonces (X_t\to P).                                                                              |
+| 11    | Disipación KL hacia (P)                           | Proposición                | Probar que (D_{\mathrm{KL}}(P|X_{t+1})\le D_{\mathrm{KL}}(P|X_t)), incluso con una cota más fuerte.                                      |
+| 12    | Comparación con Markov                            | Observación                | Explicar la analogía: Markov converge a (\pi) determinada por (K); Bayes controlado converge a (P) fijado por el problema informacional. |
+
+---
+
+# 2. Naturaleza bayesiana del bloque
+
+Esta construcción **sí puede ser bayesiana**, pero sólo bajo ciertas restricciones. No basta decir “quiero ir de (X_0) a (P)”. Hay que garantizar que cada paso pueda leerse como una actualización por verosimilitud.
+
+En tu Sección E, Bayes ya quedó definido como operador global:
+
+[
+T_\ell(X)_i
+===========
+
+\frac{X_i\ell_i}{\sum_k X_k\ell_k}.
+]
+
+Ahí la verosimilitud actúa como factor multiplicativo positivo seguido de normalización, y la actualización secuencial se interpreta como composición de correcciones globales. 
+
+Entonces, para que la trayectoria hacia (P) sea bayesiana, cada paso debe tener la forma:
+
+[
+X_{t+1}=T_{\ell^{(t)}}(X_t)
+]
+
+para alguna verosimilitud positiva:
+
+[
+\ell^{(t)}\in\mathbb R_{>0}^n.
+]
+
+---
+
+# 3. ¿Debemos fijar una hipótesis?
+
+No. Si fijas una hipótesis única, por ejemplo (H_j), entonces el blanco natural sería el vértice:
+
+[
+e_j=(0,\dots,0,1,0,\dots,0).
+]
+
+Pero ese punto no está en el interior:
+
+[
+e_j\notin\Delta_n^\circ.
+]
+
+Eso crea problemas con los cocientes, con KL y con la geometría interior de CI.
+
+Por tanto, lo correcto no es fijar una hipótesis, sino fijar una **distribución objetivo sobre hipótesis**:
+
+[
+P=(P_1,\dots,P_n)\in\Delta_n^\circ.
+]
+
+Es decir, (P_i) representa la masa posterior deseada para la hipótesis (H_i).
+
+Así se conserva la naturaleza bayesiana:
+
+[
+\boxed{
+P\text{ no es una hipótesis; }P\text{ es un posterior objetivo sobre la partición }\Pi_H.
+}
+]
+
+---
+
+# 4. Cómo se obtiene la verosimilitud que lleva (X) a (P)
+
+Si tienes:
+
+[
+X\in\Delta_n^\circ,
+\qquad
+P\in\Delta_n^\circ,
+]
+
+entonces define:
+
+[
+\ell_i^{X\to P}:=\frac{P_i}{X_i}.
+]
+
+Entonces:
+
+[
+T_{\ell^{X\to P}}(X)_i
+======================
+
+# \frac{X_i(P_i/X_i)}{\sum_k X_k(P_k/X_k)}
+
+# \frac{P_i}{\sum_kP_k}
+
+P_i.
+]
+
+Por tanto:
+
+[
+T_{\ell^{X\to P}}(X)=P.
+]
+
+Esta es la versión bayesiana exacta del salto hacia el blanco.
+
+Pero hay un matiz muy importante.
+
+---
+
+# 5. Restricción no trivial: ¿esa verosimilitud viene de una observación real?
+
+En la teoría probabilística estricta, una verosimilitud asociada a un evento observado (E) tendría la forma:
+
+[
+\ell_i=P(E\mid H_i).
+]
+
+Entonces necesariamente:
+
+[
+0<\ell_i\le 1.
+]
+
+Pero el vector
+
+[
+\ell_i^{X\to P}=\frac{P_i}{X_i}
+]
+
+puede tener entradas mayores que (1). Eso no es un problema para el operador bayesiano, porque Bayes sólo usa verosimilitudes hasta constante multiplicativa común. Bayes spaces justamente enfatiza que las densidades o funciones positivas proporcionales representan la misma información, y que la actualización bayesiana puede leerse como perturbación, es decir, multiplicación seguida de normalización. 
+
+Si queremos una lectura estrictamente como evento observado, podemos reescalar:
+
+[
+q_i:=c,\frac{P_i}{X_i},
+]
+
+con (c>0) suficientemente pequeño para que:
+
+[
+0<q_i\le 1
+\qquad
+\forall i.
+]
+
+Por ejemplo, basta tomar:
+
+[
+0<c\le \min_i\frac{X_i}{P_i}.
+]
+
+Entonces:
+
+[
+T_q(X)=T_{\ell^{X\to P}}(X)=P.
+]
+
+Pero todavía falta una hipótesis probabilística: debe existir una observación (E^\star) tal que
+
+[
+P(E^\star\mid H_i)=q_i.
+]
+
+Eso no siempre está garantizado por la partición original (\Pi_E). Puede requerir ampliar el espacio de observaciones o introducir una observación idealizada de control.
+
+Entonces la condición correcta es:
+
+[
+\boxed{
+\text{la trayectoria es bayesiana estricta si cada verosimilitud puede realizarse por una observación admisible.}
+}
+]
+
+Si no, sigue siendo bayesiana en sentido geométrico-composicional de Bayes spaces, pero no necesariamente en sentido de evento ya presente en (\Pi_E).
+
+---
+
+# 6. Naturaleza bajo CI
+
+Dentro de CI, esta trayectoria tiene sentido así:
+
+[
+\text{CI fija un blanco }P.
+]
+
+[
+\text{Bayes provee el mecanismo global para aproximarse a }P.
+]
+
+La dinámica relajada sería:
+
+[
+X_{t+1}=(1-\alpha_t)X_t+\alpha_tP.
+]
+
+Pero para que esto no parezca una interpolación arbitraria, hay que mostrar que esta misma fórmula surge de una corrección global bayesiana.
+
+Definimos:
+
+[
+Y^*(X,P)_i=\frac{P_i}{X_i}-1.
+]
+
+Luego tomamos una intensidad (\alpha_t\in[0,1]) y usamos el operador global con factor:
+
+[
+1+\alpha_tY^*(X_t,P)_i
+======================
+
+1-\alpha_t+\alpha_t\frac{P_i}{X_{t,i}}.
+]
+
+Este factor es positivo si:
+
+[
+X_t,P\in\Delta_n^\circ,
+\qquad
+\alpha_t\in[0,1].
+]
+
+Entonces:
+
+[
+T_{\alpha_tY^*(X_t,P)}(X_t)_i
+=============================
+
+X_{t,i}\left(1-\alpha_t+\alpha_t\frac{P_i}{X_{t,i}}\right)
+]
+
+porque el normalizador vale (1). Por tanto:
+
+[
+X_{t+1}
+=======
+
+(1-\alpha_t)X_t+\alpha_tP.
+]
+
+Así, la relajación no es una interpolación arbitraria: es una actualización bayesiana global con verosimilitud diseñada.
+
+---
+
+# 7. Qué significa “puramente bayesiana” aquí
+
+Hay tres niveles.
+
+## Nivel 1: Bayes algebraico-composicional
+
+Basta que cada paso sea:
+
+[
+X_{t+1}=T_{\ell^{(t)}}(X_t)
+]
+
+con
+
+[
+\ell^{(t)}\in\mathbb R_{>0}^n.
+]
+
+Este nivel está plenamente respaldado por la lectura de Bayes spaces: las verosimilitudes se consideran hasta proporcionalidad, y Bayes es perturbación multiplicativa con normalización. 
+
+## Nivel 2: Bayes probabilístico sobre hipótesis
+
+Además se exige una partición:
+
+[
+\Pi_H={H_1,\dots,H_n}
+]
+
+y que:
+
+[
+X_{t,i}=P_t(H_i).
+]
+
+Aquí (P) debe interpretarse como posterior objetivo:
+
+[
+P_i=P^\star(H_i).
+]
+
+La dinámica sigue siendo bayesiana si la verosimilitud representa evidencia sobre esas hipótesis.
+
+## Nivel 3: Bayes observacional estricto
+
+Además se exige que exista una observación (E_t) tal que:
+
+[
+\ell_i^{(t)}\propto P(E_t\mid H_i).
+]
+
+Este es el nivel más fuerte. Aquí la trayectoria depende de que las observaciones posibles sean lo suficientemente ricas para realizar las verosimilitudes diseñadas.
+
+---
+
+# 8. Por qué esto no es lo mismo que la convergencia bayesiana clásica
+
+La referencia de convergencia bayesiana estudia otro problema: cuando llegan datos sucesivos de un proceso generador, la posterior puede concentrarse alrededor de una verdad bajo condiciones de soporte KL, grosor del prior, separación, etc. 
+
+Eso es:
+
+[
+\text{convergencia estadística de la posterior por datos reales.}
+]
+
+Lo que estamos proponiendo aquí es:
+
+[
+\text{trayectoria controlada por verosimilitudes elegidas para alcanzar un blanco }P.
+]
+
+Ambas cosas son bayesianas, pero tienen naturaleza distinta.
+
+La primera es pasiva:
+
+[
+\text{los datos llegan.}
+]
+
+La segunda es controlada:
+
+[
+\text{el sistema elige o diseña evidencia admisible para dirigir el estado.}
+]
+
+---
+
+# 9. Esquema final recomendado
+
+La subsección podría organizarse así:
+
+## Trayectorias bayesianas controladas hacia un blanco informacional
+
+### Ítem 1 — Observación: Bayes no tiene estacionaria autónoma
+
+Estatus: **observación**.
+
+Función: explicar que, a diferencia de Markov, Bayes no define una dinámica autónoma sin una sucesión de verosimilitudes.
+
+---
+
+### Ítem 2 — Definición: blanco bayesiano interior
+
+Estatus: **definición**.
+
+Contenido:
+
+[
+P\in\Delta_n^\circ
+]
+
+es una distribución objetivo sobre la misma partición de hipótesis (\Pi_H).
+
+---
+
+### Ítem 3 — Proposición: verosimilitud dirigida hacia (P)
+
+Estatus: **proposición**.
+
+Contenido:
+
+Para todo (X,P\in\Delta_n^\circ), existe:
+
+[
+\ell_i^{X\to P}:=\frac{P_i}{X_i}
+]
+
+tal que:
+
+[
+T_{\ell^{X\to P}}(X)=P.
+]
+
+---
+
+### Ítem 4 — Observación técnica: realizabilidad observacional
+
+Estatus: **observación técnica**.
+
+Contenido:
+
+[
+\ell^{X\to P}
+]
+
+puede reescalarse para tener entradas en ((0,1]), pero para venir de un evento observado (E^\star) debe existir una observación tal que:
+
+[
+P(E^\star\mid H_i)\propto \frac{P_i}{X_i}.
+]
+
+---
+
+### Ítem 5 — Definición: campo bayesiano dirigido
+
+Estatus: **definición**.
+
+Contenido:
+
+[
+Y^*(X,P)_i:=\frac{P_i}{X_i}-1.
+]
+
+---
+
+### Ítem 6 — Observación: corrección nula en el blanco
+
+Estatus: **observación**.
+
+Contenido:
+
+[
+Y^*(P,P)=0.
+]
+
+---
+
+### Ítem 7 — Definición: paso bayesiano relajado
+
+Estatus: **definición**.
+
+Contenido:
+
+[
+X^+
+===
+
+T_{\alpha Y^*(X,P)}(X),
+\qquad
+\alpha\in[0,1].
+]
+
+---
+
+### Ítem 8 — Proposición: identidad de relajación
+
+Estatus: **proposición**.
+
+Contenido:
+
+[
+T_{\alpha Y^*(X,P)}(X)
+======================
+
+(1-\alpha)X+\alpha P.
+]
+
+---
+
+### Ítem 9 — Definición: trayectoria bayesiana controlada
+
+Estatus: **definición**.
+
+Contenido:
+
+[
+X_{t+1}
+=======
+
+T_{\alpha_tY^*(X_t,P)}(X_t).
+]
+
+Equivalentemente:
+
+[
+X_{t+1}
+=======
+
+(1-\alpha_t)X_t+\alpha_tP.
+]
+
+---
+
+### Ítem 10 — Proposición: convergencia al blanco
+
+Estatus: **proposición**.
+
+Contenido:
+
+Si:
+
+[
+\alpha_t\in(0,1],
+\qquad
+\prod_{t=0}^{\infty}(1-\alpha_t)=0,
+]
+
+entonces:
+
+[
+X_t\to P.
+]
+
+---
+
+### Ítem 11 — Proposición: disipación KL
+
+Estatus: **proposición**.
+
+Contenido:
+
+[
+D_{\mathrm{KL}}(P|X_{t+1})
+\le
+(1-\alpha_t)D_{\mathrm{KL}}(P|X_t)
+\le
+D_{\mathrm{KL}}(P|X_t).
+]
+
+---
+
+### Ítem 12 — Observación: analogía y diferencia con Markov
+
+Estatus: **observación**.
+
+Contenido:
+
+[
+\text{Markov converge a }\pi\text{ determinada por }K.
+]
+
+[
+\text{Bayes controlado converge a }P\text{ fijado por CI.}
+]
+
+---
+
+# Veredicto
+
+Sí: este bloque puede ser legítimamente bayesiano, pero sólo si lo escribimos con estas restricciones:
+
+[
+\boxed{
+\text{el blanco }P\text{ debe vivir sobre la partición de hipótesis }\Pi_H.
+}
+]
+
+[
+\boxed{
+\text{cada paso debe ser una corrección global }T_\ell.
+}
+]
+
+[
+\boxed{
+\text{si exigimos lectura observacional estricta, cada }\ell\text{ debe ser realizable como verosimilitud de algún }E_t.
+}
+]
+
+Entonces la dinámica relajada hacia (P) no es una interpolación arbitraria: es una trayectoria de actualizaciones bayesianas controladas dentro de CI.

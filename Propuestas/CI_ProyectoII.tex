@@ -1,0 +1,654 @@
+\documentclass[12pt]{article}
+\usepackage[spanish]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amssymb}
+\usepackage{amsthm}
+\usepackage{geometry}
+\geometry{margin=2.5cm}
+\usepackage{comment}
+\renewcommand{\familydefault}{\sfdefault}
+\usepackage{mathrsfs}
+
+% Entornos de teorema (mismo estilo que CI.pdf)
+\newtheorem{definicion}{Definición}[section]
+\newtheorem{proposicion}{Proposición}[section]
+\newtheorem{teorema}{Teorema}[section]
+\newtheorem{corolario}{Corolario}[section]
+\newtheorem{observacion}{Observación}[section]
+\newtheorem{ejemplo}{Ejemplo}[section]
+
+% Entornos nuevos para este documento
+\newtheorem{conjetura}{Conjetura}[section]
+\newtheorem{problema}{Problema abierto}[section]
+
+% Figuras y tablas
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{subcaption}
+\usepackage{booktabs,tabularx,array}
+\usepackage{longtable}
+\usepackage{xcolor}
+\usepackage{colortbl}
+
+% Listas
+\usepackage{enumitem}
+
+% Títulos
+\usepackage{titlesec}
+
+% Bibliografía
+\usepackage[authoryear]{natbib}
+\bibliographystyle{plainnat}
+
+% Hipervínculos
+\usepackage[hidelinks]{hyperref}
+
+% Colores para la tabla de orientación
+\definecolor{colorDef}{HTML}{E6F1FB}
+\definecolor{colorProp}{HTML}{EEEDFE}
+\definecolor{colorConj}{HTML}{FBEAF0}
+\definecolor{colorProb}{HTML}{F1EFE8}
+\definecolor{colorExp}{HTML}{FAECE7}
+\definecolor{trivBaja}{HTML}{EAF3DE}
+\definecolor{trivMedia}{HTML}{FAEEDA}
+\definecolor{trivAlta}{HTML}{FCEBEB}
+\definecolor{trivAbierto}{HTML}{E1F5EE}
+
+\title{Control Informacional\\
+\large Proyecto de Investigación II --- Esquema de trabajo}
+
+\author{
+\textbf{Alejandro Cruz López} \\
+Universidad Autónoma Metropolitana \\
+Unidad Iztapalapa
+}
+
+\date{
+\vspace{1em}
+\textbf{Asesores} \\[0.3em]
+Dr.\ Asael Fabián Martínez Martínez \\
+Dr.\ Joaquín Delgado Fernández \\
+\vspace{1em}
+2026
+}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Este documento presenta el esquema de trabajo del Proyecto de Investigación~II,
+cuyo eje es el estudio de \emph{dinámicas restringidas sobre el símplex de
+distribuciones de probabilidad discretas}. El proyecto se organiza en tres
+problemas centrales: alcanzabilidad restringida, control óptimo informacional y
+defecto de ordenamiento. Para cada problema se enuncian las definiciones,
+proposiciones, conjeturas y problemas abiertos pertinentes, acompañados de un
+esbozo breve de la estrategia de demostración. El documento concluye con una
+tabla de orientación que resume los 23~elementos del esquema junto con su nivel
+de trivialidad y rol en el proyecto.
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+%====================================================================
+\section{Preliminares y notación heredada de CI}
+%====================================================================
+
+Se conserva íntegramente la notación del Proyecto~I. En particular:
+\begin{itemize}[nosep]
+  \item $\Delta_n$ es el símplex de probabilidad y $\Delta_n^\circ$ su interior.
+  \item $T_Y$ es el operador informacional global con $Y\in C_{\mathrm{glob}}$.
+  \item $L_K(X)=XK$ es el operador de Markov asociado a la matriz estocástica~$K$.
+  \item $B_L(X)_i = X_iL_i/\langle X,L\rangle$ es el operador bayesiano con
+        evidencia $L\in\mathbb{R}_{>0}^n$.
+  \item $D_{\mathrm{KL}}(P\|X)=\sum_i P_i\log(P_i/X_i)$ es la divergencia de
+        Kullback--Leibler.
+  \item $g_X(u,v)=\sum_i u_iv_i/X_i$ es la métrica de Fisher en $T_X\Delta_n^\circ$.
+\end{itemize}
+
+La diferencia central respecto al Proyecto~I es que ahora se imponen
+\emph{restricciones} sobre las acciones admisibles. Sin ellas, tanto $B_L$ como
+$L_K$ pueden llevar cualquier estado a cualquier objetivo en un solo paso, lo que
+hace trivial todo problema de control o alcanzabilidad.
+
+%====================================================================
+\section{Problema 1 --- Alcanzabilidad restringida}
+%====================================================================
+
+\noindent\textbf{Pregunta rectora.} \textit{¿Es $P$ alcanzable desde $X_0$ en
+$t$ pasos bajo acciones admisibles $({\mathcal K}_\varepsilon, {\mathcal U}_R)$?}
+
+\bigskip
+
+\begin{definicion}[Acciones admisibles]
+\label{def:acciones}
+Se definen los conjuntos de acciones admisibles como
+\[
+\mathcal{K}_\varepsilon
+:=
+\bigl\{K\in\mathcal{S}_n : K_{ij}\geq\varepsilon>0\text{ para todo }i,j\bigr\}
+\]
+y
+\[
+\mathcal{U}_R
+:=
+\bigl\{v\in\mathbb{R}^n : \|v\|_\infty\leq R\bigr\},
+\]
+donde $\varepsilon>0$ y $R>0$ son parámetros fijos. Las acciones de Markov
+admisibles son $K\in\mathcal{K}_\varepsilon$ y las bayesianas son evidencias $L$
+con $\log L\in\mathcal{U}_R$.
+\end{definicion}
+
+\begin{observacion}
+La condición $K_{ij}\geq\varepsilon$ impide matrices de rango~$1$ (que llevarían
+cualquier $X$ al objetivo exacto en un paso) y garantiza que toda
+$K\in\mathcal{K}_\varepsilon$ sea primitiva. La condición $\|\log L\|_\infty\leq R$
+impide la evidencia dirigida exacta $L_i=P_i/X_i$. Ambas restricciones son las
+que hacen no trivial el problema de alcanzabilidad.
+\end{observacion}
+
+\begin{definicion}[Costo informacional de una acción]
+\label{def:costo}
+Para $X\in\Delta_n^\circ$, se define el costo informacional de una acción como
+\[
+c_M(K,X):=D_{\mathrm{KL}}(XK\|X),
+\qquad
+c_B(L,X):=D_{\mathrm{KL}}(B_L(X)\|X).
+\]
+Ambos costos miden cuánto desplaza la acción al estado actual en términos
+informacionales, son no negativos, y se anulan cuando la acción es la identidad.
+\end{definicion}
+
+\begin{observacion}
+La elección de $D_{\mathrm{KL}}$ como costo hace comparables las acciones de
+Markov y Bayes en una escala común. Esta elección es la que permite escribir
+el funcional de costo del Problema~2 con una penalización uniforme.
+\end{observacion}
+
+\begin{definicion}[Conjunto alcanzable restringido]
+\label{def:alcanzable}
+Dado $X_0\in\Delta_n^\circ$ y un horizonte $t\geq 1$, el \emph{conjunto
+alcanzable restringido en $t$ pasos} es
+\[
+\mathcal{R}_t(X_0)
+:=
+\bigl\{X_t\in\Delta_n^\circ :
+X_{s+1}\in\{L_{K_s}(X_s),\, B_{L_s}(X_s)\},\;
+K_s\in\mathcal{K}_\varepsilon,\;
+\log L_s\in\mathcal{U}_R
+\bigr\}.
+\]
+\end{definicion}
+
+\begin{definicion}[Conjunto alcanzable cuantizado]
+\label{def:alcanzable-cuant}
+Dado $M\geq 1$, el \emph{retículo de resolución $M$} es
+\[
+\Delta_n^{(M)}
+:=
+\Bigl\{X\in\Delta_n : MX_i\in\mathbb{Z}_{\geq 0}\text{ para todo }i\Bigr\}.
+\]
+El \emph{conjunto alcanzable cuantizado en $t$ pasos} es
+\[
+\mathcal{R}_t^{(M)}(X_0)
+:=
+\mathcal{R}_t(X_0)\cap\Delta_n^{(M)},
+\]
+donde además se exige que todos los estados intermedios pertenezcan a
+$\Delta_n^{(M)}$.
+\end{definicion}
+
+\begin{proposicion}[Inalcanzabilidad en tiempo finito]
+\label{prop:inalcanzable}
+Bajo las restricciones $(\mathcal{K}_\varepsilon,\mathcal{U}_R)$, para todo
+$X_0\in\Delta_n^\circ$ y todo $t$ finito existen puntos $P\in\Delta_n^\circ$
+tales que $P\notin\mathcal{R}_t(X_0)$.
+\end{proposicion}
+
+\begin{proof}[Esbozo]
+Cada acción admisible de Markov mueve el estado en una dirección acotada:
+$\|L_K(X)-X\|_1\leq 2(1-n\varepsilon)$ para $K\in\mathcal{K}_\varepsilon$.
+Cada acción bayesiana admisible satisface $\|B_L(X)-X\|_1\leq C(R)$ para una
+constante $C(R)$ que depende de $R$ pero no de $X$. Por tanto, en $t$ pasos la
+distancia en norma~$\ell^1$ entre $X_t$ y $X_0$ está uniformemente acotada.
+Escogiendo $P$ a distancia mayor que esa cota se concluye la inalcanzabilidad.
+\end{proof}
+
+\begin{problema}[Caracterización del conjunto alcanzable]
+\label{prob:caracterizacion}
+Determinar condiciones necesarias y suficientes sobre $(X_0, P,
+\mathcal{K}_\varepsilon, \mathcal{U}_R, t)$ para que $P\in\mathcal{R}_t(X_0)$.
+En particular, caracterizar la geometría de $\mathcal{R}_t(X_0)$ como
+subconjunto de $\Delta_n^\circ$.
+\end{problema}
+
+\begin{conjetura}[Pérdida de alcanzabilidad por cuantización]
+\label{conj:cuantizacion}
+Para $M$ suficientemente grande y bajo las restricciones
+$(\mathcal{K}_\varepsilon,\mathcal{U}_R)$, la pérdida de alcanzabilidad debida a
+la cuantización es de orden $O(1/M)$ en distancia~$D_{\mathrm{KL}}$. Más
+precisamente, existe $C>0$ tal que para todo $P\in\mathcal{R}_t(X_0)$,
+\[
+\inf_{Q\in\mathcal{R}_t^{(M)}(X_0)}D_{\mathrm{KL}}(P\|Q)\leq \frac{C}{M}.
+\]
+\end{conjetura}
+
+%====================================================================
+\section{Problema 2 --- Control óptimo informacional}
+%====================================================================
+
+\noindent\textbf{Pregunta rectora.} \textit{¿Cuándo conviene aplicar Markov,
+cuándo Bayes y cuándo alternar?}
+
+\bigskip
+
+\begin{definicion}[Política admisible de horizonte $T$]
+\label{def:politica}
+Una \emph{política admisible de horizonte $T$} es una sucesión de decisiones
+$\{a_t\}_{t=0}^{T-1}$ con $a_t\in\{M,B\}$, acompañada de parámetros
+$K_t\in\mathcal{K}_\varepsilon$ si $a_t=M$, o $\log L_t\in\mathcal{U}_R$ si
+$a_t=B$. El estado evoluciona según
+\[
+X_{t+1}
+=
+\begin{cases}
+L_{K_t}(X_t) & \text{si }a_t=M, \\
+B_{L_t}(X_t) & \text{si }a_t=B.
+\end{cases}
+\]
+\end{definicion}
+
+\begin{definicion}[Funcional de costo]
+\label{def:costo-total}
+Dado un objetivo $P\in\Delta_n^\circ$ y un parámetro de regularización
+$\lambda>0$, el \emph{costo de una política admisible} es
+\[
+J_T(X_0;\{a_t\})
+:=
+D_{\mathrm{KL}}(P\|X_T)
++
+\lambda\sum_{t=0}^{T-1}c_{a_t}(a_t,X_t),
+\]
+donde $c_{a_t}$ es el costo de acción de la Definición~\ref{def:costo}.
+\end{definicion}
+
+\begin{definicion}[Función de valor óptimo]
+\label{def:valor}
+La \emph{función de valor óptimo} con $\tau$ pasos restantes es
+\[
+V_\tau(X)
+:=
+\inf_{\{a_t\}_{t=0}^{\tau-1}\text{ admisible}} J_\tau(X;\{a_t\}),
+\qquad
+V_0(X):=D_{\mathrm{KL}}(P\|X).
+\]
+\end{definicion}
+
+\begin{proposicion}[Ecuación de Bellman informacional restringida]
+\label{prop:bellman}
+La función de valor satisface la recursión hacia atrás
+\[
+V_\tau(X)
+=
+D_{\mathrm{KL}}(P\|X)
++
+\min\!\left(
+\inf_{K\in\mathcal{K}_\varepsilon}
+\bigl[\lambda\,c_M(K,X)+V_{\tau-1}(XK)\bigr],\;
+\inf_{\log L\in\mathcal{U}_R}
+\bigl[\lambda\,c_B(L,X)+V_{\tau-1}(B_L(X))\bigr]
+\right).
+\]
+Bajo las restricciones $(\mathcal{K}_\varepsilon,\mathcal{U}_R)$, el ínfimo no es
+idénticamente cero para $\tau$ finito.
+\end{proposicion}
+
+\begin{proof}[Esbozo]
+La recursión se obtiene por el principio de optimalidad de Bellman: el costo
+óptimo desde $X$ en $\tau$ pasos es el costo del primer paso más el costo óptimo
+desde el estado resultante en $\tau-1$ pasos. La no trivialidad del ínfimo se
+sigue de la Proposición~\ref{prop:inalcanzable}: si $P\notin\mathcal{R}_1(X)$,
+entonces $V_1(X)>0$ para toda acción admisible.
+\end{proof}
+
+\begin{conjetura}[Política de tipo \emph{bang-bang} para $n=2$]
+\label{conj:bangbang}
+Para $n=2$ y restricciones simétricas
+($\varepsilon$ y $R$ iguales para ambas acciones), existe una partición de
+$\Delta_2^\circ$ en dos regiones $\mathcal{M}$ y $\mathcal{B}$ tales que la
+política óptima es $a^*=M$ en $\mathcal{M}$ y $a^*=B$ en $\mathcal{B}$. En
+particular, la política óptima es de acción pura en cada región y no requiere
+alternancia.
+\end{conjetura}
+
+\begin{conjetura}[Ventaja de la alternancia para $n\geq 3$]
+\label{conj:alternancia}
+Para $n\geq 3$, existen configuraciones $(X_0, P, \mathcal{K}_\varepsilon,
+\mathcal{U}_R)$ para las cuales
+\[
+J_T^*(X_0)<\min\!\bigl(J_T^M(X_0),\,J_T^B(X_0)\bigr),
+\]
+donde $J_T^*$ es el costo de la política óptima y $J_T^M$, $J_T^B$ son los
+costos de las políticas puras (solo Markov y solo Bayes respectivamente). Es
+decir, la alternancia de operadores produce un costo estrictamente menor que
+cualquier política pura.
+\end{conjetura}
+
+\begin{conjetura}[Límite continuo igual al flujo Fisher--KL]
+\label{conj:limite-continuo}
+Para $T$ fijo y $\Delta t=T/N$ con costo de acción $c_M(K,X)$, en el límite
+$N\to\infty$ la trayectoria de la política óptima converge a la solución de la
+ecuación diferencial
+\[
+\dot{X}=P-X,
+\]
+que es el flujo de gradiente Fisher--KL de $D_{\mathrm{KL}}(P\|\cdot)$
+establecido en CI~(Proyecto~I).
+\end{conjetura}
+
+%====================================================================
+\section{Problema 3 --- Defecto de ordenamiento}
+%====================================================================
+
+\noindent\textbf{Pregunta rectora.} \textit{¿Cuánto cambia la trayectoria según
+el orden en que se aplican Markov y Bayes?}
+
+\bigskip
+
+\begin{definicion}[Defecto de ordenamiento]
+\label{def:defecto}
+Sea $K\in\mathcal{K}_\varepsilon$ y sea $L$ con $\log L\in\mathcal{U}_R$. El
+\emph{defecto de ordenamiento} en el estado $X\in\Delta_n^\circ$ es el vector
+\[
+\mathcal{D}_{K,L}(X)
+:=
+B_L(XK)-B_L(X)K
+\in\mathbb{R}^n,
+\]
+que mide la diferencia entre aplicar primero Markov y luego Bayes, versus el
+orden inverso.
+\end{definicion}
+
+\begin{observacion}
+El defecto $\mathcal{D}_{K,L}(X)$ generaliza y reemplaza el conmutador
+$\mathcal{C}_{P,L}(X)$ de CI~(Proyecto~I). La diferencia es de convención: aquí
+se usa $K$ para la matriz de Markov (reservando $P$ para el objetivo) y se
+escribe la diferencia en el orden que resulta más natural para el problema de
+control.
+\end{observacion}
+
+\begin{proposicion}[Tangencia al símplex del defecto]
+\label{prop:tangencia}
+Para todo $X\in\Delta_n^\circ$, toda $K\in\mathcal{K}_\varepsilon$ y toda $L$
+con $\log L\in\mathcal{U}_R$, se cumple
+\[
+\sum_{i=1}^n \mathcal{D}_{K,L}(X)_i=0.
+\]
+Por tanto,
+\[
+\mathcal{D}_{K,L}(X)\in T_X\Delta_n^\circ.
+\]
+\end{proposicion}
+
+\begin{proof}[Esbozo]
+Ambos términos en la definición del defecto son distribuciones de probabilidad:
+$B_L(XK)\in\Delta_n^\circ$ y $B_L(X)K\in\Delta_n^\circ$. Por tanto, cada
+uno tiene suma de coordenadas igual a~$1$. La diferencia tiene suma cero, lo
+que es precisamente la condición de pertenencia al espacio tangente
+$T_X\Delta_n^\circ=\{u\in\mathbb{R}^n:\sum_i u_i=0\}$.
+\end{proof}
+
+\begin{problema}[Caracterización algebraica de $\mathcal{D}_{K,L}\equiv 0$]
+\label{prob:conmutacion}
+Determinar condiciones necesarias y suficientes sobre $K$ y $L$ para que
+\[
+\mathcal{D}_{K,L}(X)=0
+\quad\text{para todo }X\in\Delta_n^\circ.
+\]
+\end{problema}
+
+\begin{observacion}
+El Proyecto~I contenía la condición $L\propto\pi$ (con $\pi$ estacionaria de~$K$)
+como posible respuesta. Sin embargo, esa condición es insuficiente en general con
+la convención de vectores fila. El Problema~\ref{prob:conmutacion} queda abierto
+y su resolución es necesaria antes de usar cualquier resultado de conmutación
+en el control óptimo.
+\end{observacion}
+
+\begin{proposicion}[Subvariedad de conmutación]
+\label{prop:subvariedad}
+Bajo condiciones genéricas sobre $K$ y $L$, el conjunto
+\[
+\mathcal{M}_{K,L}
+:=
+\bigl\{X\in\Delta_n^\circ:\mathcal{D}_{K,L}(X)=0\bigr\}
+\]
+es una subvariedad de $\Delta_n^\circ$ de dimensión estrictamente menor que
+$n-1$.
+\end{proposicion}
+
+\begin{proof}[Esbozo]
+El defecto $\mathcal{D}_{K,L}:\Delta_n^\circ\to T\Delta_n^\circ$ es una función
+suave. Por el teorema de la función implícita, si la diferencial
+$D_X\mathcal{D}_{K,L}$ tiene rango máximo en algún punto de
+$\mathcal{M}_{K,L}$, entonces $\mathcal{M}_{K,L}$ es localmente una subvariedad.
+La dimensión es estrictamente menor que $n-1$ porque $\mathcal{D}_{K,L}=0$ impone
+$n-1$ ecuaciones independientes en un espacio de dimensión $n-1$ (el símplex).
+La genericidad de las condiciones debe verificarse por separado.
+\end{proof}
+
+\begin{conjetura}[Cota de suboptimalidad por orden incorrecto]
+\label{conj:cota}
+Existe una constante $C=C(\varepsilon,R)>0$ tal que para toda $K\in
+\mathcal{K}_\varepsilon$, toda $L$ con $\log L\in\mathcal{U}_R$ y todo
+$X\in\Delta_n^\circ$,
+\[
+\bigl|J(X;K,L)-J(X;L,K)\bigr|
+\leq
+C\cdot\|\mathcal{D}_{K,L}(X)\|,
+\]
+donde $J(X;K,L):=D_{\mathrm{KL}}(P\|B_L(XK))$ y
+$J(X;L,K):=D_{\mathrm{KL}}(P\|B_L(X)K)$ son los costos de dos pasos en cada
+orden.
+En particular, si $\mathcal{D}_{K,L}(X)=0$, el orden de aplicación es
+irrelevante para el costo.
+\end{conjetura}
+
+\begin{observacion}[El corazón del proyecto]
+La Conjetura~\ref{conj:cota} es el resultado central que unifica los tres
+problemas:
+\begin{itemize}[nosep]
+  \item \textbf{Problema~1:} los dos órdenes producen estados distintos,
+        cuya separación está medida por $\mathcal{D}_{K,L}(X)$.
+  \item \textbf{Problema~2:} la diferencia de costos entre el orden óptimo y
+        el subóptimo es precisamente $|J(X;K,L)-J(X;L,K)|$.
+  \item \textbf{Problema~3:} el defecto $\mathcal{D}_{K,L}$ es el objeto que
+        acota esa diferencia.
+\end{itemize}
+Una demostración con constante $C$ no óptima, o bajo condiciones adicionales
+sobre $K$ y $L$, ya constituiría un resultado publicable.
+\end{observacion}
+
+%====================================================================
+\section{Tabla de orientación}
+%====================================================================
+
+La tabla siguiente resume los 23~elementos del esquema con su tipo, contenido
+abreviado, rol en el proyecto y nivel de trivialidad. Su propósito es servir
+como mapa de navegación durante la redacción formal del documento.
+
+\medskip
+
+\noindent\textbf{Leyenda de tipos:}
+\textbf{Def}~=~Definición,\;
+\textbf{Prop}~=~Proposición,\;
+\textbf{Conj}~=~Conjetura,\;
+\textbf{Prob}~=~Problema abierto,\;
+\textbf{Exp}~=~Experimento.
+
+\medskip
+
+\noindent\textbf{Leyenda de trivialidad:}
+\colorbox{trivBaja}{\strut~Baja~} formalización necesaria, no sorprendente;\;
+\colorbox{trivMedia}{\strut~Media~} requiere demostración;\;
+\colorbox{trivAlta}{\strut~Alta~} difícil;\;
+\colorbox{trivAbierto}{\strut~Abierto~} sin respuesta conocida.
+
+\bigskip
+
+\begingroup
+\small
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.25}
+
+\noindent\begin{longtable}{@{}p{0.65cm}p{0.65cm}p{3.5cm}p{4.6cm}p{3.6cm}p{1.5cm}@{}}
+\toprule
+\textbf{Tipo} & \textbf{ID} & \textbf{Título} & \textbf{Contenido} &
+\textbf{Rol en el proyecto} & \textbf{Trivial.} \\
+\midrule
+\endfirsthead
+\multicolumn{6}{c}{\textit{(continuación)}} \\
+\toprule
+\textbf{Tipo} & \textbf{ID} & \textbf{Título} & \textbf{Contenido} &
+\textbf{Rol en el proyecto} & \textbf{Trivial.} \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+
+\multicolumn{6}{@{}l}{\textbf{Problema 1 --- Alcanzabilidad restringida}} \\[2pt]
+\rowcolor{colorDef}
+Def & 1.1 & Acciones admisibles $({\mathcal K}_\varepsilon,{\mathcal U}_R)$ &
+$K_{ij}\geq\varepsilon$; $\|\log L\|_\infty\leq R$ &
+Sin esto todo colapsa a un paso &
+\cellcolor{trivBaja} Baja \\
+\rowcolor{colorDef}
+Def & 1.2 & Costo informacional de acción &
+$c_M=D_{\mathrm{KL}}(XK\|X)$; $c_B=D_{\mathrm{KL}}(B_L(X)\|X)$ &
+Hace comparables Markov y Bayes en escala KL &
+\cellcolor{trivBaja} Baja \\
+\rowcolor{colorDef}
+Def & 1.3 & Conjunto alcanzable $\mathcal{R}_t(X_0)$ &
+Estados alcanzables en $t$ pasos bajo $({\mathcal K}_\varepsilon,{\mathcal U}_R)$ &
+Objeto central del Problema~1 &
+\cellcolor{trivBaja} Baja \\
+\rowcolor{colorDef}
+Def & 1.4 & Conjunto alcanzable cuantizado $\mathcal{R}_t^{(M)}(X_0)$ &
+$\mathcal{R}_t\cap\Delta_n^{(M)}$; estados intermedios en el retículo &
+Restricción sobre estados, no solo acciones &
+\cellcolor{trivBaja} Baja \\
+\rowcolor{colorProp}
+Prop & 1.1 & Inalcanzabilidad en tiempo finito &
+Bajo $({\mathcal K}_\varepsilon,{\mathcal U}_R)$, existen $P\notin\mathcal{R}_t(X_0)$ &
+Justifica la no trivialidad del marco restringido &
+\cellcolor{trivMedia} Media \\
+\rowcolor{colorProb}
+Prob & 1.2 & Caracterización de $\mathcal{R}_t(X_0)$ &
+CNS para $P\in\mathcal{R}_t(X_0)$ en función de $X_0,P,\varepsilon,R,t$ &
+Problema abierto central; atacable con punto fijo &
+\cellcolor{trivAbierto} Abierto \\
+\rowcolor{colorConj}
+Conj & 1.1 & Pérdida por cuantización $O(1/M)$ &
+$\inf_{Q\in\mathcal{R}_t^{(M)}}D_{\mathrm{KL}}(P\|Q)\leq C/M$ &
+Verificable numéricamente antes del ataque analítico &
+\cellcolor{trivMedia} Media \\
+\rowcolor{colorExp}
+Exp & 1.A & Mapa de $\mathcal{R}_1$ y $\mathcal{R}_2$ para $n=3$ &
+Trazar $\mathcal{R}_t(X_0)$ para $\varepsilon=0.05,0.1$ y $R=0.5,1,2$ &
+Diseñado para refutar la Prop.~1.1 o acotar la constante &
+--- \\[4pt]
+
+\multicolumn{6}{@{}l}{\textbf{Problema 2 --- Control óptimo informacional}} \\[2pt]
+\rowcolor{colorDef}
+Def & 2.1 & Política admisible de horizonte $T$ &
+$\{a_t\}$ con $a_t\in\{M,B\}$ y parámetros en $({\mathcal K}_\varepsilon,{\mathcal U}_R)$ &
+Formaliza el espacio de decisiones &
+\cellcolor{trivBaja} Baja \\
+\rowcolor{colorDef}
+Def & 2.2 & Funcional de costo $J_T$ &
+$D_{\mathrm{KL}}(P\|X_T)+\lambda\sum_t c_{a_t}(a_t,X_t)$; indexación corregida &
+Objeto de minimización del Problema~2 &
+\cellcolor{trivBaja} Baja \\
+\rowcolor{colorDef}
+Def & 2.3 & Función de valor óptimo $V_T(X)$ &
+$\inf_{\{a_t\}} J_T$; definida recursivamente hacia atrás &
+Permite escribir la ecuación de Bellman &
+\cellcolor{trivBaja} Baja \\
+\rowcolor{colorProp}
+Prop & 2.1 & Ecuación de Bellman restringida &
+Recursión donde el ínfimo se toma sobre ${\mathcal K}_\varepsilon$ y ${\mathcal U}_R$, no sobre todos los operadores &
+El ínfimo no es cero; distingue del caso irrestricto &
+\cellcolor{trivMedia} Media \\
+\rowcolor{colorConj}
+Conj & 2.1 & Política \emph{bang-bang} para $n=2$ &
+Partición de $\Delta_2^\circ$ en regiones de acción pura (solo $M$ o solo $B$) &
+Caso tratable analíticamente; punto de entrada &
+\cellcolor{trivMedia} Media \\
+\rowcolor{colorConj}
+Conj & 2.2 & Ventaja de la alternancia para $n\geq 3$ &
+Existen $(X_0,P,{\mathcal K}_\varepsilon,{\mathcal U}_R)$ donde la política alternada supera a toda política pura &
+Resultado central del Problema~2 &
+\cellcolor{trivAbierto} Abierto \\
+\rowcolor{colorConj}
+Conj & 2.3 & Límite continuo $=$ flujo Fisher--KL &
+Para $\Delta t\to 0$ con costo $c_M$, la política óptima converge a $\dot{X}=P-X$ &
+Conecta control discreto con geometría de CI (Proyecto~I) &
+\cellcolor{trivMedia} Media \\
+\rowcolor{colorExp}
+Exp & 2.A & Programación dinámica para $n=2$ &
+Resolver $V_T$ sobre grilla de $\Delta_2^\circ$; trazar frontera entre regiones &
+Diseñado para refutar la Conj.~2.1 &
+--- \\
+\rowcolor{colorExp}
+Exp & 2.B & Comparación de políticas para $n=3$ &
+Comparar costos: solo-$M$, solo-$B$, alternada, óptima numérica vs.\ $\varepsilon$ y $R$ &
+Diseñado para refutar la Conj.~2.2 &
+--- \\[4pt]
+
+\multicolumn{6}{@{}l}{\textbf{Problema 3 --- Defecto de ordenamiento}} \\[2pt]
+\rowcolor{colorDef}
+Def & 3.1 & Defecto de ordenamiento $\mathcal{D}_{K,L}(X)$ &
+$B_L(XK)-B_L(X)K$; diferencia entre los dos órdenes &
+Observable central del Problema~3 &
+\cellcolor{trivBaja} Baja \\
+\rowcolor{colorProp}
+Prop & 3.1 & Tangencia al símplex del defecto &
+$\sum_i\mathcal{D}_{K,L}(X)_i=0$; verificación con convención fila &
+Corrige el gap pendiente de CI (Proyecto~I) &
+\cellcolor{trivBaja} Baja \\
+\rowcolor{colorProb}
+Prob & 3.2 & CNS algebraica de $\mathcal{D}_{K,L}\equiv 0$ &
+Condiciones sobre $K$ y $L$ para conmutación global &
+Reemplaza la condición incorrecta $L\propto\pi$ de CI &
+\cellcolor{trivAlta} Alta \\
+\rowcolor{colorProp}
+Prop & 3.2 & Subvariedad de conmutación $\mathcal{M}_{K,L}$ &
+$\{X:\mathcal{D}_{K,L}(X)=0\}$ es subvariedad de dimensión $<n-1$ &
+Caracterización geométrica; por teorema de la función implícita &
+\cellcolor{trivMedia} Media \\
+\rowcolor{colorExp}
+Exp & 3.A & Mapa del defecto en la grilla del símplex &
+Calcular $\|\mathcal{D}_{K,L}(X)\|$ en grilla para $n=3$; identificar máximos y ceros &
+Diseñado para refutar la Prop.~3.2 o verificar la dimensión de $\mathcal{M}_{K,L}$ &
+--- \\
+\rowcolor{colorConj}
+$\bigstar$ Conj & 3.3 & Cota de suboptimalidad por orden incorrecto &
+$|J(X;K,L)-J(X;L,K)|\leq C\|\mathcal{D}_{K,L}(X)\|$ &
+\textbf{Clímax del proyecto:} une los tres problemas &
+\cellcolor{trivAbierto} Abierto \\
+
+\bottomrule
+\end{longtable}
+\endgroup
+
+\bigskip
+
+\noindent La Conjetura~$\bigstar$~3.3 es el objetivo principal del proyecto.
+Una demostración con constante~$C$ no óptima, o bajo condiciones adicionales
+sobre $K$ y~$L$, ya constituiría un resultado publicable. Si se refuta
+numéricamente, la conclusión también es valiosa: indicaría que la suboptimalidad
+por orden incorrecto no está controlada uniformemente por el defecto, lo que
+requiere un observable distinto.
+
+\end{document}

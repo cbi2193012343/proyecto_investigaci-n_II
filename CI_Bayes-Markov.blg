@@ -1,0 +1,48 @@
+This is BibTeX, Version 0.99d
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: CI_Bayes-Markov.aux
+Reallocating 'name_of_file' (item size: 1) to 9 items.
+The style file: plainnat.bst
+Reallocating 'name_of_file' (item size: 1) to 29 items.
+Database file #1: Referencias/Bib/referencesFC.bib
+You've used 3 entries,
+            2773 wiz_defined-function locations,
+            614 strings with 5309 characters,
+and the built_in function-call counts, 947 in all, are:
+= -- 75
+> -- 30
+< -- 3
++ -- 12
+- -- 9
+* -- 52
+:= -- 162
+add.period$ -- 11
+call.type$ -- 3
+change.case$ -- 10
+chr.to.int$ -- 3
+cite$ -- 6
+duplicate$ -- 60
+empty$ -- 97
+format.name$ -- 12
+if$ -- 193
+int.to.chr$ -- 1
+int.to.str$ -- 1
+missing$ -- 6
+newline$ -- 25
+num.names$ -- 12
+pop$ -- 30
+preamble$ -- 1
+purify$ -- 9
+quote$ -- 0
+skip$ -- 37
+stack$ -- 0
+substring$ -- 6
+swap$ -- 3
+text.length$ -- 0
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 18
+warning$ -- 0
+while$ -- 9
+width$ -- 0
+write$ -- 51

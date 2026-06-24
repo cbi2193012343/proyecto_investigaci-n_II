@@ -1,0 +1,62 @@
+\begin{thebibliography}{9}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Aitchison(1986)]{Aitchison1986}
+John Aitchison.
+\newblock \emph{The Statistical Analysis of Compositional Data}.
+\newblock Chapman and Hall, London, 1986.
+\newblock Reprinted in 2003.
+
+\bibitem[Bellman(1952)]{ref18}
+Richard Bellman.
+\newblock On the theory of dynamic programming.
+\newblock \emph{Proceedings of the National Academy of Sciences of the United
+  States of America}, 38\penalty0 (8):\penalty0 716--719, 1952.
+
+\bibitem[Gaubert and Qu(2014)]{GaubertQu2014}
+Stephane Gaubert and Zheng Qu.
+\newblock Dobrushin's ergodicity coefficient for markov operators on cones,
+  2014.
+\newblock Preprint.
+
+\bibitem[Kappen(2005)]{Kappen2005LinearTheoryForControlOfNonLinearStochasticSystems}
+Hilbert~J. Kappen.
+\newblock A linear theory for control of non-linear stochastic systems.
+\newblock \emph{Physical Review Letters}, 95\penalty0 (20):\penalty0 200201,
+  2005.
+
+\bibitem[Kappen et~al.(2012)Kappen, Gomez, and
+  Opper]{KappenGomezOpper2012OptimalControlAsAGraphicalModelInferenceProblem}
+Hilbert~J. Kappen, Vicenc Gomez, and Manfred Opper.
+\newblock Optimal control as a graphical model inference problem, 2012.
+\newblock arXiv:0901.0633v3 [math.OC].
+
+\bibitem[Kolmogorov(1933)]{Kolmogorov1933}
+Andrei~Nikolaevich Kolmogorov.
+\newblock \emph{Grundbegriffe der Wahrscheinlichkeitsrechnung}.
+\newblock Springer, Berlin, 1933.
+\newblock English translation: \textit{Foundations of the Theory of
+  Probability}, Chelsea Publishing, New York, 1956.
+
+\bibitem[Norris(1997)]{Norris1997}
+J.~R. Norris.
+\newblock \emph{Markov Chains}.
+\newblock Cambridge University Press, Cambridge, 1997.
+\newblock Cambridge Series in Statistical and Probabilistic Mathematics.
+
+\bibitem[Sprungk(2020)]{Sprungk2020}
+Bjoern Sprungk.
+\newblock On the local lipschitz stability of bayesian inverse problems, 2020.
+\newblock Preprint.
+
+\bibitem[Todorov(2009)]{Todorov2009EfficientComputationOptimalActions}
+Emanuel Todorov.
+\newblock Efficient computation of optimal actions.
+\newblock \emph{Proceedings of the National Academy of Sciences of the United
+  States of America}, 106\penalty0 (28):\penalty0 11478--11483, 2009.
+
+\end{thebibliography}

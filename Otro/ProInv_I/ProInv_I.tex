@@ -1,0 +1,1158 @@
+\documentclass[12pt]{article}
+\usepackage[spanish]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amssymb}
+\usepackage{amsthm}
+\usepackage{geometry}
+\geometry{margin=2.5cm}
+\usepackage{comment}
+\renewcommand{\familydefault}{\sfdefault} % texto en sans serif
+% \usepackage{lmodern} % alternativa si prefieres serif moderna
+\usepackage{mathrsfs}
+
+% Matemáticas y entornos
+\usepackage{amsmath,amssymb}
+% (amsthm no es obligatorio, pero útil si quieres \begin{proof})
+\usepackage{amsthm}
+\newtheorem{definicion}{Definición}[section]
+\newtheorem{proposicion}{Proposición}[section]
+\newtheorem{teorema}{Teorema}[section]
+\newtheorem{corolario}{Corolario}[section]
+\newtheorem{observacion}{Observación}[section]
+\newtheorem{ejemplo}{Ejemplo}[section]
+
+% Figuras y tablas
+\usepackage{graphicx}
+\usepackage{float}       % para [H]
+\usepackage{subcaption}
+\usepackage{booktabs,tabularx,array}
+
+% Listas
+\usepackage{enumitem}
+
+% Títulos (opcional; quítalo si no lo usas o si cambias a wiley-article)
+\usepackage{titlesec}
+
+% Bibliografía con natbib (autor-año)
+\usepackage[authoryear]{natbib}
+\bibliographystyle{plainnat}
+
+% Hipervínculos (SIEMPRE al final)
+\usepackage[hidelinks]{hyperref}
+\title{Control Informacional}
+
+\author{
+\textbf{Alejandro Cruz López} \\
+Universidad Autónoma Metropolitana \\
+Unidad Iztapalapa
+}
+
+\date{
+\vspace{1em}
+\textbf{Asesores} \\[0.3em]
+Dr.\ Asael Fabián Martínez Martínez \\
+Dr.\ Joaquín Delgado Fernández \\
+\vspace{1em}
+9 de abril de 2026
+}
+\begin{document}
+\maketitle
+\section*{Introducción}
+
+El estudio de distribuciones de probabilidad finitas suele abordarse desde dos perspectivas principales: como objetos estáticos sujetos a estimación, o como estados que se actualizan mediante reglas inferenciales o dinámicas específicas. En distintos contextos, sin embargo, aparecen secuencias de distribuciones cuya evolución constituye por sí misma el fenómeno de interés. Esto conduce a una pregunta distinta: ¿Cómo describir transformaciones entre estados probabilísticos preservando su estructura intrínseca, sin reducir necesariamente el análisis a un modelo estocástico externo?.
+
+En el caso finito, toda distribución de probabilidad puede representarse como un punto del símplex. Esta representación aparece de manera natural en la teoría axiomática de la probabilidad (\cite{Kolmogorov1933}). A partir de esta observación, el problema del cambio informacional puede reformularse como el estudio de transformaciones internas del símplex compatibles con la interpretación probabilística. En este trabajo se fija un dominio preciso ---estados informacionales discretos inducidos por particiones medibles finitas--- y se introducen transformaciones elementales definidas mediante correcciones relativas. Estas transformaciones dan lugar a operadores bien definidos sobre el símplex y permiten incorporar funcionales informacionales para comparar estados (\cite{Csiszar1975}).
+
+El punto de vista adoptado no pretende reemplazar marcos ya establecidos para dinámicas estocásticas o reglas particulares de actualización. Un ejemplo clásico de tales marcos lo proporcionan las cadenas de Markov. También existen formulaciones variacionales para la evolución de medidas en espacios métricos (\cite{JordanKinderlehrerOtto1998}). Más modestamente, el objetivo aquí es aislar un formalismo matemático en el que las transformaciones entre distribuciones finitas puedan estudiarse directamente como objeto de análisis. En esta formulación, los cambios entre estados se modelan mediante correcciones relativas que preservan la masa total. En el desarrollo posterior, estas correcciones admitirán interpretación composicional (\cite{Aitchison1986}). También admitirán una interpretación por cambio de medida en el caso discreto. Cuando sea pertinente, se indicará además su interpretación geométrica local en términos de la métrica de Fisher (\cite{Amari2016}).
+
+El interés de este problema no es únicamente formal. En diversas situaciones aparecen familias finitas de probabilidades o vectores normalizados cuya evolución contiene información relevante sobre estabilidad, convergencia o respuesta al entorno. En particular, las actualizaciones multiplicativas sobre el símplex aparecen en optimización y aprendizaje (\cite{KivinenWarmuth1997}). Por otra parte, la estructura geométrica del símplex ha sido estudiada sistemáticamente en análisis composicional (\cite{Aitchison1986}). También ha sido analizada desde la geometría de la información (\cite{AmariNagaoka2000}).
+
+El objetivo central de este Proyecto de Investigación I es construir y organizar un marco básico para el estudio de transformaciones deterministas de estados probabilísticos finitos. En particular, se busca:
+\begin{enumerate}
+    \item fijar con precisión el dominio probabilístico discreto en el que se trabajará;
+    \item introducir correcciones relativas y operadores asociados que preserven la estructura del símplex;
+    \item relacionar dichas transformaciones con cambios discretos de medida;
+    \item incorporar funcionales informacionales y estudiar la dinámica que inducen en el caso discreto.
+\end{enumerate}
+
+El alcance del trabajo es deliberadamente acotado. Se considera exclusivamente el caso de distribuciones finitas, formuladas como puntos del símplex de probabilidad, y se estudian las estructuras mínimas necesarias para pasar de estados aislados a transformaciones y dinámicas entre ellos. En este sentido, el documento tiene un carácter fundacional: no pretende agotar el problema general, sino establecer con rigor el núcleo matemático que servirá de base para desarrollos posteriores.
+
+La organización del texto es la siguiente. En el Sección 1 se fija el dominio probabilístico y su representación geométrica en el símplex. En el Sección 2 se introducen correcciones locales que preservan la estructura probabilística y se muestra su interpretación como cambios discretos de medida. En el Sección 3 se construyen operadores globales asociados a dichas correcciones y se estudia su estructura algebraica. Finalmente, en el Sección 4 se incorporan funcionales informacionales, en particular la divergencia de Kullback--Leibler (\cite{KullbackLeibler1951}). Sobre esta base se analiza una dinámica determinista sobre el interior del símplex con interpretación geométrica de tipo Fisher (\cite{Amari2016}).
+
+\subsection*{Relación con marcos de referencia}
+
+El desarrollo del trabajo utiliza herramientas provenientes de varios marcos que actúan sobre el mismo dominio, el símplex de probabilidades $\Delta_n$, pero que cumplen funciones distintas dentro de la exposición.
+
+\begin{itemize}
+    \item \textbf{Análisis composicional (Aitchison).} Proporciona la estructura algebraico--geométrica interna del símplex cuando las transformaciones relevantes son multiplicativas y seguidas de cierre o normalización. En particular, las operaciones de perturbación y potenciación permiten trabajar con cantidades relativas dentro del símplex (\cite{Aitchison1986}).
+
+    \item \textbf{Geometría de divergencias (Csiszár).} Aporta funcionales de comparación entre distribuciones. En particular, las $f$-divergencias proporcionan un marco general para medir discrepancias entre estados probabilísticos (\cite{Csiszar1975}). Dentro de esta familia, la divergencia de Kullback--Leibler ocupa un lugar central en este trabajo (\cite{KullbackLeibler1951}).
+
+    \item \textbf{Geometría de la información (Amari).} Proporciona la métrica de Fisher y el lenguaje diferencial que permite interpretar gradientes y direcciones de cambio en el interior del símplex (\cite{AmariNagaoka2000}). Este punto de vista se utilizará sólo cuando sea necesario para interpretar localmente la dinámica (\cite{Amari2016}).
+
+    \item \textbf{Formulaciones variacionales en espacios de medidas (Wasserstein/JKO).} Este marco no se desarrolla en el documento como teoría principal. Sin embargo, se toma como referencia cuando se discuten analogías entre funcionales, esquemas discretos y dinámicas de descenso (\cite{JordanKinderlehrerOtto1998}). La formulación abstracta de estos flujos en espacios métricos puede consultarse en (\cite{AmbrosioGigliSavare2005}).
+\end{itemize}
+
+La convención adoptada será la siguiente. Las transformaciones elementales se formulan principalmente en la geometría composicional del símplex (\cite{Aitchison1986}). Los funcionales de comparación se expresan mediante divergencias informacionales (\cite{Csiszar1975}). Cuando resulte necesario, las interpretaciones diferenciales se harán explícitas en términos de la métrica de Fisher (\cite{Amari2016}). De manera análoga, las referencias a esquemas variacionales se entenderán sólo como punto de comparación conceptual (\cite{JordanKinderlehrerOtto1998}).
+\section{Sección 1 — Probabilidad y símplex}
+
+Este sección  fija el dominio probabilístico discreto en el que se desarrollará el trabajo. El punto de partida es un espacio de probabilidad en el sentido de Kolmogórov (\cite{Kolmogorov1933}). A partir de una partición medible finita se asocia a la medida un vector de probabilidades, que se interpretará como estado informacional discreto. Dicho vector pertenece naturalmente al símplex de probabilidad.
+
+\begin{observacion}
+Conviene distinguir desde el inicio entre la medida $P$ sobre $(\Omega,\mathcal F)$ y el estado discreto $X$ inducido por una partición $\Pi$. Un mismo espacio de probabilidad puede dar lugar a distintos estados al variar la partición considerada.
+\end{observacion}
+
+\begin{definicion}[Espacio de probabilidad]\label{def:espacio_prob}
+Un \emph{espacio de probabilidad} es una terna $(\Omega,\mathcal F,P)$ tal que:
+\begin{enumerate}
+    \item $\Omega$ es un conjunto no vacío;
+    \item $\mathcal F$ es una $\sigma$-álgebra de subconjuntos de $\Omega$;
+    \item $P:\mathcal F\to[0,1]$ es una medida con $P(\Omega)=1$.
+\end{enumerate}
+\end{definicion}
+
+\begin{definicion}[Partición medible finita]\label{def:particion}
+Sea $(\Omega,\mathcal F,P)$ un espacio de probabilidad. Una \emph{partición medible finita} de $\Omega$ es una familia finita
+\[
+\Pi=\{E_1,\dots,E_n\}\subset \mathcal F,\qquad n\ge 1,
+\]
+tal que:
+\begin{enumerate}
+    \item $E_i\cap E_j=\varnothing$ si $i\neq j$;
+    \item $\bigcup_{i=1}^n E_i=\Omega$.
+\end{enumerate}
+
+Diremos que $\Pi$ es \emph{no degenerada} si además
+\[
+P(E_i)>0,\qquad i=1,\dots,n.
+\]
+\end{definicion}
+
+\begin{observacion}
+La hipótesis de no degeneración no forma parte de la definición general de partición, pero será útil cuando intervengan cocientes o logaritmos.
+\end{observacion}
+
+\begin{definicion}[Símplex de probabilidad e interior]\label{def:simplex}
+Para $n\ge 1$ se define el \emph{símplex de probabilidad} por
+\[
+\Delta_n:=\Bigl\{x\in\mathbb R^n:\ x_i\ge 0,\ \sum_{i=1}^n x_i=1\Bigr\}.
+\]
+Su interior relativo en el hiperplano $\sum_{i=1}^n x_i=1$ está dado por
+\[
+\Delta_n^\circ:=\{x\in\Delta_n:\ x_i>0\ \text{para todo } i\}.
+\]
+\end{definicion}
+
+\begin{observacion}
+El conjunto $\Delta_n$ será el espacio general de estados. Cuando se requiera positividad estricta, por ejemplo en expresiones con cocientes o logaritmos, se trabajará en $\Delta_n^\circ$.
+\end{observacion}
+
+\begin{definicion}[Estado informacional discreto]\label{def:estado}
+Sea $(\Omega,\mathcal F,P)$ un espacio de probabilidad y sea $\Pi=\{E_1,\dots,E_n\}$ una partición medible finita. El \emph{estado informacional discreto} asociado a $\Pi$ es el vector
+\[
+X=(X_1,\dots,X_n)\in\mathbb R^n,
+\qquad
+X_i:=P(E_i),\quad i=1,\dots,n.
+\]
+\end{definicion}
+
+\begin{proposicion}\label{prop:estado_simplex}
+Sea $X$ el estado informacional discreto asociado a una partición medible finita $\Pi=\{E_1,\dots,E_n\}$.
+Entonces:
+\begin{enumerate}
+    \item $X\in\Delta_n$;
+    \item si $\Pi$ es no degenerada, entonces $X\in\Delta_n^\circ$.
+\end{enumerate}
+\end{proposicion}
+
+\begin{proof}
+Como $E_i\in\mathcal F$, se tiene $X_i=P(E_i)\ge 0$ para todo $i$. Además, por disjunción de la partición y aditividad numerable de $P$,
+\[
+\sum_{i=1}^n X_i
+=
+\sum_{i=1}^n P(E_i)
+=
+P\Bigl(\bigcup_{i=1}^n E_i\Bigr)
+=
+P(\Omega)
+=
+1.
+\]
+Por tanto, $X\in\Delta_n$. Si además $P(E_i)>0$ para todo $i$, entonces $X_i>0$ para todo $i$, y en consecuencia $X\in\Delta_n^\circ$.
+\end{proof}
+
+\begin{observacion}
+El paso de $(\Omega,\mathcal F,P)$ a $X$ depende de la partición elegida. En consecuencia, $X$ no representa a la medida $P$ en toda su estructura, sino sólo su distribución sobre las clases de observación determinadas por $\Pi$.
+\end{observacion}
+
+\begin{definicion}[Operador de cierre]\label{def:cierre}
+Sea
+\[
+\mathbb R_{>0}^n:=\{z=(z_1,\dots,z_n)\in\mathbb R^n:\ z_i>0\ \text{para todo } i\}.
+\]
+El \emph{operador de cierre} es la aplicación
+\[
+\mathscr{C}:\mathbb R_{>0}^n\to\Delta_n^\circ,
+\qquad
+\mathscr{C}(z):=\frac{1}{\sum_{i=1}^n z_i}\,z.
+\]
+\end{definicion}
+
+\begin{observacion}
+Para todo $\lambda>0$ y todo $z\in\mathbb R_{>0}^n$ se cumple
+\[
+\mathscr{C}(\lambda z)=\mathscr{C}(z).
+\]
+Esta invarianza de escala expresa que el cierre conserva únicamente la información relativa entre coordenadas y además la normalización coincide con la operación de cierre utilizada en análisis composicional para pasar de vectores positivos a composiciones sobre el símplex (\cite{Aitchison1986}).
+\end{observacion}
+
+\begin{observacion}
+Cuando se requiera interpretar transformaciones multiplicativas internas del símplex, se utilizará el formalismo composicional introducido por Aitchison (\cite{Aitchison1986}). En particular, el interior del símplex admite una estructura algebraica natural mediante perturbación y potenciación. Para los resultados de esa teoría que sean necesarios más adelante, se remitirá a la bibliografía correspondiente.
+\end{observacion}
+\section{Sección 2 — Correcciones locales y cambio de medida}
+
+En este sección  se introduce el mecanismo elemental de transformación sobre el símplex. Dado un estado $X\in\Delta_n$, se definen correcciones relativas admisibles que preservan la no negatividad y la normalización, se asocia a cada una de ellas un operador local sobre el espacio de estados y se muestra que dicha actualización coincide con un cambio de medida discreto sobre la partición subyacente.
+
+\begin{definicion}[Conjunto de correcciones admisibles en $X$]\label{def:CX}
+Sea $X=(X_1,\dots,X_n)\in\Delta_n$. Se define el \emph{conjunto de correcciones admisibles en $X$} por
+\[
+C(X)
+:=
+\Bigl\{
+Y=(Y_1,\dots,Y_n)\in\mathbb{R}^n
+\;\Big|\;
+X_i(1+Y_i)\ge 0\ \text{para todo } i,
+\ \sum_{i=1}^n X_i(1+Y_i)=1
+\Bigr\}.
+\]
+\end{definicion}
+
+\begin{observacion}\label{obs:neutralidad}
+Si $Y\in C(X)$, entonces
+\[
+\sum_{i=1}^n X_iY_i=0.
+\]
+En efecto, como $\sum_{i=1}^n X_i=1$ y $\sum_{i=1}^n X_i(1+Y_i)=1$, se obtiene
+\[
+\sum_{i=1}^n X_iY_i
+=
+\sum_{i=1}^n X_i(1+Y_i)-\sum_{i=1}^n X_i
+=
+1-1
+=
+0.
+\]
+Esta identidad expresa la neutralidad de masa de la corrección, es decir, $\sum_{i=1}^n X_iY_i=0$.
+\end{observacion}
+
+\begin{definicion}[Operador informacional local]\label{def:Tloc}
+Sea $X\in\Delta_n$ y sea $Y\in C(X)$. El \emph{operador informacional local} asociado a $Y$ en $X$ es el vector
+\[
+T_Y^{\mathrm{loc}}(X)
+=
+\bigl(T_Y^{\mathrm{loc}}(X)_1,\dots,T_Y^{\mathrm{loc}}(X)_n\bigr)\in\mathbb{R}^n,
+\]
+definido por
+\[
+T_Y^{\mathrm{loc}}(X)_i:=X_i(1+Y_i),\qquad i=1,\dots,n.
+\]
+\end{definicion}
+
+\begin{observacion}\label{obs:frontera}
+No es necesario exigir $X\in\Delta_n^\circ$ para definir $T_Y^{\mathrm{loc}}$. Si $X_i=0$, entonces
+\[
+T_Y^{\mathrm{loc}}(X)_i=0
+\]
+independientemente del valor de $Y_i$. Por tanto, el operador local está bien definido en todo $\Delta_n$. La restricción al interior $\Delta_n^\circ$ sólo será necesaria más adelante, cuando intervengan expresiones que requieran positividad estricta.
+\end{observacion}
+
+\begin{proposicion}[Preservación local del símplex]\label{prop:preservacionLocal}
+Sea $X\in\Delta_n$ y sea $Y\in C(X)$. Entonces
+\[
+T_Y^{\mathrm{loc}}(X)\in\Delta_n.
+\]
+\end{proposicion}
+
+\begin{proof}
+Por definición de $C(X)$,
+\[
+X_i(1+Y_i)\ge 0,\qquad i=1,\dots,n,
+\]
+y
+\[
+\sum_{i=1}^n X_i(1+Y_i)=1.
+\]
+Como
+\[
+T_Y^{\mathrm{loc}}(X)_i=X_i(1+Y_i),
+\]
+se sigue que todas las coordenadas de $T_Y^{\mathrm{loc}}(X)$ son no negativas y que su suma es $1$. Por tanto,
+\[
+T_Y^{\mathrm{loc}}(X)\in\Delta_n.
+\]
+\end{proof}
+
+\begin{proposicion}[Cambio de medida discreto inducido por una corrección local]\label{prop:QYprobabilidad}
+Sea $(\Omega,\mathcal F,P)$ un espacio de probabilidad y sea
+\[
+\Pi=\{E_1,\dots,E_n\}\subset\mathcal F
+\]
+una partición medible finita no degenerada. Defínase
+\[
+X_i:=P(E_i),\qquad i=1,\dots,n,
+\]
+de modo que $X=(X_1,\dots,X_n)\in\Delta_n^\circ$.
+
+Sea $Y\in C(X)$ y defínase
+\[
+h:\Omega\to[0,\infty),
+\qquad
+h(\omega):=1+Y_i
+\quad\text{si }\omega\in E_i.
+\]
+Sea además
+\[
+Q_Y:\mathcal F\to[0,\infty],
+\qquad
+Q_Y(A):=\int_A h(\omega)\,dP(\omega),
+\qquad A\in\mathcal F.
+\]
+Entonces $Q_Y$ es una medida de probabilidad sobre $(\Omega,\mathcal F)$.
+\end{proposicion}
+
+\begin{proof}
+Como $Y\in C(X)$, se tiene
+\[
+X_i(1+Y_i)\ge 0,\qquad i=1,\dots,n.
+\]
+Puesto que $X_i=P(E_i)>0$, se sigue que
+\[
+1+Y_i\ge 0,\qquad i=1,\dots,n.
+\]
+Por tanto,
+\[
+h(\omega)\ge 0,\qquad \omega\in\Omega.
+\]
+En consecuencia, la aplicación
+\[
+A\mapsto \int_A h\,dP
+\]
+define una medida no negativa sobre $(\Omega,\mathcal F)$.
+
+Además, usando que $\Pi=\{E_1,\dots,E_n\}$ es una partición de $\Omega$ y que $h$ es constante en cada sección ,
+\[
+Q_Y(\Omega)
+=
+\int_\Omega h\,dP
+=
+\sum_{i=1}^n \int_{E_i} h\,dP
+=
+\sum_{i=1}^n (1+Y_i)P(E_i)
+=
+\sum_{i=1}^n X_i(1+Y_i)
+=
+1.
+\]
+Por tanto, $Q_Y$ es una medida de probabilidad.
+\end{proof}
+
+\begin{proposicion}[Compatibilidad entre $T_Y^{\mathrm{loc}}$ y el cambio de medida]\label{prop:compatibilidadCambioMedida}
+Sea $(\Omega,\mathcal F,P)$ un espacio de probabilidad y sea
+\[
+\Pi=\{E_1,\dots,E_n\}\subset\mathcal F
+\]
+una partición medible finita no degenerada. Defínase
+\[
+X_i:=P(E_i),\qquad i=1,\dots,n,
+\]
+de modo que $X=(X_1,\dots,X_n)\in\Delta_n^\circ$.
+
+Sea $\omega \in \Omega$. Sea $Y \in C(X)$ y defínase $h:\Omega \to (0,\infty)$ por
+\[
+h(\omega):=1+Y_i \quad \text{si } \omega \in E_i.
+\]
+Sea además
+\[
+Q_Y(A):=\int_A h(\omega)\,dP(\omega),
+\qquad A\in\mathcal F.
+\]
+Entonces, para cada $i=1,\dots,n$, se cumple
+\[
+Q_Y(E_i)=T_Y^{\mathrm{loc}}(X)_i.
+\]
+\end{proposicion}
+
+\begin{proof}
+Como $h$ es constante sobre cada sección  $E_i$ y vale $1+Y_i$ en dicho sección ,
+\[
+Q_Y(E_i)
+=
+\int_{E_i} h(\omega)\,dP(\omega)
+=
+(1+Y_i)P(E_i)
+=
+(1+Y_i)X_i.
+\]
+Por la definición del operador local,
+\[
+(1+Y_i)X_i=T_Y^{\mathrm{loc}}(X)_i.
+\]
+Por tanto,
+\[
+Q_Y(E_i)=T_Y^{\mathrm{loc}}(X)_i.
+\]
+\end{proof}
+
+\begin{observacion}
+La proposición anterior identifica la actualización local con la redistribución de probabilidad inducida por la medida $Q_Y$ sobre la partición original. En este sentido, el operador $T_Y^{\mathrm{loc}}$ no actúa sólo como transformación algebraica sobre el símplex, sino como representación discreta de un cambio de medida por sección s.
+\end{observacion}
+\section{Sección 3 — Operadores globales multiplicativos y composición}
+
+En esta sección  se pasa del mecanismo local del sección 2 a una familia de operadores definida de manera uniforme sobre el interior del símplex. La idea es considerar correcciones multiplicativas positivas y renormalizar el resultado para conservar la suma unitaria. Esto da lugar a operadores globales sobre $\Delta_n^\circ$ y permite describir su composición de forma explícita.
+
+\begin{definicion}[Correcciones globales]\label{def:Cglob}
+Se define el conjunto de \emph{correcciones globales} por
+\[
+C_{\mathrm{glob}}
+:=
+\Bigl\{
+Y=(Y_1,\dots,Y_n)\in\mathbb{R}^n
+\;\Big|\;
+1+Y_i>0 \ \text{para todo } i
+\Bigr\}.
+\]
+Para cada $Y\in C_{\mathrm{glob}}$, el vector de factores multiplicativos asociado viene dado por
+\[
+a(Y):=(1+Y_1,\dots,1+Y_n)\in\mathbb{R}_{>0}^n.
+\]
+\end{definicion}
+
+\begin{definicion}[Operador informacional global]\label{def:Tglobal}
+Sea $Y\in C_{\mathrm{glob}}$. El \emph{operador informacional global} asociado a $Y$ es la aplicación
+\[
+T_Y:\Delta_n^\circ\to\Delta_n^\circ,
+\qquad
+T_Y(X)
+:=
+\frac{X\circ a(Y)}{\sum_{j=1}^n X_j a_j(Y)},
+\]
+donde $\circ$ denota el producto coordenada a coordenada. En forma explícita,
+\[
+T_Y(X)_i
+=
+\frac{X_i(1+Y_i)}{\sum_{j=1}^n X_j(1+Y_j)},
+\qquad i=1,\dots,n.
+\]
+\end{definicion}
+
+\begin{observacion}\label{obs:Tglobal-frontera}
+La fórmula de $T_Y$ tiene sentido también para $X\in\Delta_n$, no sólo para $X\in\Delta_n^\circ$. En efecto, si $Y\in C_{\mathrm{glob}}$, entonces $1+Y_i>0$ para todo $i$, y por tanto
+\[
+\sum_{j=1}^n X_j(1+Y_j)>0
+\]
+para todo $X\in\Delta_n$. Así, $T_Y(X)$ está bien definido en todo $\Delta_n$. No obstante, la restricción a $\Delta_n^\circ$ será la natural cuando se estudie la estructura de composición e inversión de estos operadores.
+\end{observacion}
+\begin{proposicion}[Preservación del interior del símplex]\label{prop:interiorGlobal}
+Sea $Y\in C_{\mathrm{glob}}$. Entonces, para todo $X\in\Delta_n^\circ$,
+\[
+T_Y(X)\in\Delta_n^\circ.
+\]
+\end{proposicion}
+
+\begin{proof}
+Si $X_i>0$ y $a_i(Y)=1+Y_i>0$ para todo $i$, entonces
+\[
+X_i a_i(Y)>0,\qquad i=1,\dots,n.
+\]
+Además,
+\[
+\sum_{i=1}^n T_Y(X)_i
+=
+\frac{\sum_{i=1}^n X_i a_i(Y)}{\sum_{j=1}^n X_j a_j(Y)}
+=
+1.
+\]
+Por tanto, todas las coordenadas de $T_Y(X)$ son estrictamente positivas y su suma es $1$, es decir,
+\[
+T_Y(X)\in\Delta_n^\circ.
+\]
+\end{proof}
+
+\begin{observacion}[Relación con el operador local del sección 2]\label{obs:localVsGlobal}
+Sea $X\in\Delta_n^\circ$ y sea $Y\in C_{\mathrm{glob}}$. Si además
+\[
+\sum_{i=1}^n X_i(1+Y_i)=1,
+\]
+entonces
+\[
+T_Y(X)_i=X_i(1+Y_i),\qquad i=1,\dots,n,
+\]
+y por tanto
+\[
+T_Y(X)=T_Y^{\mathrm{loc}}(X).
+\]
+En este sentido, el operador global extiende el mecanismo local del sección 2 al incorporar una renormalización dependiente del estado base.
+\end{observacion}
+
+\begin{definicion}[Familia global de operadores]\label{def:G}
+Se define
+\[
+\mathcal G
+:=
+\bigl\{
+T_Y:\Delta_n^\circ\to\Delta_n^\circ
+\;\big|\;
+Y\in C_{\mathrm{glob}}
+\bigr\},
+\]
+dotada de la composición usual de aplicaciones.
+\end{definicion}
+
+\begin{proposicion}[Ley de composición]\label{prop:composicionGlobal}
+Sean $Y_1,Y_2\in C_{\mathrm{glob}}$. Entonces existe un único $Y_{\mathrm{tot}}\in C_{\mathrm{glob}}$ tal que
+\[
+T_{Y_2}\circ T_{Y_1}=T_{Y_{\mathrm{tot}}},
+\]
+y está determinado por la condición
+\[
+1+Y_{\mathrm{tot}}
+=
+(1+Y_1)\circ(1+Y_2).
+\]
+En coordenadas,
+\[
+1+(Y_{\mathrm{tot}})_i=(1+(Y_1)_i)(1+(Y_2)_i),
+\qquad i=1,\dots,n.
+\]
+\end{proposicion}
+\begin{proof}
+Sean $Y^{(1)},Y^{(2)}\in C_{\mathrm{glob}}$. Para $r=1,2$, recordemos que el vector de factores multiplicativos esta dado por:
+\[
+a^{(r)}:=(a_1^{(r)},\dots,a_n^{(r)}),\qquad a_i^{(r)}:=1+Y_i^{(r)}.
+\]
+Como $Y^{(r)}\in C_{\mathrm{glob}}$, se tiene
+\[
+a_i^{(r)}>0\qquad \text{para todo } i=1,\dots,n.
+\]
+
+Sea ahora $X\in\Delta_n^\circ$. Entonces, por definición,
+\[
+T_{Y^{(1)}}(X)_i=\frac{X_i a_i^{(1)}}{\sum_{j=1}^n X_j a_j^{(1)}},\qquad i=1,\dots,n.
+\]
+Aplicando después $T_{Y^{(2)}}$, para cada $i=1,\dots,n$ se obtiene
+\[
+T_{Y^{(2)}}(T_{Y^{(1)}}(X))_i
+=
+\frac{T_{Y^{(1)}}(X)_i\,a_i^{(2)}}{\sum_{j=1}^n T_{Y^{(1)}}(X)_j\,a_j^{(2)}}.
+\]
+Sustituyendo la expresión de $T_{Y^{(1)}}(X)$,
+\[
+T_{Y^{(2)}}(T_{Y^{(1)}}(X))_i
+=
+\frac{
+\displaystyle
+\frac{X_i a_i^{(1)}}{\sum_{k=1}^n X_k a_k^{(1)}}\,a_i^{(2)}
+}{
+\displaystyle
+\sum_{j=1}^n
+\frac{X_j a_j^{(1)}}{\sum_{k=1}^n X_k a_k^{(1)}}\,a_j^{(2)}
+}.
+\]
+El factor común $\sum_{k=1}^n X_k a_k^{(1)}$ aparece en numerador y denominador, por lo que se cancela. Así,
+\[
+T_{Y^{(2)}}(T_{Y^{(1)}}(X))_i
+=
+\frac{X_i a_i^{(1)} a_i^{(2)}}{\sum_{j=1}^n X_j a_j^{(1)} a_j^{(2)}}.
+\]
+
+Definimos ahora
+\[
+a^{(\mathrm{tot})}:=(a_1^{(1)}a_1^{(2)},\dots,a_n^{(1)}a_n^{(2)})\in \mathbb R_{>0}^n.
+\]
+Como $a_i^{(1)}>0$ y $a_i^{(2)}>0$ para todo $i$, se tiene
+\[
+a_i^{(\mathrm{tot})}>0\qquad \text{para todo } i.
+\]
+Definimos $Y^{(\mathrm{tot})}\in\mathbb R^n$ por
+\[
+1+Y_i^{(\mathrm{tot})}:=a_i^{(\mathrm{tot})},\qquad i=1,\dots,n.
+\]
+Entonces $Y^{(\mathrm{tot})}\in C_{\mathrm{glob}}$ y, para cada $i=1,\dots,n$,
+\[
+T_{Y^{(\mathrm{tot})}}(X)_i
+=
+\frac{X_i a_i^{(\mathrm{tot})}}{\sum_{j=1}^n X_j a_j^{(\mathrm{tot})}}
+=
+\frac{X_i a_i^{(1)} a_i^{(2)}}{\sum_{j=1}^n X_j a_j^{(1)} a_j^{(2)}}.
+\]
+Por consiguiente,
+\[
+T_{Y^{(2)}}(T_{Y^{(1)}}(X))_i=T_{Y^{(\mathrm{tot})}}(X)_i
+\qquad \text{para todo } i=1,\dots,n,
+\]
+y por tanto
+\[
+T_{Y^{(2)}}\circ T_{Y^{(1)}}=T_{Y^{(\mathrm{tot})}}.
+\]
+\end{proof}
+
+\begin{corolario}[Estructura de grupo abeliano]
+El conjunto $\mathcal G$, dotado de la composición de aplicaciones, es un grupo abeliano.
+\end{corolario}
+
+\begin{proof}
+Por la Proposición 3.2, si $Y^{(1)},Y^{(2)}\in C_{\mathrm{glob}}$, entonces la composición
+\[
+T_{Y^{(2)}}\circ T_{Y^{(1)}}
+\]
+vuelve a ser de la forma $T_{Y^{(\mathrm{tot})}}$, donde
+\[
+1+Y_i^{(\mathrm{tot})}=(1+Y_i^{(1)})(1+Y_i^{(2)}),
+\qquad i=1,\dots,n.
+\]
+Por tanto, la composición en $\mathcal G$ corresponde al producto coordenado de los factores multiplicativos positivos.
+
+Como el producto coordenado en $(0,\infty)^n$ es asociativo y conmutativo, la composición en $\mathcal G$ hereda estas propiedades.
+
+El elemento neutro corresponde al vector
+\[
+a=(1,\dots,1),
+\]
+es decir, a $Y=0$, y en ese caso
+\[
+T_0(X)=X
+\qquad \text{para todo } X\in\Delta_n^\circ.
+\]
+
+Ahora sea $Y\in C_{\mathrm{glob}}$ y sea
+\[
+a(Y)=(1+Y_1,\dots,1+Y_n)\in(0,\infty)^n.
+\]
+Definimos
+\[
+a(Y)^{-1}
+:=
+\left(
+\frac{1}{1+Y_1},\dots,\frac{1}{1+Y_n}
+\right)\in(0,\infty)^n.
+\]
+Sea $Z\in\mathbb R^n$ dado por
+\[
+1+Z_i:=\frac{1}{1+Y_i},
+\qquad i=1,\dots,n.
+\]
+Entonces $1+Z_i>0$ para todo $i$, de modo que $Z\in C_{\mathrm{glob}}$. Además,
+\[
+(1+Y_i)(1+Z_i)=1,
+\qquad i=1,\dots,n.
+\]
+Por la ley de composición,
+\[
+T_Z\circ T_Y=T_0.
+\]
+Análogamente,
+\[
+T_Y\circ T_Z=T_0.
+\]
+Así, todo elemento de $\mathcal G$ es invertible.
+
+En consecuencia, $\mathcal G$ es un grupo abeliano.
+\end{proof}
+
+\begin{observacion}[Coordenadas log-multiplicativas]\label{obs:coordenadasLog}
+Para $Y\in C_{\mathrm{glob}}$ se definen las coordenadas
+\[
+\theta(Y) := (\theta_1,\dots,\theta_n), \qquad \theta_i := \log(1+Y_i), \quad i=1,\dots,n.
+\]
+Entonces
+\[
+1+Y_i=e^{\theta_i},
+\]
+y el operador global puede escribirse como
+\[
+T_\theta(X)
+=
+\frac{X\circ e^\theta}{\sum_{j=1}^n X_j e^{\theta_j}},
+\qquad
+e^\theta:=(e^{\theta_1},\dots,e^{\theta_n}).
+\]
+Bajo esta parametrización, la ley de composición del corolario anterior se traduce en
+\[
+\theta_{\mathrm{tot}}=\theta^{(1)}+\theta^{(2)}.
+\]
+En este sentido, la estructura multiplicativa de los factores positivos se convierte en una estructura aditiva en coordenadas logarítmicas la cual es compatible con el uso de coordenadas relativas en análisis composicional (\cite{Aitchison1986}).
+\end{observacion}
+
+\section{Sección 4 — Divergencia KL, métrica de Fisher y dinámica inducida}
+
+En esta sección  se introduce el funcional informacional
+\[
+E_P(X):=D_{\mathrm{KL}}(P\|X),
+\]
+se calcula su gradiente respecto de la métrica de Fisher en el interior del símplex y se obtiene la dinámica continua asociada. Finalmente, se muestra que esta dinámica es compatible con la familia de operadores globales introducida en la sección 3 .
+
+El resultado principal de la sección  será el Teorema~\ref{teo:equivalenciaCD}, donde se establece la compatibilidad estructural entre la dinámica Fisher--KL y la familia de operadores globales de la sección 3.
+
+\begin{definicion}[Divergencia de Kullback--Leibler discreta]\label{def:KL}
+Sea $P\in\Delta_n^\circ$ fija. Para $X\in\Delta_n$ se define
+\[
+D_{\mathrm{KL}}(P\|X)
+=
+\begin{cases}
+\displaystyle \sum_{i=1}^n P_i\log\!\left(\frac{P_i}{X_i}\right),
+& \text{si } X_i>0 \text{ para todo } i,\\[1em]
++\infty,
+& \text{si existe } i \text{ tal que } P_i>0 \text{ y } X_i=0.
+\end{cases}
+\]
+
+Se define además el funcional
+\[
+E_P:\Delta_n^\circ\to\mathbb R,
+\qquad
+E_P(X):=D_{\mathrm{KL}}(P\|X).
+\]
+\end{definicion}
+
+\begin{observacion}[Dominio natural de $E_P$]\label{obs:KLsoporte}
+Como $P\in\Delta_n^\circ$, se tiene $P_i>0$ para todo $i$. Por tanto,
+\[
+D_{\mathrm{KL}}(P\|X)<\infty
+\quad\Longleftrightarrow\quad
+X\in\Delta_n^\circ.
+\]
+En consecuencia, el dominio natural de $E_P$ es el interior del símplex.
+\end{observacion}
+
+\begin{definicion}[Espacio tangente del símplex]\label{def:tangente}
+Sea $X\in\Delta_n^\circ$. El \emph{espacio tangente en $X$} se define como el conjunto de velocidades de curvas suaves del símplex que pasan por $X$, es decir,
+\[
+T_X\Delta_n^\circ
+:=
+\left\{
+u\in\mathbb R^n
+\;\middle|\;
+\exists\,\varepsilon>0,\ \exists\,\gamma:(-\varepsilon,\varepsilon)\to\Delta_n^\circ
+\ \text{de clase } C^1,\ 
+\gamma(0)=X,\ 
+\gamma'(0)=u
+\right\}.
+\]
+\end{definicion}
+
+\begin{observacion}
+Para todo $X\in\Delta_n^\circ$,
+\[
+T_X\Delta_n^\circ
+=
+\left\{
+u=(u_1,\dots,u_n)\in\mathbb R^n
+\;\middle|\;
+\sum_{i=1}^n u_i=0
+\right\}.
+\]
+\end{observacion}
+
+\begin{definicion}[Métrica de Fisher discreta]\label{def:Fisher}
+Para $X\in\Delta_n^\circ$, la \emph{métrica de Fisher} en $T_X\Delta_n$ es la forma bilineal
+\[
+g_X(u,v)
+:=
+\sum_{i=1}^n \frac{u_i v_i}{X_i},
+\qquad
+u,v\in T_X\Delta_n.
+\]
+Esta es la realización discreta de la métrica de Fisher--Rao en la variedad de distribuciones finitas (\cite{Chentsov1982,AmariNagaoka2000,Amari2016}).
+\end{definicion}
+
+\begin{definicion}[Gradiente riemanniano respecto de la métrica de Fisher]\label{def:gradienteFisher}
+Sea $E:\Delta_n^\circ\to\mathbb R$ una función suave. El \emph{gradiente riemanniano} de $E$ respecto de $g$ es el campo
+\[
+\mathrm{grad}_gE:\Delta_n^\circ\to T\Delta_n,
+\qquad
+X\mapsto \mathrm{grad}_gE(X)\in T_X\Delta_n,
+\]
+caracterizado por
+\[
+g_X(\mathrm{grad}_gE(X),u)=\mathrm dE(X)[u],
+\qquad
+\forall\,u\in T_X\Delta_n.
+\]
+\end{definicion}
+\begin{proposicion}[Gradiente Fisher de la divergencia KL]\label{prop:gradKL}
+Sea $P\in\Delta_n^\circ$ fija y sea
+\[
+E_P(X)=D_{\mathrm{KL}}(P\|X)=\sum_{i=1}^n P_i \log\!\left(\frac{P_i}{X_i}\right),
+\qquad X\in\Delta_n^\circ.
+\]
+Entonces
+\[
+\operatorname{grad}_g E_P(X)=X-P,
+\qquad X\in\Delta_n^\circ.
+\]
+\end{proposicion}
+
+\begin{proof}
+Fijemos $X\in\Delta_n^\circ$ y sea $u\in T_X\Delta_n^\circ$. Entonces
+\[
+dE_P(X)[u]
+=
+\left.\frac{d}{dt}E_P(X+tu)\right|_{t=0}.
+\]
+Como
+\[
+E_P(X+tu)
+=
+\sum_{i=1}^n P_i \log\!\left(\frac{P_i}{X_i+tu_i}\right),
+\]
+se obtiene
+\[
+\frac{d}{dt}E_P(X+tu)
+=
+-\sum_{i=1}^n P_i \frac{u_i}{X_i+tu_i}.
+\]
+Evaluando en $t=0$,
+\[
+dE_P(X)[u]
+=
+-\sum_{i=1}^n \frac{P_i}{X_i}u_i.
+\]
+
+Por otra parte, por definición de la métrica de Fisher,
+\[
+g_X(v,u)=\sum_{i=1}^n \frac{v_i u_i}{X_i}.
+\]
+Tomando $v=X-P$, se tiene
+\[
+g_X(X-P,u)
+=
+\sum_{i=1}^n \frac{(X_i-P_i)u_i}{X_i}
+=
+\sum_{i=1}^n u_i - \sum_{i=1}^n \frac{P_i}{X_i}u_i.
+\]
+Como $u\in T_X\Delta_n^\circ$, se cumple $\sum_{i=1}^n u_i=0$, y por tanto
+\[
+g_X(X-P,u)
+=
+-\sum_{i=1}^n \frac{P_i}{X_i}u_i
+=
+dE_P(X)[u].
+\]
+Por la definición del gradiente riemanniano, se concluye que
+\[
+\operatorname{grad}_g E_P(X)=X-P.
+\]
+\end{proof}
+
+\begin{definicion}[Flujo de gradiente Fisher--KL]\label{def:flujoFisherKL}
+El \emph{flujo de gradiente} asociado a $E_P$ es la ecuación diferencial
+\[
+\dot X(t)=-\mathrm{grad}_gE_P(X(t)),
+\qquad
+X(t)\in\Delta_n^\circ.
+\]
+Por la Proposición~\ref{prop:gradKL}, esta ecuación toma la forma
+\[
+\dot X(t)=P-X(t).
+\]
+\end{definicion}
+
+\begin{proposicion}[Solución explícita del flujo]\label{prop:solucionExplicita}
+Sea $X_0\in\Delta_n^\circ$. La solución del problema
+\[
+\dot X(t)=P-X(t),
+\qquad
+X(0)=X_0,
+\]
+está dada por
+\[
+X(t)=e^{-t}X_0+(1-e^{-t})P,
+\qquad t\ge 0.
+\]
+En particular, $X(t)\in\Delta_n^\circ$ para todo $t\ge 0$ y
+\[
+X(t)\longrightarrow P
+\qquad (t\to\infty).
+\]
+\end{proposicion}
+
+\begin{proof}
+La ecuación
+\[
+\dot X(t)=P-X(t),\qquad X(0)=X_0,
+\]
+se desacopla coordenada a coordenada. En efecto, para cada $i=1,\dots,n$,
+\[
+\dot X_i(t)=P_i-X_i(t),\qquad X_i(0)=(X_0)_i.
+\]
+La solución de esta ecuación lineal escalar es
+\[
+X_i(t)=e^{-t}(X_0)_i+(1-e^{-t})P_i,
+\qquad i=1,\dots,n.
+\]
+Por tanto,
+\[
+X(t)=e^{-t}X_0+(1-e^{-t})P.
+\]
+
+Como $X_0\in\Delta_n^\circ$ y $P\in\Delta_n^\circ$, se tiene
+\[
+(X_0)_i>0,\qquad P_i>0,\qquad i=1,\dots,n.
+\]
+Además, para todo $t\ge 0$,
+\[
+e^{-t}>0,
+\qquad
+1-e^{-t}\ge 0.
+\]
+De aquí se sigue que, para cada $i=1,\dots,n$,
+\[
+X_i(t)=e^{-t}(X_0)_i+(1-e^{-t})P_i>0.
+\]
+Por otra parte,
+\[
+\sum_{i=1}^n X_i(t)
+=
+e^{-t}\sum_{i=1}^n (X_0)_i
++
+(1-e^{-t})\sum_{i=1}^n P_i
+=
+e^{-t}+(1-e^{-t})
+=
+1.
+\]
+Por tanto,
+\[
+X(t)\in\Delta_n^\circ
+\qquad \text{para todo } t\ge 0.
+\]
+
+Finalmente,
+\[
+X(t)-P
+=
+e^{-t}X_0+(1-e^{-t})P-P
+=
+e^{-t}(X_0-P).
+\]
+Como $e^{-t}\to 0$ cuando $t\to\infty$, se concluye que
+\[
+X(t)\to P
+\qquad (t\to\infty).
+\]
+\end{proof}
+
+\begin{proposicion}[Monotonicidad de $E_P$ a lo largo del flujo]\label{prop:Hteorema}
+Sea $X(\cdot)$ una solución del flujo Fisher--KL. Entonces la función
+\[
+t\longmapsto E_P(X(t))
+\]
+es decreciente y satisface
+\[
+\frac{d}{dt}E_P(X(t))
+=
+-\,g_{X(t)}\!\bigl(\mathrm{grad}_gE_P(X(t)),\mathrm{grad}_gE_P(X(t))\bigr)
+\le 0.
+\]
+La igualdad sólo ocurre si $X(t)=P$.
+\end{proposicion}
+
+\begin{proof}
+Por la regla de la cadena,
+\[
+\frac{d}{dt}E_P(X(t))
+=
+\mathrm dE_P(X(t))[\dot X(t)].
+\]
+Como
+\[
+\dot X(t)=-\mathrm{grad}_gE_P(X(t)),
+\]
+y por definición del gradiente riemanniano,
+\[
+\mathrm dE_P(X(t))[\dot X(t)]
+=
+-\,g_{X(t)}\!\bigl(\mathrm{grad}_gE_P(X(t)),\mathrm{grad}_gE_P(X(t))\bigr).
+\]
+La no positividad es inmediata porque $g$ es definida positiva en cada espacio tangente. Además,
+\[
+g_{X(t)}\!\bigl(\mathrm{grad}_gE_P(X(t)),\mathrm{grad}_gE_P(X(t))\bigr)=0
+\]
+si y sólo si
+\[
+\mathrm{grad}_gE_P(X(t))=0
+\quad\Longleftrightarrow\quad
+X(t)-P=0,
+\]
+por la Proposición~\ref{prop:gradKL}. Por tanto, la igualdad sólo ocurre en el equilibrio $X(t)=P$.
+\end{proof}
+
+\begin{proposicion}[Mínimo global de $E_P$]\label{prop:minimoGlobalKL}
+Para todo $X\in\Delta_n^\circ$ se cumple
+\[
+E_P(X)\ge 0,
+\]
+y además
+\[
+E_P(X)=0
+\quad\Longleftrightarrow\quad
+X=P.
+\]
+En particular, $P$ es el único minimizador global de $E_P$ en $\Delta_n^\circ$.
+\end{proposicion}
+
+\begin{proof}
+La no negatividad y el criterio de igualdad corresponden a la desigualdad de Gibbs para la divergencia de Kullback--Leibler (\cite{Csiszar1975,CoverThomas1991}). Aplicando ese resultado a
+\[
+E_P(X)=D_{\mathrm{KL}}(P\|X),
+\]
+se obtiene inmediatamente
+\[
+E_P(X)\ge 0
+\quad\text{y}\quad
+E_P(X)=0 \Longleftrightarrow X=P.
+\]
+De aquí se sigue que $P$ es el único minimizador global.
+\end{proof}
+
+\begin{teorema}[Equivalencia estructural Sección 3 $\leftrightarrow$ Sección 4]
+\label{teo:equivalenciaCD}
+Sea $P\in\Delta_n^\circ$ fijo. Considérese el operador informacional global $T_Y$
+del sección ~C (Def.~\ref{def:Tglobal}), definido para $Y\in C_{\mathrm{glob}}$
+(Def.~\ref{def:Cglob}) por
+\[
+T_Y(X)=\frac{X\circ(1+Y)}{\langle X,1+Y\rangle}.
+\]
+Defínase, para cada $X\in\Delta_n^\circ$, el campo de corrección óptima
+\[
+Y^*(X,P)\in\mathbb{R}^n,
+\qquad
+Y^*_i(X,P):=\frac{P_i}{X_i}-1,\quad i=1,\dots,n.
+\]
+Entonces se verifican las siguientes afirmaciones.
+
+\smallskip
+\noindent\textbf{(i) Nivel algebraico (corrección multiplicativa).}
+Para todo $X\in\Delta_n^\circ$ se tiene $Y^*(X,P)\in C(X)$ (Def.~\ref{def:CX}) y
+\[
+T_{Y^*(X,P)}(X)=P.
+\]
+
+\smallskip
+\noindent\textbf{(ii) Nivel discreto (dinámica inducida).}
+Fijado $\alpha\in(0,1]$, la iteración
+\[
+X_{k+1}:=T_{\alpha\,Y^*(X_k,P)}(X_k),\qquad X_0\in\Delta_n^\circ,
+\]
+se reduce a la interpolación convexa
+\[
+X_{k+1}=(1-\alpha)X_k+\alpha P,
+\]
+y por tanto permanece en $\Delta_n^\circ$ (Prop.~\ref{prop:interiorGlobal}).
+
+\smallskip
+\noindent\textbf{(iii) Nivel continuo (límite infinitesimal y geometría Fisher).}
+El límite de primer orden $\alpha\to 0$ de la regla
+$T_{\alpha Y}(X)$ conduce a la ecuación diferencial
+\[
+\dot X = X\circ Y - X\,\langle X,Y\rangle.
+\]
+Aplicada al campo óptimo $Y=Y^*(X,P)$, esta ecuación se reduce a
+\[
+\dot X = P-X,
+\]
+que coincide con el flujo de gradiente Fisher--KL del funcional $E_P$
+(Def.~\ref{def:flujoFisherKL}), es decir,
+\[
+\dot X=-\mathrm{grad}_g E_P(X)
+\qquad
+(\text{Prop.~\ref{prop:gradKL}}).
+\]
+
+\end{teorema}
+
+\begin{proof}
+\noindent\textbf{(i)} Sea $X\in\Delta_n^\circ$. Como $X_i>0$ y $P_i>0$ para todo $i$,
+se tiene $1+Y^*_i(X,P)=P_i/X_i>0$, luego $Y^*(X,P)\in C_{\mathrm{glob}}$
+(Def.~\ref{def:Cglob}). Además,
+\[
+X_i\bigl(1+Y^*_i(X,P)\bigr)=P_i\ge 0,
+\qquad
+\sum_{i=1}^n X_i\bigl(1+Y^*_i(X,P)\bigr)=\sum_{i=1}^n P_i=1,
+\]
+luego $Y^*(X,P)\in C(X)$ (Def.~\ref{def:CX}). Sustituyendo en el operador global,
+\[
+T_{Y^*(X,P)}(X)_i
+=
+\frac{X_i(P_i/X_i)}{\sum_{j=1}^n X_j(P_j/X_j)}
+=
+\frac{P_i}{\sum_{j=1}^n P_j}
+=
+P_i,
+\]
+y por tanto $T_{Y^*(X,P)}(X)=P$.
+
+\smallskip
+\noindent\textbf{(ii)} Sea $\alpha\in(0,1]$ y $X\in\Delta_n^\circ$. Entonces
+\[
+1+\alpha Y^*_i(X,P)
+=
+(1-\alpha)+\alpha\,\frac{P_i}{X_i},
+\]
+y al sustituir en $T_{\alpha Y^*}(X)$ se obtiene, coordenada a coordenada,
+\[
+T_{\alpha Y^*(X,P)}(X)_i
+=
+\frac{(1-\alpha)X_i+\alpha P_i}{(1-\alpha)\sum_{j}X_j+\alpha\sum_{j}P_j}
+=
+(1-\alpha)X_i+\alpha P_i,
+\]
+pues $\sum_j X_j=\sum_j P_j=1$. Iterando, $X_{k+1}=(1-\alpha)X_k+\alpha P$, y por
+ser combinación convexa de puntos de $\Delta_n^\circ$ se mantiene
+$X_k\in\Delta_n^\circ$ (Prop.~\ref{prop:interiorGlobal}).
+
+\smallskip
+\noindent\textbf{(iii)} Partimos de
+\[
+T_{\alpha Y}(X)
+=
+\frac{X+\alpha(X\circ Y)}{1+\alpha\langle X,Y\rangle}.
+\]
+Usando la expansión $\frac{1}{1+\alpha a}=1-\alpha a+o(\alpha)$,
+\[
+T_{\alpha Y}(X)
+=
+X+\alpha\bigl(X\circ Y-X\langle X,Y\rangle\bigr)+o(\alpha),
+\]
+lo que conduce a la ecuación diferencial anunciada.
+
+Tomando $Y=Y^*(X,P)$,
+\[
+X\circ Y^*(X,P)=P-X,
+\qquad
+\langle X,Y^*(X,P)\rangle=\sum_i P_i-\sum_i X_i=0,
+\]
+y sustituyendo se obtiene $\dot X=P-X$. Por la
+Proposición~\ref{prop:gradKL}, $\mathrm{grad}_g E_P(X)=X-P$, de modo que
+\[
+\dot X=P-X=-\mathrm{grad}_g E_P(X).
+\]
+Esto establece la equivalencia estructural entre los tres niveles.
+\end{proof}
+
+\section{Conclusiones y perspectivas}
+
+En este trabajo se desarrolló un marco interno para el estudio de transformaciones entre distribuciones de probabilidad discretas sobre el símplex. En particular, se introdujo el concepto de correcciones multiplicativas y su estructura asociada, distinguiendo entre correcciones locales dependientes del estado y correcciones globales definidas de manera uniforme. A partir de ello, se construyeron operadores informacionales que preservan el símplex y cuya ley de composición corresponde a un producto coordenado de factores positivos.
+
+Asimismo, se estableció una conexión con la geometría de información mediante la métrica de Fisher y la divergencia de Kullback--Leibler, mostrando que la dinámica inducida por el gradiente conduce a un flujo explícito que converge hacia una distribución de referencia. Esto proporciona una interpretación dinámica del proceso de corrección como una relajación informacional.
+
+En continuidad con este desarrollo, el Proyecto de Investigación II podría orientarse hacia diversas extensiones estructurales del marco descrito. En particular, resulta natural explorar la relación entre los operadores introducidos y operadores de tipo Markov, con el objetivo de analizar si estos últimos pueden interpretarse como una subfamilia dentro del conjunto de transformaciones multiplicativas. De manera análoga, podría estudiarse la existencia de una representación multiplicativa de operadores de Markov y la posible emergencia de una estructura de tipo grupoide.
+
+Por otra parte, una dirección relevante consiste en incorporar el enfoque del análisis de datos composicionales de Aitchison, en el cual el símplex se dota de una geometría basada en coordenadas log-ratio. En este contexto, podría investigarse si las correcciones multiplicativas del marco descrito admiten una representación lineal en dichas coordenadas, lo que permitiría reinterpretar las transformaciones en términos de estructuras vectoriales asociadas y analizar nociones como ortogonalidad y proyección.
+
+Finalmente, también podría considerarse la conexión con problemas de inferencia estadística. En particular, sería de interés analizar si ciertos procedimientos, como la actualización bayesiana, pueden interpretarse dentro de este esquema como correcciones óptimas, así como explorar posibles vínculos con herramientas del análisis multivariado composicional, incluyendo matrices de covarianza en coordenadas log-ratio, métodos tipo PCA y técnicas de agrupamiento. Estas líneas constituyen posibles direcciones de desarrollo y requerirán un análisis más detallado en etapas posteriores.
+\clearpage
+
+\bibliography{../Referencias/Bib/referencesFC}
+\end{document}

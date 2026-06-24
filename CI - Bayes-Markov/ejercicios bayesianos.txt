@@ -1,0 +1,296 @@
+
+\section{Ejercicios de referencia bayesiana}
+
+Se presentan cinco ejercicios resueltos. En cada uno se formula primero una proposición y se demuestra por dos vías: \emph{Solución Via CI} y \emph{Método tradicional}. La vía CI explicita qué objeto del marco se usa en cada paso: estado informacional (Sec.~A), corrección global (Sec.~C), operador $T_Y$ (Sec.~C), o proposición de equivalencia bayesiana (Sec.~E).
+
+\begin{ejercicio}[Prueba diagnóstica y teorema de Bayes]
+Una enfermedad afecta al $1\%$ de la población. Una prueba tiene sensibilidad del $99\%$ y especificidad del $95\%$. Si un paciente da positivo, ¿cuál es la probabilidad de que realmente tenga la enfermedad?
+\end{ejercicio}
+
+\begin{proposicion}[Diagnóstico bayesiano]
+Sea $X=(0.01,0.99)\in\Delta_2^\circ$ el estado previo y sea $\ell^{(+)}=(0.99,0.05)$ la corrección asociada al positivo. Entonces
+\[
+T_{Y^{\ell^{(+)}}}(X)=\left(\frac{1}{6},\;\frac{5}{6}\right),
+\qquad
+P(D\mid +)=\frac{1}{6}.
+\]
+\end{proposicion}
+
+\begin{proof}[Solución Via CI]
+\textbf{Paso 1 (estado previo, Def.~\ref{def:estado}).}
+Se trabaja con $n=2$ hipótesis: $H_1=\{\text{enfermo}\}$, $H_2=\{\text{sano}\}$. El estado informacional previo
+\[
+X=(X_1,X_2)=(0.01,\;0.99)\in\Delta_2^\circ
+\]
+codifica la prevalencia poblacional como un punto del interior del símplex.
+
+\textbf{Paso 2 (corrección global, Def.~\ref{def:verosimilitud} y Def.~\ref{def:Cglob}).}
+La observación $E_+=\{\text{test positivo}\}$ fija las probabilidades condicionales:
+\[
+\ell_1^{(+)}:=P(+\mid H_1)=0.99,\qquad \ell_2^{(+)}:=P(+\mid H_2)=0.05.
+\]
+Definiendo $1+Y_i^{\ell^{(+)}}:=\ell_i^{(+)}>0$ para $i=1,2$, se obtiene $Y^{\ell^{(+)}}\in C_{\mathrm{glob}}$.
+
+\textbf{Paso 3 (operador global, Def.~\ref{def:Tglobal}).}
+El denominador del operador es $\langle X,\ell^{(+)}\rangle=0.01\times 0.99+0.99\times 0.05=0.0594$. El operador produce
+\[
+T_{Y^{\ell^{(+)}}}(X)_i=\frac{X_i\,\ell_i^{(+)}}{\langle X,\ell^{(+)}\rangle},\qquad i=1,2.
+\]
+
+\textbf{Paso 4 (equivalencia bayesiana, Prop.~\ref{prop:bayes_como_TY}).}
+Por esa proposición, $T_{Y^{\ell^{(+)}}}(X)_i=P(H_i\mid +)$. Calculando:
+\[
+T_{Y^{\ell^{(+)}}}(X)
+=\left(\frac{0.0099}{0.0594},\;\frac{0.0495}{0.0594}\right)
+=\left(\frac{1}{6},\;\frac{5}{6}\right).
+\]
+La rareza de la enfermedad ($X_1=0.01$) hace que los falsos positivos dominen la posterior aunque la sensibilidad sea alta.
+\end{proof}
+
+\begin{proof}[Método tradicional]
+\[
+P(D\mid +)
+=\frac{P(+\mid D)\,P(D)}{P(+\mid D)\,P(D)+P(+\mid D^c)\,P(D^c)}
+=\frac{0.99\times 0.01}{0.99\times 0.01+0.05\times 0.99}
+=\frac{1}{6}.
+\]
+\end{proof}
+
+\vspace{1em}
+
+\begin{ejercicio}[Prior y posterior Beta-Binomial]\label{ej:betabinomial}
+Se quiere estimar la probabilidad $p$ de éxito en un proceso. Se usa una prior $p\sim\mathrm{Beta}(2,2)$. Se observan $7$ éxitos en $10$ ensayos. Calcule la distribución posterior e interprete la media posterior.
+\end{ejercicio}
+
+\begin{proposicion}[Actualización Beta-Binomial en CI]\label{prop:betabinomial}
+Sea $P_0=\mathrm{Beta}(2,2)$ sobre $\Omega=(0,1)$ con densidad $f(p)=6p(1-p)$, y sea $\ell(p)=\binom{10}{7}p^7(1-p)^3$ la verosimilitud. Para toda partición $\Pi_n$ de $(0,1)$,
+\[
+T_{Y^\ell}(X_0)_i=Q(E_i),\qquad i=1,\dots,n,
+\]
+donde $Q=\mathrm{Beta}(9,5)$ es la posterior exacta y $\mathbb{E}_Q[p]=9/14$.
+\end{proposicion}
+
+\begin{proof}[Solución Via CI]
+\textbf{Paso 1 (espacio de probabilidad, Def.~\ref{def:espacio_prob}).}
+Se fija $(\Omega,\mathcal{F},P_0)$ con $\Omega=(0,1)$, $\mathcal{F}$ la $\sigma$-álgebra de Borel y $P_0=\mathrm{Beta}(2,2)$ con densidad $f(p)=6p(1-p)$.
+
+\textbf{Paso 2 (partición y estado previo, Def.~\ref{def:particion_parametrica}).}
+Se fija una partición $\Pi_n=\{E_1,\dots,E_n\}$ de $(0,1)$ en $n$ celdas iguales de longitud $h=1/n$. El estado informacional previo es
+\[
+X_{0,i}:=P_0(E_i)=\int_{E_i}6p(1-p)\,dp\in\Delta_n^\circ.
+\]
+
+\textbf{Paso 3 (corrección global exacta, Def.~\ref{def:verosimilitud_global} y Def.~\ref{def:Cglob}).}
+La verosimilitud $\ell(p)=\binom{10}{7}p^7(1-p)^3$ determina la corrección exacta
+\[
+\ell_i:=E_{P_0}[\ell\mid E_i]=\frac{\displaystyle\int_{E_i}p^7(1-p)^3\,dP_0(p)}{P_0(E_i)}>0.
+\]
+Con $1+Y_i^\ell:=\ell_i$ se obtiene $Y^\ell\in C_{\mathrm{glob}}$.
+
+\textbf{Paso 4 (operador, Prop.~\ref{prop:bayes_parametrico}).}
+Por esa proposición, $T_{Y^\ell}(X_0)_i=Q(E_i)$ exactamente, donde $Q$ es la medida posterior con $dQ/dP_0\propto\ell$.
+
+\textbf{Paso 5 (familia conjugada, Prop.~\ref{prop:conjugado_exponencial_CI}).}
+Las densidades pertenecen a la familia exponencial con estadístico $T(p)=(\log p,\log(1-p))$:
+\[
+f(p)\propto\exp\!\bigl(1\cdot\log p+1\cdot\log(1-p)\bigr),\quad
+\ell(p)\propto\exp\!\bigl(7\cdot\log p+3\cdot\log(1-p)\bigr).
+\]
+Los parámetros naturales son $\eta_0=(1,1)$ y $\eta_\ell=(7,3)$. Por la Prop.~\ref{prop:conjugado_exponencial_CI}(ii), la posterior $Q$ tiene parámetro
+\[
+\eta_n=\eta_0+\eta_\ell=(8,4),
+\]
+que corresponde a $\mathrm{Beta}(9,5)$ (los parámetros de la Beta son $\eta_i+1$). En particular,
+\[
+\mathbb{E}_Q[p]=\frac{9}{9+5}=\frac{9}{14}\approx 0.6429.
+\]
+La prior centrada en $0.5$ y los datos que sugieren $0.7$ producen una posterior en $\approx0.643$, ponderando ambas fuentes por su masa informacional relativa.
+\end{proof}
+
+\begin{proof}[Método tradicional]
+Se multiplica prior por likelihood y se reconoce la forma Beta:
+\[
+p^{2-1}(1-p)^{2-1}\times p^7(1-p)^3
+\propto p^8(1-p)^4
+=p^{9-1}(1-p)^{5-1}.
+\]
+Luego $p\mid\mathcal{D}\sim\mathrm{Beta}(9,5)$ y $\mathbb{E}[p\mid\mathcal{D}]=9/14\approx 0.6429$.
+\end{proof}
+
+\vspace{1em}
+
+\begin{ejercicio}[Actualización secuencial con prior Normal]
+La estatura de adultos sigue $N(\mu,\sigma^2)$ con $\sigma^2=25$ conocido. La prior es $\mu\sim N(170,100)$. Se observa una muestra de tamaño $n=10$ con media muestral $\bar y=175$. Calcule la distribución posterior de $\mu$.
+\end{ejercicio}
+
+\begin{proposicion}[Actualización Normal-Normal en CI]
+Sea $P_0=N(170,100)$ sobre $\Omega\subset\mathbb{R}$ y sea
+\[
+\ell(\mu)\propto\exp\!\left(-\frac{(\mu-175)^2}{5}\right)
+\]
+la verosimilitud de $n=10$ observaciones con $\bar y=175$ y $\sigma^2=25$. Para toda partición $\Pi_n$ de $\Omega$,
+\[
+T_{Y^\ell}(X_0)_i=Q(E_i),\qquad i=1,\dots,n,
+\]
+donde la posterior exacta es
+\[
+Q=N\!\left(\frac{7170}{41},\;\frac{100}{41}\right)\approx N(174.878,\;2.439).
+\]
+\end{proposicion}
+
+\begin{proof}[Solución Via CI]
+\textbf{Paso 1 (espacio de probabilidad, Def.~\ref{def:espacio_prob}).}
+Se fija $(\Omega,\mathcal{F},P_0)$ con $P_0=N(170,100)$, densidad $f(\mu)\propto\exp(-(\mu-170)^2/200)$, y $\Omega$ un intervalo que contiene el soporte efectivo de $f$ y $\ell$.
+
+\textbf{Paso 2 (partición y estado previo, Def.~\ref{def:particion_parametrica}).}
+Se fija $\Pi_n=\{E_1,\dots,E_n\}$ sobre $\Omega$. El estado previo es $X_{0,i}=P_0(E_i)\in\Delta_n^\circ$.
+
+\textbf{Paso 3 (corrección global exacta, Def.~\ref{def:verosimilitud_global}).}
+La verosimilitud conjunta de $n=10$ observaciones con $\bar y=175$ y $\sigma^2=25$ es
+\[
+\ell(\mu)\propto\exp\!\left(-\frac{n(\mu-\bar y)^2}{2\sigma^2}\right)=\exp\!\left(-\frac{(\mu-175)^2}{5}\right),
+\]
+donde $5=2\sigma^2/n$. La corrección exacta es $\ell_i=E_{P_0}[\ell\mid E_i]>0$, con $Y^\ell\in C_{\mathrm{glob}}$.
+
+\textbf{Paso 4 (operador, Prop.~\ref{prop:bayes_parametrico}).}
+$T_{Y^\ell}(X_0)_i=Q(E_i)$ exactamente, donde $Q$ tiene $dQ/dP_0\propto\ell$.
+
+\textbf{Paso 5 (familia conjugada, Prop.~\ref{prop:conjugado_exponencial_CI}).}
+Por la Prop.~\ref{prop:conjugado_exponencial_CI}(ii), la posterior $Q$ tiene densidad proporcional a $f(\mu)\,\ell(\mu)$:
+\[
+f(\mu)\,\ell(\mu)
+\propto
+\exp\!\left(-\frac{(\mu-170)^2}{200}-\frac{(\mu-175)^2}{5}\right).
+\]
+Usando la parametrización de precisión $\tau_0=1/\sigma_0^2$ y $\tau_\ell=n/\sigma^2$, la suma de las cuadráticas da:
+\[
+\tau_n=\tau_0+\tau_\ell=\frac{1}{100}+\frac{10}{25}=\frac{41}{100},
+\qquad
+\sigma_{\mathrm{post}}^2=\frac{1}{\tau_n}=\frac{100}{41},
+\]
+\[
+\mu_{\mathrm{post}}
+=\frac{\tau_0\,\mu_0+\tau_\ell\,\bar y}{\tau_n}
+=\frac{170/100+10\times 175/25}{41/100}
+=\frac{7170}{41}\approx 174.878.
+\]
+La prior centrada en 170 y los datos que sugieren 175 producen una posterior en $\approx174.88$, desplazada hacia los datos en proporción a la precisión relativa de cada fuente.
+\end{proof}
+
+\begin{proof}[Método tradicional]
+Para el modelo Normal-Normal conjugado con varianza conocida:
+\[
+\sigma_{\mathrm{post}}^2=\left(\frac{1}{100}+\frac{10}{25}\right)^{-1}=\frac{100}{41},
+\qquad
+\mu_{\mathrm{post}}=\frac{7170}{41},
+\]
+\[
+\mu\mid\mathcal{D}\sim N\!\left(\frac{7170}{41},\;\frac{100}{41}\right)\approx N(174.878,\;2.439).
+\]
+\end{proof}
+
+\vspace{1em}
+
+\begin{ejercicio}[Factor de Bayes y comparación de modelos]
+Compare dos modelos para un conjunto de conteos: $M_1$ con distribución Poisson$(\lambda=3)$ y $M_2$ con distribución Poisson$(\lambda=5)$. Se observan los datos $\{2,4,3,5,2\}$. Calcule el factor de Bayes $B_{12}$.
+\end{ejercicio}
+
+\begin{proposicion}[Factor de Bayes en CI]
+Sea $X=(1/2,1/2)\in\Delta_2^\circ$ el prior sobre modelos y sean $\ell_r=\prod_{k=1}^5 P(x_k\mid M_r)$ las verosimilitudes globales, $r=1,2$. Entonces
+\[
+T_{Y^\ell}(X)_r=\frac{\ell_r}{\ell_1+\ell_2},
+\qquad
+B_{12}=\frac{\ell_1}{\ell_2}=e^{10}\!\left(\frac{3}{5}\right)^{\!16}\approx 6.214.
+\]
+\end{proposicion}
+
+\begin{proof}[Solución Via CI]
+\textbf{Paso 1 (estado previo, Def.~\ref{def:estado}).}
+Se trabaja con $n=2$ hipótesis: $H_r=\{\text{modelo }M_r\}$. El estado
+\[
+X=\left(\frac{1}{2},\frac{1}{2}\right)\in\Delta_2^\circ
+\]
+expresa indiferencia a priori entre los modelos.
+
+\textbf{Paso 2 (composición de correcciones, Cor.~\ref{cor:bayes_secuencial} y Prop.~\ref{prop:composicionGlobal}).}
+Las cinco observaciones $\{2,4,3,5,2\}$ son condicionalmente independientes dado el modelo. Por el Cor.~\ref{cor:bayes_secuencial}, las correcciones individuales de cada dato se componen multiplicativamente (Prop.~\ref{prop:composicionGlobal}): la corrección acumulada satisface
+\[
+1+(Y^{\ell^{(1:5)}})_r=\prod_{k=1}^5\!\bigl(1+(Y^{\ell^{(k)}})_r\bigr)=\prod_{k=1}^5 P(x_k\mid M_r)=:\ell_r.
+\]
+Para Poisson$(\lambda_r)$ con $\sum_k x_k=16$ y cinco observaciones:
+\[
+\ell_1\propto e^{-15}\cdot 3^{16},\qquad\ell_2\propto e^{-25}\cdot 5^{16}.
+\]
+
+\textbf{Paso 3 (operador, Prop.~\ref{prop:bayes_como_TY}).}
+Con $X_1=X_2=1/2$, el operador global simplifica a:
+\[
+T_{Y^{\ell^{(1:5)}}}(X)_r=\frac{(1/2)\,\ell_r}{(1/2)(\ell_1+\ell_2)}=\frac{\ell_r}{\ell_1+\ell_2}.
+\]
+El factor de Bayes emerge como la razón de los factores multiplicativos de la corrección:
+\[
+B_{12}=\frac{\ell_1}{\ell_2}=\frac{T_{Y^\ell}(X)_1/X_1}{T_{Y^\ell}(X)_2/X_2}=\frac{\text{odds posterior}}{\text{odds prior}}.
+\]
+
+\textbf{Paso 4 (cómputo).}
+\[
+B_{12}=\frac{e^{-15}\cdot 3^{16}}{e^{-25}\cdot 5^{16}}=e^{10}\!\left(\frac{3}{5}\right)^{\!16}\approx 6.214.
+\]
+Los datos son $\approx 6.2$ veces más probables bajo $M_1$: evidencia moderada a favor del modelo con tasa menor.
+\end{proof}
+
+\begin{proof}[Método tradicional]
+\[
+B_{12}=\frac{\prod_{k=1}^5 P(x_k\mid M_1)}{\prod_{k=1}^5 P(x_k\mid M_2)}
+=\frac{e^{-15}\cdot 3^{16}}{e^{-25}\cdot 5^{16}}
+=e^{10}\!\left(\frac{3}{5}\right)^{\!16}\approx 6.214.
+\]
+\end{proof}
+
+\vspace{1em}
+
+\begin{ejercicio}[Intervalo de credibilidad e intervalo de confianza]
+Con la posterior $Q\sim\mathrm{Beta}(9,5)$ obtenida en el Ejercicio~\ref{ej:betabinomial}, calcule un intervalo de credibilidad al $95\%$ y compare su interpretación estructural con la de un intervalo de confianza frecuentista.
+\end{ejercicio}
+
+\begin{proposicion}[Intervalo de credibilidad en CI]
+Sea $T_{Y^\ell}(X_0)\in\Delta_n^\circ$ el estado posterior de la Proposición~\ref{prop:betabinomial}, con $T_{Y^\ell}(X_0)_i=Q(E_i)$ y $Q=\mathrm{Beta}(9,5)$. El intervalo de credibilidad equi-cola al $95\%$ es
+\[
+\mathrm{IC}_{0.95}^{\mathrm{cred}}
+=(Q_{0.025},\;Q_{0.975})
+\approx(0.428,\;0.891),
+\]
+donde $Q_\alpha$ denota el cuantil $\alpha$ de $\mathrm{Beta}(9,5)$. El intervalo de confianza de Wald al $95\%$ con $\hat p=7/10$ y $n=10$ es
+\[
+\mathrm{IC}_{0.95}^{\mathrm{freq}}
+=\hat p\pm 1.96\sqrt{\hat p(1-\hat p)/n}
+\approx(0.416,\;0.984).
+\]
+\end{proposicion}
+
+\begin{proof}[Solución Via CI]
+\textbf{Paso 1 (el estado posterior como distribución, Prop.~\ref{prop:bayes_parametrico}).}
+Por esa proposición, $T_{Y^\ell}(X_0)_i=Q(E_i)$ es la probabilidad exacta de que $p\in E_i$ condicionada al dato. El vector $T_{Y^\ell}(X_0)\in\Delta_n^\circ$ representa la distribución de probabilidad completa sobre el parámetro $p$ a la resolución de $\Pi_n$: no es una estimación puntual, es un estado informacional.
+
+\textbf{Paso 2 (región de credibilidad como subconjunto de celdas).}
+Un intervalo de credibilidad al $95\%$ es una colección $I_n^*\subset\{1,\dots,n\}$ minimal con
+\[
+\sum_{i\in I_n^*}T_{Y^\ell}(X_0)_i\ge 0.95.
+\]
+En el límite continuo ($n\to\infty$), esto equivale a encontrar $(a,b)\subset(0,1)$ con $Q((a,b))\ge 0.95$. El criterio equi-cola usa los cuantiles $Q_{0.025}$ y $Q_{0.975}$ de $\mathrm{Beta}(9,5)$, obtenidos numéricamente:
+\[
+Q_{0.025}\approx 0.428,\qquad Q_{0.975}\approx 0.891.
+\]
+
+\textbf{Paso 3 (comparación estructural con el frecuentista).}
+El intervalo de Wald usa únicamente $\hat p=7/10$ y $n=10$:
+\[
+0.7\pm 1.96\sqrt{\frac{0.7\times 0.3}{10}}=0.7\pm 0.284=(0.416,\;0.984).
+\]
+La diferencia no es solo numérica sino estructural. En CI, $T_{Y^\ell}(X_0)_i=Q(E_i)$ es la probabilidad de que $p\in E_i$ dado el dato: una afirmación directa sobre el parámetro como cantidad incerta. El intervalo frecuentista no hace una afirmación sobre $p$; garantiza que el $95\%$ de los intervalos construidos bajo el mismo procedimiento en muestras repetidas contienen al verdadero $p$ fijo. El IC bayesiano es más angosto porque la prior $\mathrm{Beta}(2,2)$ concentra la masa hacia valores intermedios, reduciendo la incertidumbre efectiva sobre $p$.
+\end{proof}
+
+\begin{proof}[Método tradicional]
+Se calculan numéricamente los cuantiles $Q_{0.025}\approx 0.428$ y $Q_{0.975}\approx 0.891$ de $\mathrm{Beta}(9,5)$, obteniendo $\mathrm{IC}_{0.95}^{\mathrm{cred}}\approx(0.428,\;0.891)$. El intervalo de Wald frecuentista con $\hat p=7/10$ y $n=10$ da $\mathrm{IC}_{0.95}^{\mathrm{freq}}\approx(0.416,\;0.984)$.
+\end{proof}
+

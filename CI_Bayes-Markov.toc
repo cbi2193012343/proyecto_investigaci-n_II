@@ -1,0 +1,26 @@
+\babel@toc {spanish}{}\relax 
+\contentsline {section}{\numberline {1}Mapa de trabajo}{3}{section.1}%
+\contentsline {section}{\numberline {2}Sección A -- Probabilidad y símplex}{3}{section.2}%
+\contentsline {section}{\numberline {3}Sección B -- Correcciones locales y cambio de medida}{4}{section.3}%
+\contentsline {section}{\numberline {4}Sección C -- Operadores globales multiplicativos y composición}{5}{section.4}%
+\contentsline {section}{\numberline {5}Sección D -- Divergencia KL, métrica de Fisher y dinámica inducida}{6}{section.5}%
+\contentsline {section}{\numberline {6}Sección E -- Semántica bayesiana}{8}{section.6}%
+\contentsline {subsection}{\numberline {6.1}Ruta de lectura}{8}{subsection.6.1}%
+\contentsline {subsection}{\numberline {6.2}Modelos continuos como estados informacionales discretos}{11}{subsection.6.2}%
+\contentsline {section}{\numberline {7}Ejercicios de referencia bayesiana}{13}{section.7}%
+\contentsline {section}{\numberline {8}Sección F --- Semántica markoviana}{18}{section.8}%
+\contentsline {section}{\numberline {9}Sección G -- Control Óptimo Informacional y Defecto de Ordenamiento}{21}{section.9}%
+\contentsline {subsection}{\numberline {9.1}Observación 0.1 -- Justificación topológica de la dirección de $D_{\mathrm {KL}}(P\|X_T)$}{21}{subsection.9.1}%
+\contentsline {subsection}{\numberline {9.2}Sección 1 -- Límites de velocidad}{21}{subsection.9.2}%
+\contentsline {subsection}{\numberline {9.3}Definición 2.4 -- Variable de ordenamiento}{23}{subsection.9.3}%
+\contentsline {subsection}{\numberline {9.4}Definición 2.5 -- Costos secuenciales ordenados}{23}{subsection.9.4}%
+\contentsline {subsection}{\numberline {9.5}Definición 2.6 -- Q-funciones por orden}{23}{subsection.9.5}%
+\contentsline {subsection}{\numberline {9.6}Sección 3 -- Defecto de ordenamiento}{24}{subsection.9.6}%
+\contentsline {subsection}{\numberline {9.7}Lema 3.0 -- Fórmula explícita del defecto $\mathcal {D}_{K,L}(X)$}{24}{subsection.9.7}%
+\contentsline {subsection}{\numberline {9.8}Proposición 3.3 -- Caso $n=2$: defecto escalar y subvariedad de conmutación}{24}{subsection.9.8}%
+\contentsline {subsection}{\numberline {9.9}Lema 3.4 -- Lipschitz local de $D_{\mathrm {KL}}(P\|\cdot )$}{25}{subsection.9.9}%
+\contentsline {subsection}{\numberline {9.10}Definición -- Defecto de primer paso $\delta _{K,L}(X)$}{26}{subsection.9.10}%
+\contentsline {subsection}{\numberline {9.11}Proposición 3.4 -- Cota de suboptimalidad de un paso}{26}{subsection.9.11}%
+\contentsline {subsection}{\numberline {9.12}Lema 3.5'' -- Diferencia de costos secuenciales}{27}{subsection.9.12}%
+\contentsline {subsection}{\numberline {9.13}Teorema 3.3'' -- Cota de suboptimalidad multi-paso (Q-función)}{28}{subsection.9.13}%
+\contentsline {subsection}{\numberline {9.14}Sección 4 -- Caracterización del defecto en $n=2$ y relevancia cuantitativa en $n=3$}{29}{subsection.9.14}%

@@ -1,0 +1,1025 @@
+
+\section{Sección E -- Semántica bayesiana}
+
+Esta es la parte que queremos desarrollar con más calma. La idea es fijar un espacio conjunto hipótesis-observaciones, identificar la verosimilitud como una corrección global y demostrar que la actualización de Bayes aparece exactamente como un caso particular del operador $T_Y$. Esta lectura no se introduce de manera aislada: está alineada con la interpretación de Bayes spaces de Egozcue, Pawlowsky-Glahn, Tolosana-Delgado, Ortego y van den Boogaart (2013), donde la regla de Bayes se entiende como una perturbación entre densidades proporcionales, y también con la geometría afín del símplex de Pistone y Shoaib (2024), que permite leer las actualizaciones como operadores internos sobre el espacio de estados.
+
+En paralelo, la parte diferencial del marco se apoya en la geometría de la información de Amari (2016), mientras que la interpretación variacional y del statistical bundle remite a Pistone (2018). Por eso, el objetivo de esta sección no es solo obtener una fórmula de actualización, sino situarla en una narración geométrica y probabilística coherente con la bibliografía ya revisada.
+
+\subsection{Ruta de lectura}
+
+La semántica bayesiana usa como soporte directo:
+\begin{itemize}
+    \item la representación del estado como punto de $\Delta_n^\circ$;
+    \item la actualización multiplicativa global $T_Y$;
+    \item la composición de correcciones por producto coordenado;
+    \item la lectura dinámica via KL y el gradiente Fisher;
+    \item la equivalencia estructural que conecta la corrección óptima con el flujo de descenso.
+\end{itemize}
+
+En términos bibliográficos, la base composicional del símplex se apoya en Egozcue, Pawlowsky-Glahn, Mateu-Figueras y Barcelo-Vidal (2003), así como en las notas de Pawlowsky-Glahn, Egozcue y Tolosana-Delgado (2011). Esa base es la que hace natural pasar de vectores positivos a composiciones normalizadas y, por ello, prepara el terreno para la lectura bayesiana posterior.
+
+\begin{definicion}[Espacio conjunto hipótesis-observaciones]\label{def:espacio_conjunto}
+Sea $(\Omega,\mathcal F,P)$ un espacio de probabilidad. Sean $n,m\in\mathbb N$ y sean
+\[
+\Pi_H=\{H_1,\dots,H_n\},\qquad \Pi_E=\{E_1,\dots,E_m\},
+\]
+dos particiones medibles finitas de $\Omega$. Supongamos que
+\[
+P(H_i)>0\quad \text{para todo } i=1,\dots,n,
+\qquad
+P(E_j)>0\quad \text{para todo } j=1,\dots,m.
+\]
+Interpretamos los elementos de $\Pi_H$ como hipótesis alternativas y los elementos de $\Pi_E$ como observaciones posibles.
+
+El estado informacional previo asociado a $\Pi_H$ es el vector
+\[
+X=(X_1,\dots,X_n)\in\Delta_n^\circ,
+\qquad
+X_i:=P(H_i),\quad i=1,\dots,n,
+\]
+de modo que $\sum_{i=1}^n X_i=1$ y $X_i>0$ para todo $i$.
+\end{definicion}
+
+\begin{definicion}[Probabilidad condicional en el espacio conjunto]\label{def:prob_condicional}
+Sea $(\Omega,\mathcal F,P)$ el espacio de probabilidad de la Definición~\ref{def:espacio_conjunto}, y sean $\Pi_H=\{H_1,\dots,H_n\}$ y $\Pi_E=\{E_1,\dots,E_m\}$ las particiones medibles finitas allí fijadas. Sean $i\in\{1,\dots,n\}$ y $j\in\{1,\dots,m\}$. Si $P(H_i)>0$, se define la probabilidad condicional de la observación $E_j$ dada la hipótesis $H_i$ por
+\[
+P(E_j\mid H_i):=\frac{P(H_i\cap E_j)}{P(H_i)}.
+\]
+Se dirá que la observación $E_j$ es compatible con la hipótesis $H_i$ si $P(H_i\cap E_j)>0$. Equivalentemente, puesto que $P(H_i)>0$, esta compatibilidad se cumple si y sólo si $P(E_j\mid H_i)>0$.
+\end{definicion}
+
+\begin{definicion}[Verosimilitud como corrección global]\label{def:verosimilitud}
+Sea $j\in\{1,\dots,m\}$ con $P(E_j)>0$. Denótese por
+\[
+\ell^{(j)}=(\ell_1^{(j)},\dots,\ell_n^{(j)})\in\mathbb R_{>0}^n
+\]
+el vector de verosimilitud asociado a la observación $E_j$, donde
+\[
+\ell_i^{(j)}:=P(E_j\mid H_i),\qquad i=1,\dots,n.
+\]
+Cuando $\ell_i^{(j)}>0$ para todo $i$, el vector $\ell^{(j)}$ determina una corrección global $Y^{\ell^{(j)}}\in C_{\mathrm{glob}}$ mediante
+\[
+1+Y_i^{\ell^{(j)}}:=\ell_i^{(j)},\qquad i=1,\dots,n.
+\]
+En particular, la verosimilitud queda incorporada al formalismo global como un representante multiplicativo positivo.
+\end{definicion}
+
+Con esta identificación, la actualización posterior puede formularse ya como una transformación del propio estado en el símplex.
+\begin{proposicion}[El operador bayesiano como caso particular de $T_Y$]\label{prop:bayes_como_TY}
+Sean $(\Omega,\mathcal F,P)$ el espacio de probabilidad y $\Pi_H=\{H_1,\dots,H_n\}$, $\Pi_E=\{E_1,\dots,E_m\}$ las particiones de la Definición~\ref{def:espacio_conjunto}. Sea $j\in\{1,\dots,m\}$ tal que $P(E_j)>0$, y supóngase que la verosimilitud asociada a $E_j$ satisface
+\[
+\ell^{(j)}=(\ell_1^{(j)},\dots,\ell_n^{(j)})\in\mathbb R_{>0}^n,
+\qquad
+\ell_i^{(j)}:=P(E_j\mid H_i),\quad i=1,\dots,n.
+\]
+Sea además $X\in\Delta_n^\circ$ el estado previo asociado a $\Pi_H$, dado por $X_i=P(H_i)$ para todo $i=1,\dots,n$. Entonces, para cada $i=1,\dots,n$, se tiene
+\[
+T_{Y^{\ell^{(j)}}}(X)_i
+=
+\frac{X_i\,\ell_i^{(j)}}{\displaystyle\sum_{k=1}^n X_k\,\ell_k^{(j)}}
+=
+P(H_i\mid E_j).
+\]
+En particular, $T_{Y^{\ell^{(j)}}}(X)$ coincide con el estado posterior condicionado a la observación $E_j$.
+\end{proposicion}
+
+\begin{proof}
+Como $\ell_i^{(j)}>0$ para todo $i=1,\dots,n$, el vector $Y^{\ell^{(j)}}$ pertenece a $C_{\mathrm{glob}}$, y por tanto el operador global $T_{Y^{\ell^{(j)}}}$ está bien definido. Por la Definición~\ref{def:Tglobal}, para cada $i=1,\dots,n$,
+\[
+T_{Y^{\ell^{(j)}}}(X)_i
+=
+\frac{X_i(1+Y_i^{\ell^{(j)}})}{\sum_{k=1}^n X_k(1+Y_k^{\ell^{(j)}})}.
+\]
+Puesto que $1+Y_i^{\ell^{(j)}}=\ell_i^{(j)}$, esta expresión se reduce a
+\[
+T_{Y^{\ell^{(j)}}}(X)_i
+=
+\frac{X_i\,\ell_i^{(j)}}{\sum_{k=1}^n X_k\,\ell_k^{(j)}}.
+\]
+Ahora bien, por definición del estado previo y de la verosimilitud, $X_i=P(H_i)$ y $\ell_i^{(j)}=P(E_j\mid H_i)$, de modo que
+\[
+X_i\,\ell_i^{(j)}=P(H_i)\,P(E_j\mid H_i)=P(H_i\cap E_j).
+\]
+Además, como $\Pi_H=\{H_1,\dots,H_n\}$ es una partición de $\Omega$, los conjuntos $H_1\cap E_j,\dots,H_n\cap E_j$ son disjuntos y su unión es $E_j$. En consecuencia,
+\[
+\sum_{k=1}^n X_k\,\ell_k^{(j)}=\sum_{k=1}^n P(H_k\cap E_j)=P(E_j).
+\]
+Sustituyendo estas identidades en la expresión anterior, se obtiene
+\[
+T_{Y^{\ell^{(j)}}}(X)_i
+=
+\frac{P(H_i\cap E_j)}{P(E_j)}
+=
+P(H_i\mid E_j),
+\qquad i=1,\dots,n.
+\]
+\end{proof}
+
+La unicidad de esta representación fija la regla de actualización dentro de $\mathcal G$ y evita ambigüedades al pasar del prior al posterior.
+
+%%%%%%%%%%%%%%%%
+
+\begin{proposicion}[Unicidad: $T_{Y^{\ell^{(j)}}}$ es el único operador coherente con $P$]\label{prop:unicidad_bayes}
+Sean $(\Omega,\mathcal F,P)$ un espacio de probabilidad,
+\[
+\Pi_H=\{H_1,\dots,H_n\},
+\qquad
+\Pi_E=\{E_1,\dots,E_m\},
+\]
+particiones medibles finitas de $\Omega$, y
+\[
+X=(X_1,\dots,X_n)\in\Delta_n^\circ,
+\qquad
+X_i:=P(H_i),\quad i=1,\dots,n.
+\]
+Sea $j\in\{1,\dots,m\}$ tal que
+\[
+P(H_i\cap E_j)>0,\qquad i=1,\dots,n,
+\]
+y defínase
+\[
+\ell_i^{(j)}:=P(E_j\mid H_i),\qquad i=1,\dots,n.
+\]
+Entonces, para un operador $T\in\mathcal G$, se tiene
+\[
+T(X)_i=P(H_i\mid E_j),\qquad i=1,\dots,n,
+\]
+si y sólo si
+\[
+T=T_{Y^{\ell^{(j)}}}.
+\]
+\end{proposicion}
+
+\begin{proof}
+Sea $T\in\mathcal G$. Entonces existe $Y\in C_{\mathrm{glob}}$ tal que $T=T_Y$. Supóngase primero que
+\[
+T(X)_i=P(H_i\mid E_j),\qquad i=1,\dots,n.
+\]
+Por definición del operador global,
+\[
+T_Y(X)_i
+=
+\frac{X_i(1+Y_i)}{\sum_{k=1}^n X_k(1+Y_k)},
+\qquad i=1,\dots,n.
+\]
+Por otra parte, como $X_i=P(H_i)$ y $\ell_i^{(j)}=P(E_j\mid H_i)$, se tiene
+\[
+X_i\,\ell_i^{(j)}=P(H_i)\,P(E_j\mid H_i)=P(H_i\cap E_j),
+\]
+y, puesto que $\Pi_H$ es una partición de $\Omega$,
+\[
+\sum_{k=1}^n X_k\,\ell_k^{(j)}
+=
+\sum_{k=1}^n P(H_k\cap E_j)
+=
+P(E_j).
+\]
+De aquí se sigue que
+\[
+P(H_i\mid E_j)
+=
+\frac{P(H_i\cap E_j)}{P(E_j)}
+=
+\frac{X_i\,\ell_i^{(j)}}{\sum_{k=1}^n X_k\,\ell_k^{(j)}},
+\qquad i=1,\dots,n.
+\]
+Por consiguiente,
+\[
+\frac{X_i(1+Y_i)}{\sum_{k=1}^n X_k(1+Y_k)}
+=
+\frac{X_i\,\ell_i^{(j)}}{\sum_{k=1}^n X_k\,\ell_k^{(j)}},
+\qquad i=1,\dots,n.
+\]
+Como $X_i>0$ para todo $i=1,\dots,n$, se deduce que
+\[
+\frac{1+Y_i}{\ell_i^{(j)}}
+=
+\frac{\sum_{k=1}^n X_k(1+Y_k)}{\sum_{k=1}^n X_k\,\ell_k^{(j)}}
+=:c,
+\qquad i=1,\dots,n.
+\]
+La constante $c$ es positiva e independiente de $i$, y por tanto
+\[
+1+Y_i=c\,\ell_i^{(j)},\qquad i=1,\dots,n.
+\]
+Sea ahora $Z\in\Delta_n^\circ$. Entonces, para cada $i=1,\dots,n$,
+\[
+T_Y(Z)_i
+=
+\frac{Z_i(1+Y_i)}{\sum_{k=1}^n Z_k(1+Y_k)}
+=
+\frac{Z_i\,c\,\ell_i^{(j)}}{\sum_{k=1}^n Z_k\,c\,\ell_k^{(j)}}
+=
+\frac{Z_i\,\ell_i^{(j)}}{\sum_{k=1}^n Z_k\,\ell_k^{(j)}}
+=
+T_{Y^{\ell^{(j)}}}(Z)_i.
+\]
+Se sigue que $T=T_{Y^{\ell^{(j)}}}$.
+
+Recíprocamente, si $T=T_{Y^{\ell^{(j)}}}$, entonces para cada $i=1,\dots,n$,
+\[
+T(X)_i
+=
+\frac{X_i\,\ell_i^{(j)}}{\sum_{k=1}^n X_k\,\ell_k^{(j)}}
+=
+\frac{P(H_i\cap E_j)}{P(E_j)}
+=
+P(H_i\mid E_j).
+\]
+Esto concluye la demostración.
+\end{proof}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{corolario}[Actualización bayesiana secuencial como composición en $\mathcal G$]\label{cor:bayes_secuencial}
+Sean $(\Omega,\mathcal F,P)$ un espacio de probabilidad,
+\[
+\Pi_H=\{H_1,\dots,H_n\},
+\qquad
+\Pi_E=\{E_1,\dots,E_m\},
+\]
+particiones medibles finitas de $\Omega$, y
+\[
+X_0=(X_{0,1},\dots,X_{0,n})\in\Delta_n^\circ,
+\qquad
+X_{0,i}:=P(H_i),\quad i=1,\dots,n.
+\]
+Sean $j_1,\dots,j_r\in\{1,\dots,m\}$ y, para cada $s=1,\dots,r$, supóngase que
+\[
+P(H_i\cap E_{j_s})>0,\qquad i=1,\dots,n.
+\]
+Para cada $s=1,\dots,r$, defínase la verosimilitud asociada a la observación $E_{j_s}$ por
+\[
+\ell_i^{(j_s)}:=P(E_{j_s}\mid H_i),\qquad i=1,\dots,n.
+\]
+Entonces el estado posterior obtenido tras aplicar sucesivamente las $r$ actualizaciones bayesianas viene dado por
+\[
+X_r=
+T_{Y^{\ell^{(j_r)}}}\circ\cdots\circ T_{Y^{\ell^{(j_1)}}}(X_0).
+\]
+Si, además, las observaciones son condicionalmente independientes dadas las hipótesis, entonces la actualización secuencial coincide con la actualización en un solo paso asociada a la verosimilitud acumulada
+\[
+\widetilde{\ell}_i:=\prod_{s=1}^r \ell_i^{(j_s)},
+\qquad i=1,\dots,n,
+\]
+es decir,
+\[
+X_r=T_{Y^{\widetilde{\ell}}}(X_0).
+\]
+\end{corolario}
+
+\begin{proof}
+Para cada $s=1,\dots,r$, la hipótesis $P(H_i\cap E_{j_s})>0$ para todo $i=1,\dots,n$ implica que
+\[
+\ell_i^{(j_s)}=P(E_{j_s}\mid H_i)>0,\qquad i=1,\dots,n.
+\]
+Por consiguiente, cada vector $\ell^{(j_s)}$ determina una corrección global $Y^{\ell^{(j_s)}}\in C_{\mathrm{glob}}$, y el operador
+\[
+T_{Y^{\ell^{(j_s)}}}:\Delta_n^\circ\to\Delta_n^\circ
+\]
+está bien definido.
+
+Aplicando en cada paso la actualización bayesiana asociada a la observación correspondiente, se obtiene sucesivamente
+\[
+X_1=T_{Y^{\ell^{(j_1)}}}(X_0),\qquad
+X_2=T_{Y^{\ell^{(j_2)}}}(X_1),\qquad \dots,\qquad
+X_r=T_{Y^{\ell^{(j_r)}}}(X_{r-1}).
+\]
+Por sustitución iterada, resulta
+\[
+X_r=
+T_{Y^{\ell^{(j_r)}}}\circ\cdots\circ T_{Y^{\ell^{(j_1)}}}(X_0).
+\]
+
+Supóngase ahora, además, que las observaciones son condicionalmente independientes dadas las hipótesis. Entonces, para cada $i=1,\dots,n$, la verosimilitud conjunta es el producto de las verosimilitudes individuales:
+\[
+\widetilde{\ell}_i=\prod_{s=1}^r \ell_i^{(j_s)}.
+\]
+Por la ley de composición de los operadores globales, la composición
+\[
+T_{Y^{\ell^{(j_r)}}}\circ\cdots\circ T_{Y^{\ell^{(j_1)}}}
+\]
+es nuevamente un operador global, cuyo factor multiplicativo es proporcional al producto coordenado de los factores individuales. Como dichos factores son precisamente
+\[
+\ell^{(j_1)},\dots,\ell^{(j_r)},
+\]
+el operador compuesto coincide con $T_{Y^{\widetilde{\ell}}}$. Por tanto,
+\[
+X_r=T_{Y^{\widetilde{\ell}}}(X_0).
+\]
+Esto concluye la demostración.
+\end{proof}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{corolario}[Corrección óptima hacia el posterior]\label{cor:correccion_optima_bayes}
+Sean $(\Omega,\mathcal F,P)$ un espacio de probabilidad,
+\[
+\Pi_H=\{H_1,\dots,H_n\},
+\qquad
+\Pi_E=\{E_1,\dots,E_m\},
+\]
+particiones medibles finitas de $\Omega$, y
+\[
+X=(X_1,\dots,X_n)\in\Delta_n^\circ,
+\qquad
+X_i:=P(H_i),\quad i=1,\dots,n.
+\]
+Sea $j\in\{1,\dots,m\}$ tal que
+\[
+P(H_i\cap E_j)>0,\qquad i=1,\dots,n,
+\]
+y defínanse
+\[
+\pi_i^{(j)}:=P(H_i\mid E_j),
+\qquad
+\ell_i^{(j)}:=P(E_j\mid H_i),
+\qquad i=1,\dots,n.
+\]
+Defínase el campo de corrección bayesiana hacia el posterior por
+\[
+Y^*(X,\pi^{(j)})_i:=\frac{\pi_i^{(j)}}{X_i}-1,
+\qquad i=1,\dots,n.
+\]
+Entonces se verifican las siguientes afirmaciones:
+\begin{enumerate}
+    \item \textnormal{(desplazamiento algebraico --- contenido propio)} Para todo $i=1,\dots,n$,
+    \[
+    1+Y^*(X,\pi^{(j)})_i
+    =
+    \frac{\pi_i^{(j)}}{X_i}
+    =
+    \frac{\ell_i^{(j)}}{P(E_j)}.
+    \]
+    En particular, los factores multiplicativos de $Y^*(X,\pi^{(j)})$ son proporcionales a la verosimilitud, y por tanto
+    \[
+    T_{Y^*(X,\pi^{(j)})}=T_{Y^{\ell^{(j)}}},
+    \qquad
+    T_{Y^*(X,\pi^{(j)})}(X)=\pi^{(j)}.
+    \]
+    \item \textnormal{(desplazamiento discreto)} Para todo $\alpha\in[0,1]$, la actualización relajada
+    \[
+    X^+:=T_{\alpha\,Y^*(X,\pi^{(j)})}(X)
+    \]
+    satisface
+    \[
+    X^+=(1-\alpha)X+\alpha\,\pi^{(j)}.
+    \]
+    En particular, para $\alpha=1$ se recupera exactamente la actualización bayesiana:
+    \[
+    X^+=\pi^{(j)}.
+    \]
+    \item \textnormal{(desplazamiento infinitesimal)} El límite infinitesimal de la regla discreta anterior viene dado por
+    \[
+    \dot X(t)=\pi^{(j)}-X(t),
+    \qquad X(0)=X,
+    \]
+    cuya solución es
+    \[
+    X(t)=e^{-t}X+(1-e^{-t})\pi^{(j)},
+    \qquad t\ge 0.
+    \]
+    En consecuencia,
+    \[
+    X(t)\to \pi^{(j)}
+    \qquad \text{cuando } t\to\infty.
+    \]
+\end{enumerate}
+\end{corolario}
+
+\begin{proof}
+Los ítems 2 y 3 son aplicaciones directas del Teorema~\ref{teo:equivalenciaCD} con el blanco abstracto $P$ sustituido por el posterior $\pi^{(j)}$: el campo $Y^*(X,\pi^{(j)})_i = \pi_i^{(j)}/X_i - 1$ tiene exactamente la forma $Y^*(X,P)_i = P_i/X_i - 1$ del teorema, con $P:=\pi^{(j)}$.
+
+El contenido propio del ítem 1 es la identidad $\pi_i^{(j)}/X_i = \ell_i^{(j)}/P(E_j)$, que resulta de la fórmula de Bayes: para cada $i=1,\dots,n$,
+\[
+\pi_i^{(j)}
+=
+P(H_i\mid E_j)
+=
+\frac{P(H_i)\,P(E_j\mid H_i)}{P(E_j)}
+=
+\frac{X_i\,\ell_i^{(j)}}{P(E_j)}.
+\]
+Como $X_i>0$, se obtiene $\pi_i^{(j)}/X_i = \ell_i^{(j)}/P(E_j)$. Dado que el operador global es invariante frente a una constante multiplicativa positiva común, se concluye $T_{Y^*(X,\pi^{(j)})}=T_{Y^{\ell^{(j)}}}$, y en particular $T_{Y^*(X,\pi^{(j)})}(X)=\pi^{(j)}$.
+\end{proof}
+
+
+\subsection{Modelos continuos como estados informacionales discretos}
+
+\begin{observacion}[Criterio medible para la discretización paramétrica]
+La discretización paramétrica que se usa en este bloque descansa en dos planos ya fijados. En el plano interno, las Secciones~A--D proporcionan el espacio de probabilidad, la partición medible finita, el símplex, el conjunto de correcciones globales y el operador multiplicativo normalizado; en particular, se usan los objetos introducidos en las Definiciones~\ref{def:espacio_prob}, \ref{def:particion}, \ref{def:simplex}, \ref{def:Cglob} y \ref{def:Tglobal}. En el plano de teoría de la medida, la referencia de Tao, \emph{An Introduction to Measure Theory}, justifica trabajar con conjuntos borelianos, funciones indicadoras, funciones medibles no negativas e integrales de Lebesgue sobre espacios de medida. Así, las masas de las celdas pueden escribirse como integrales de funciones indicadoras contra una densidad.
+\end{observacion}
+
+\begin{definicion}[Partición paramétrica uniforme]\label{def:particion_parametrica}
+Sea $\Omega=(a,b)\subset\mathbb R$, con $a<b$, y sea $\mathcal F=\mathcal B(\Omega)$ la $\sigma$-álgebra de Borel relativa en $\Omega$. Sea $P_0$ una medida de probabilidad sobre $(\Omega,\mathcal F)$ absolutamente continua respecto de la medida de Lebesgue restringida a $\Omega$. Sea
+\[
+f:=\frac{dP_0}{d\lambda}
+\]
+una densidad de $P_0$ respecto de $\lambda$, donde $\lambda$ denota la medida de Lebesgue restringida a $\Omega$. Se supone que
+\[
+f:\Omega\to(0,\infty)
+\]
+es $\mathcal F$-medible y satisface
+\[
+\int_\Omega f(\theta)\,d\theta=1.
+\]
+
+Dado $n\ge 1$, sea
+\[
+h:=\frac{b-a}{n}.
+\]
+La \emph{partición paramétrica uniforme} de orden $n$ asociada a $\Omega$ es la familia
+\[
+\Pi_n:=\{E_1,\dots,E_n\},
+\]
+donde
+\[
+E_i:=
+\begin{cases}
+[a+(i-1)h,\,a+ih)\cap\Omega, & i=1,\dots,n-1,\\[4pt]
+[a+(n-1)h,\,b)\cap\Omega, & i=n.
+\end{cases}
+\]
+
+El \emph{estado informacional previo} asociado a $(\Omega,\mathcal F,P_0,\Pi_n)$ es el vector
+\[
+X_0=(X_{0,1},\dots,X_{0,n}),
+\qquad
+X_{0,i}:=P_0(E_i)=\int_{E_i} f(\theta)\,d\theta,
+\quad i=1,\dots,n.
+\]
+\end{definicion}
+
+\begin{proposicion}[Estado previo inducido por una partición paramétrica uniforme]\label{prop:estado_parametrico_simplex}
+Sea $\Omega=(a,b)\subset\mathbb R$, con $a<b$, y sea $\mathcal F=\mathcal B(\Omega)$. Sea $P_0$ una medida de probabilidad sobre $(\Omega,\mathcal F)$ absolutamente continua respecto de la medida de Lebesgue restringida a $\Omega$, con densidad $f:\Omega\to(0,\infty)$ medible y tal que
+\[
+\int_\Omega f(\theta)\,d\theta=1.
+\]
+Sea $n\ge 1$, sea $h=(b-a)/n$ y sean
+\[
+E_i:=
+\begin{cases}
+[a+(i-1)h,\,a+ih)\cap\Omega, & i=1,\dots,n-1,\\[4pt]
+[a+(n-1)h,\,b)\cap\Omega, & i=n.
+\end{cases}
+\]
+Defínase
+\[
+X_{0,i}:=P_0(E_i)=\int_{E_i}f(\theta)\,d\theta,
+\qquad i=1,\dots,n.
+\]
+Entonces $\Pi_n=\{E_1,\dots,E_n\}$ es una partición medible finita no degenerada de $\Omega$ y
+\[
+X_0=(X_{0,1},\dots,X_{0,n})\in\Delta_n^\circ.
+\]
+\end{proposicion}
+
+\begin{proof}
+Para $i=1,\dots,n$, cada $E_i$ es intersección de un intervalo boreliano de $\mathbb R$ con $\Omega$; por tanto,
+\[
+E_i\in\mathcal F.
+\]
+Además,
+\[
+E_i\cap E_j=\varnothing\quad (i\ne j),
+\qquad
+\bigcup_{i=1}^n E_i=\Omega.
+\]
+Luego $\Pi_n$ es una partición medible finita de $\Omega$.
+
+Como cada $E_i$ contiene un intervalo relativo no vacío de $\Omega$ y $f(\theta)>0$ para todo $\theta\in\Omega$, se tiene
+\[
+X_{0,i}
+=P_0(E_i)
+=\int_{E_i}f(\theta)\,d\theta
+>0,
+\qquad i=1,\dots,n.
+\]
+Por otra parte,
+\[
+\sum_{i=1}^n X_{0,i}
+=
+\sum_{i=1}^n P_0(E_i)
+=
+P_0\!\left(\bigcup_{i=1}^n E_i\right)
+=
+P_0(\Omega)
+=1.
+\]
+Así,
+\[
+X_{0,i}>0\quad (i=1,\dots,n),
+\qquad
+\sum_{i=1}^nX_{0,i}=1,
+\]
+y por consiguiente
+\[
+X_0\in\Delta_n^\circ.
+\]
+\end{proof}
+
+\begin{observacion}[Promedio condicional de la verosimilitud]
+La integral que aparece en la verosimilitud discreta es una integral de Lebesgue respecto de $P_0$. La referencia de Tao permite tratar $\int_{E_i}\ell\,dP_0$ como integral de una función medible no negativa sobre un espacio de medida. La condición $0<\int_\Omega \ell\,dP_0<\infty$ evita cantidades extendidas en el normalizador; esta precaución es necesaria porque las operaciones algebraicas con $+\infty$ no admiten cancelación ordinaria. En la semántica bayesiana ya desarrollada en la Sección~E, la verosimilitud actúa como factor multiplicativo; esta lectura concuerda con los espacios de Bayes de Egozcue, Pawlowsky-Glahn, Tolosana-Delgado, Ortego y van den Boogaart, donde la perturbación corresponde a multiplicación de densidades seguida de normalización.
+\end{observacion}
+
+\begin{definicion}[Verosimilitud discreta inducida por una partición]\label{def:verosimilitud_global}
+Sea $\Omega=(a,b)\subset\mathbb R$, sea $\mathcal F=\mathcal B(\Omega)$ y sea $P_0$ una medida de probabilidad sobre $(\Omega,\mathcal F)$. Sea $\Pi_n=\{E_1,\dots,E_n\}$ una partición medible finita no degenerada de $\Omega$. Sea $e$ un dato observado y sea
+\[
+\ell:\Omega\to(0,\infty)
+\]
+una función de verosimilitud medible, asociada al dato $e$, tal que
+\[
+0<\int_\Omega \ell(\theta)\,dP_0(\theta)<\infty.
+\]
+
+La \emph{verosimilitud discreta del dato $e$ bajo la celda $E_i$} se define por
+\[
+\ell_i
+:=E_{P_0}[\ell\mid E_i]
+:=
+\frac{\displaystyle\int_{E_i}\ell(\theta)\,dP_0(\theta)}{P_0(E_i)},
+\qquad i=1,\dots,n.
+\]
+Si, además, $P_0$ tiene densidad $f$ respecto de la medida de Lebesgue restringida a $\Omega$, entonces
+\[
+\ell_i
+=
+\frac{\displaystyle\int_{E_i}\ell(\theta)f(\theta)\,d\theta}{\displaystyle\int_{E_i}f(\theta)\,d\theta},
+\qquad i=1,\dots,n.
+\]
+
+El vector asociado a la verosimilitud discreta se define por
+\[
+1+Y_i^\ell:=\ell_i,
+\qquad i=1,\dots,n.
+\]
+\end{definicion}
+
+\begin{proposicion}[Admisibilidad de la corrección de verosimilitud]\label{prop:admisibilidad_verosimilitud_global}
+Sea $(\Omega,\mathcal F,P_0)$ un espacio de probabilidad. Sea $\Pi_n=\{E_1,\dots,E_n\}$ una partición medible finita de $\Omega$ tal que
+\[
+P_0(E_i)>0,
+\qquad i=1,\dots,n.
+\]
+Sea $\ell:\Omega\to(0,\infty)$ una función medible tal que
+\[
+0<\int_\Omega \ell\,dP_0<\infty.
+\]
+Para cada $i=1,\dots,n$, defínase
+\[
+\ell_i:=\frac{\displaystyle\int_{E_i}\ell\,dP_0}{P_0(E_i)}
+\]
+y defínase $Y^\ell\in\mathbb R^n$ por
+\[
+1+Y_i^\ell:=\ell_i,
+\qquad i=1,\dots,n.
+\]
+Entonces
+\[
+Y^\ell\in C_{\mathrm{glob}}.
+\]
+\end{proposicion}
+
+\begin{proof}
+Como $\ell(\omega)>0$ para todo $\omega\in\Omega$ y $P_0(E_i)>0$, se tiene
+\[
+\int_{E_i}\ell\,dP_0>0.
+\]
+Además,
+\[
+0<\int_{E_i}\ell\,dP_0
+\le
+\int_\Omega \ell\,dP_0
+<\infty.
+\]
+Por tanto,
+\[
+0<
+\frac{\displaystyle\int_{E_i}\ell\,dP_0}{P_0(E_i)}
+<\infty,
+\qquad i=1,\dots,n.
+\]
+Es decir,
+\[
+0<\ell_i<\infty,
+\qquad i=1,\dots,n.
+\]
+Como
+\[
+1+Y_i^\ell=\ell_i,
+\]
+se obtiene
+\[
+1+Y_i^\ell>0,
+\qquad i=1,\dots,n.
+\]
+Así,
+\[
+Y^\ell=(Y_1^\ell,\dots,Y_n^\ell)\in\mathbb R^n,
+\qquad
+1+Y_i^\ell>0\quad (i=1,\dots,n),
+\]
+y por consiguiente
+\[
+Y^\ell\in C_{\mathrm{glob}}.
+\]
+\end{proof}
+
+\begin{observacion}[Radon--Nikodym y construcción de la posterior]
+En la teoría de la medida, una medida absolutamente continua puede representarse mediante una derivada de Radon--Nikodym respecto de una medida dominante. En este bloque no se invoca el teorema para obtener existencia abstracta: la posterior se construye directamente mediante la densidad $\ell/Z$ respecto de $P_0$, donde $Z=\int_\Omega\ell\,dP_0$. La referencia de Tao proporciona el marco de espacios de medida e integración; la lectura bayesiana de los espacios de Bayes proporciona la interpretación multiplicativa de la actualización.
+\end{observacion}
+
+\begin{lema}[Cambio de medida exacto por celdas]\label{lem:verosimilitud_cambio_medida}
+Sea $(\Omega,\mathcal F,P_0)$ un espacio de probabilidad. Sea $\Pi_n=\{E_1,\dots,E_n\}$ una partición medible finita de $\Omega$ tal que
+\[
+P_0(E_i)>0,
+\qquad i=1,\dots,n.
+\]
+Sea $\ell:\Omega\to(0,\infty)$ una función medible tal que
+\[
+Z:=\int_\Omega\ell\,dP_0
+\]
+satisface
+\[
+0<Z<\infty.
+\]
+Defínase, para $A\in\mathcal F$,
+\[
+Q(A):=\int_A\frac{\ell}{Z}\,dP_0.
+\]
+Defínase también
+\[
+\ell_i:=\frac{\displaystyle\int_{E_i}\ell\,dP_0}{P_0(E_i)},
+\qquad i=1,\dots,n.
+\]
+Entonces $Q$ es una medida de probabilidad sobre $(\Omega,\mathcal F)$, se cumple
+\[
+\frac{dQ}{dP_0}=\frac{\ell}{Z},
+\]
+y, para cada $i=1,\dots,n$,
+\[
+Q(E_i)
+=
+\frac{P_0(E_i)\ell_i}{\displaystyle\sum_{k=1}^nP_0(E_k)\ell_k}.
+\]
+\end{lema}
+
+\begin{proof}
+Para $A\in\mathcal F$,
+\[
+Q(A)=\int_A\frac{\ell}{Z}\,dP_0\ge 0.
+\]
+Además,
+\[
+Q(\Omega)
+=
+\int_\Omega\frac{\ell}{Z}\,dP_0
+=
+\frac{1}{Z}\int_\Omega\ell\,dP_0
+=
+\frac{Z}{Z}
+=1.
+\]
+La aditividad numerable se hereda de la integral respecto de $P_0$, pues la densidad $\ell/Z$ es medible y no negativa. Luego $Q$ es una medida de probabilidad.
+
+Por definición de $Q$,
+\[
+Q(A)=\int_A\frac{\ell}{Z}\,dP_0,
+\qquad A\in\mathcal F,
+\]
+de modo que
+\[
+\frac{dQ}{dP_0}=\frac{\ell}{Z}.
+\]
+
+Para cada $i=1,\dots,n$,
+\[
+P_0(E_i)\ell_i
+=
+P_0(E_i)
+\frac{\displaystyle\int_{E_i}\ell\,dP_0}{P_0(E_i)}
+=
+\int_{E_i}\ell\,dP_0.
+\]
+Por tanto,
+\[
+\sum_{k=1}^nP_0(E_k)\ell_k
+=
+\sum_{k=1}^n\int_{E_k}\ell\,dP_0
+=
+\int_{\bigcup_{k=1}^nE_k}\ell\,dP_0
+=
+\int_\Omega\ell\,dP_0
+=Z.
+\]
+Así,
+\[
+Q(E_i)
+=
+\int_{E_i}\frac{\ell}{Z}\,dP_0
+=
+\frac{\displaystyle\int_{E_i}\ell\,dP_0}{Z}
+=
+\frac{P_0(E_i)\ell_i}{\displaystyle\sum_{k=1}^nP_0(E_k)\ell_k}.
+\]
+\end{proof}
+
+\begin{observacion}[Identidad entre actualización bayesiana y operador global]
+La Sección~C introduce el operador informacional global como multiplicación coordenada a coordenada seguida de normalización. La semántica bayesiana de la Sección~E identifica la verosimilitud con los factores multiplicativos de esa corrección. En la bibliografía de espacios de Bayes, la fórmula de Bayes se lee precisamente como perturbación: se multiplican densidades positivas proporcionales y se normaliza. En consecuencia, la proposición siguiente formaliza que el operador $T_Y$ no aproxima la posterior continua, sino que coincide con la masa que esa posterior asigna a cada celda de la partición.
+\end{observacion}
+
+\begin{proposicion}[Actualización bayesiana paramétrica en CI]\label{prop:bayes_parametrico}
+Sea $\Omega=(a,b)\subset\mathbb R$, con $a<b$, y sea $\mathcal F=\mathcal B(\Omega)$. Sea $P_0$ una medida de probabilidad sobre $(\Omega,\mathcal F)$ absolutamente continua respecto de la medida de Lebesgue restringida a $\Omega$, con densidad $f:\Omega\to(0,\infty)$ medible y tal que
+\[
+\int_\Omega f(\theta)\,d\theta=1.
+\]
+Sea $n\ge 1$, sea $h=(b-a)/n$ y sean
+\[
+E_i:=
+\begin{cases}
+[a+(i-1)h,\,a+ih)\cap\Omega, & i=1,\dots,n-1,\\[4pt]
+[a+(n-1)h,\,b)\cap\Omega, & i=n.
+\end{cases}
+\]
+Defínase
+\[
+X_{0,i}:=P_0(E_i)=\int_{E_i}f(\theta)\,d\theta,
+\qquad i=1,\dots,n.
+\]
+Sea $\ell:\Omega\to(0,\infty)$ una función medible tal que
+\[
+Z:=\int_\Omega\ell\,dP_0
+\]
+satisface
+\[
+0<Z<\infty.
+\]
+Defínase
+\[
+\ell_i:=\frac{\displaystyle\int_{E_i}\ell\,dP_0}{P_0(E_i)},
+\qquad
+1+Y_i^\ell:=\ell_i,
+\qquad i=1,\dots,n.
+\]
+Defínase, para $A\in\mathcal F$,
+\[
+Q(A):=\int_A\frac{\ell}{Z}\,dP_0.
+\]
+Finalmente, defínase
+\[
+T_{Y^\ell}(X_0)_i
+:=
+\frac{X_{0,i}(1+Y_i^\ell)}{\displaystyle\sum_{k=1}^nX_{0,k}(1+Y_k^\ell)},
+\qquad i=1,\dots,n.
+\]
+Entonces
+\[
+T_{Y^\ell}(X_0)_i=Q(E_i),
+\qquad i=1,\dots,n.
+\]
+En particular,
+\[
+T_{Y^\ell}(X_0)\in\Delta_n^\circ.
+\]
+\end{proposicion}
+
+\begin{proof}
+Para cada $i=1,\dots,n$,
+\[
+X_{0,i}=P_0(E_i),
+\qquad
+1+Y_i^\ell=\ell_i.
+\]
+Por tanto,
+\[
+T_{Y^\ell}(X_0)_i
+=
+\frac{X_{0,i}(1+Y_i^\ell)}{\displaystyle\sum_{k=1}^nX_{0,k}(1+Y_k^\ell)}
+=
+\frac{P_0(E_i)\ell_i}{\displaystyle\sum_{k=1}^nP_0(E_k)\ell_k}.
+\]
+Como
+\[
+\ell_i
+=
+\frac{\displaystyle\int_{E_i}\ell\,dP_0}{P_0(E_i)},
+\]
+se tiene
+\[
+P_0(E_i)\ell_i
+=
+\int_{E_i}\ell\,dP_0.
+\]
+Luego
+\[
+\sum_{k=1}^nP_0(E_k)\ell_k
+=
+\sum_{k=1}^n\int_{E_k}\ell\,dP_0
+=
+\int_\Omega\ell\,dP_0
+=Z.
+\]
+Sustituyendo,
+\[
+T_{Y^\ell}(X_0)_i
+=
+\frac{\displaystyle\int_{E_i}\ell\,dP_0}{Z}
+=
+\int_{E_i}\frac{\ell}{Z}\,dP_0
+=Q(E_i).
+\]
+Además, como $f>0$ en $\Omega$ y cada $E_i$ tiene longitud positiva,
+\[
+X_{0,i}>0.
+\]
+Como $\ell_i>0$,
+\[
+X_{0,i}(1+Y_i^\ell)=X_{0,i}\ell_i>0.
+\]
+Así,
+\[
+T_{Y^\ell}(X_0)_i>0,
+\qquad i=1,\dots,n.
+\]
+Finalmente,
+\[
+\sum_{i=1}^nT_{Y^\ell}(X_0)_i
+=
+\sum_{i=1}^nQ(E_i)
+=
+Q(\Omega)
+=1.
+\]
+Por consiguiente,
+\[
+T_{Y^\ell}(X_0)\in\Delta_n^\circ.
+\]
+\end{proof}
+
+\begin{observacion}[Familias exponenciales y separación de niveles]
+En los espacios de Bayes, las familias exponenciales aparecen como estructuras afines o cónicas de densidades positivas. Este hecho justifica separar dos niveles: el nivel continuo, donde la conjugación se expresa por suma de parámetros naturales, y el nivel discreto, donde el operador global recupera las masas de la posterior sobre una partición finita. La proposición siguiente no modifica el teorema bayesiano anterior; únicamente lo especializa al caso en que el producto entre densidad previa y verosimilitud conserva forma exponencial.
+\end{observacion}
+
+\begin{proposicion}[Modelo conjugado exponencial como caso particular]\label{prop:conjugado_exponencial_CI}
+Sea $\Omega=(a,b)\subset\mathbb R$, con $a<b$, y sea $\mathcal F=\mathcal B(\Omega)$. Sea $T:\Omega\to\mathbb R^m$ una función medible. Sean $\eta_0,\eta_\ell\in\mathbb R^m$ tales que
+\[
+0<
+I_0:=\int_\Omega \exp\bigl(\eta_0\cdot T(\theta)\bigr)\,d\theta
+<\infty
+\]
+y
+\[
+0<
+I_1:=\int_\Omega \exp\bigl((\eta_0+\eta_\ell)\cdot T(\theta)\bigr)\,d\theta
+<\infty.
+\]
+Defínase
+\[
+f(\theta):=\frac{\exp\bigl(\eta_0\cdot T(\theta)\bigr)}{I_0},
+\qquad \theta\in\Omega,
+\]
+y sea $P_0$ la medida de probabilidad sobre $(\Omega,\mathcal F)$ dada por
+\[
+dP_0(\theta)=f(\theta)\,d\theta.
+\]
+Sea $c_\ell>0$ y defínase la verosimilitud
+\[
+\ell(\theta):=c_\ell\exp\bigl(\eta_\ell\cdot T(\theta)\bigr),
+\qquad \theta\in\Omega.
+\]
+Sea $n\ge1$, sea $h=(b-a)/n$ y sean
+\[
+E_i:=
+\begin{cases}
+[a+(i-1)h,\,a+ih)\cap\Omega, & i=1,\dots,n-1,\\[4pt]
+[a+(n-1)h,\,b)\cap\Omega, & i=n.
+\end{cases}
+\]
+Defínase
+\[
+X_{0,i}:=P_0(E_i),
+\qquad
+\ell_i:=\frac{\displaystyle\int_{E_i}\ell\,dP_0}{P_0(E_i)},
+\qquad
+1+Y_i^\ell:=\ell_i.
+\]
+Defínase $Q$ por
+\[
+Q(A):=\frac{\displaystyle\int_A\ell\,dP_0}{\displaystyle\int_\Omega\ell\,dP_0},
+\qquad A\in\mathcal F.
+\]
+Entonces, para cada $i=1,\dots,n$,
+\[
+T_{Y^\ell}(X_0)_i
+=
+Q(E_i)
+=
+\frac{\displaystyle\int_{E_i}\exp\bigl((\eta_0+\eta_\ell)\cdot T(\theta)\bigr)\,d\theta}{\displaystyle\int_\Omega\exp\bigl((\eta_0+\eta_\ell)\cdot T(\theta)\bigr)\,d\theta}.
+\]
+Además, $Q$ es absolutamente continua respecto de la medida de Lebesgue restringida a $\Omega$ y su densidad es
+\[
+q(\theta)
+=
+\frac{\exp\bigl((\eta_0+\eta_\ell)\cdot T(\theta)\bigr)}{\displaystyle\int_\Omega\exp\bigl((\eta_0+\eta_\ell)\cdot T(u)\bigr)\,du}.
+\]
+En particular, la posterior pertenece a la misma familia exponencial, con parámetro natural
+\[
+\eta_{\mathrm{post}}:=\eta_0+\eta_\ell.
+\]
+\end{proposicion}
+
+\begin{proof}
+Primero,
+\[
+\int_\Omega f(\theta)\,d\theta
+=
+\frac{1}{I_0}\int_\Omega \exp\bigl(\eta_0\cdot T(\theta)\bigr)\,d\theta
+=
+1.
+\]
+Luego $P_0$ es probabilidad. Además,
+\[
+\int_\Omega\ell\,dP_0
+=
+\int_\Omega c_\ell\exp\bigl(\eta_\ell\cdot T(\theta)\bigr)
+\frac{\exp\bigl(\eta_0\cdot T(\theta)\bigr)}{I_0}\,d\theta.
+\]
+Por tanto,
+\[
+\int_\Omega\ell\,dP_0
+=
+\frac{c_\ell}{I_0}
+\int_\Omega\exp\bigl((\eta_0+\eta_\ell)\cdot T(\theta)\bigr)\,d\theta
+=
+\frac{c_\ell I_1}{I_0}.
+\]
+Como $c_\ell>0$, $0<I_0<\infty$ y $0<I_1<\infty$,
+\[
+0<\int_\Omega\ell\,dP_0<\infty.
+\]
+
+Para $A\in\mathcal F$,
+\[
+Q(A)
+=
+\frac{\displaystyle\int_A\ell\,dP_0}{\displaystyle\int_\Omega\ell\,dP_0}.
+\]
+El numerador satisface
+\[
+\int_A\ell\,dP_0
+=
+\frac{c_\ell}{I_0}
+\int_A\exp\bigl((\eta_0+\eta_\ell)\cdot T(\theta)\bigr)\,d\theta.
+\]
+El denominador satisface
+\[
+\int_\Omega\ell\,dP_0
+=
+\frac{c_\ell}{I_0}
+\int_\Omega\exp\bigl((\eta_0+\eta_\ell)\cdot T(\theta)\bigr)\,d\theta.
+\]
+Luego
+\[
+Q(A)
+=
+\frac{\displaystyle\int_A\exp\bigl((\eta_0+\eta_\ell)\cdot T(\theta)\bigr)\,d\theta}{\displaystyle\int_\Omega\exp\bigl((\eta_0+\eta_\ell)\cdot T(\theta)\bigr)\,d\theta}.
+\]
+Tomando $A=E_i$,
+\[
+Q(E_i)
+=
+\frac{\displaystyle\int_{E_i}\exp\bigl((\eta_0+\eta_\ell)\cdot T(\theta)\bigr)\,d\theta}{\displaystyle\int_\Omega\exp\bigl((\eta_0+\eta_\ell)\cdot T(\theta)\bigr)\,d\theta}.
+\]
+
+Por otra parte,
+\[
+T_{Y^\ell}(X_0)_i
+=
+\frac{X_{0,i}(1+Y_i^\ell)}{\displaystyle\sum_{k=1}^nX_{0,k}(1+Y_k^\ell)}
+=
+\frac{P_0(E_i)\ell_i}{\displaystyle\sum_{k=1}^nP_0(E_k)\ell_k}.
+\]
+Como
+\[
+P_0(E_i)\ell_i=\int_{E_i}\ell\,dP_0,
+\qquad
+\sum_{k=1}^nP_0(E_k)\ell_k=\int_\Omega\ell\,dP_0,
+\]
+se obtiene
+\[
+T_{Y^\ell}(X_0)_i
+=
+\frac{\displaystyle\int_{E_i}\ell\,dP_0}{\displaystyle\int_\Omega\ell\,dP_0}
+=Q(E_i).
+\]
+Finalmente, la densidad de $Q$ respecto de Lebesgue es
+\[
+q(\theta)
+=
+\frac{\exp\bigl((\eta_0+\eta_\ell)\cdot T(\theta)\bigr)}{\displaystyle\int_\Omega\exp\bigl((\eta_0+\eta_\ell)\cdot T(u)\bigr)\,du},
+\]
+de modo que el parámetro natural posterior es
+\[
+\eta_{\mathrm{post}}=\eta_0+\eta_\ell.
+\]
+\end{proof}
+

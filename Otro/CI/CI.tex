@@ -1,0 +1,2740 @@
+\documentclass[12pt]{article}
+\usepackage[spanish]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amssymb}
+\usepackage{amsthm}
+\usepackage{geometry}
+\geometry{margin=2.5cm}
+\usepackage{comment}
+\renewcommand{\familydefault}{\sfdefault} % texto en sans serif
+% \usepackage{lmodern} % alternativa si prefieres serif moderna
+\usepackage{mathrsfs}
+
+\newtheorem{definicion}{Definición}[section]
+\newtheorem{proposicion}{Proposición}[section]
+\newtheorem{teorema}{Teorema}[section]
+\newtheorem{corolario}{Corolario}[section]
+\newtheorem{observacion}{Observación}[section]
+\newtheorem{ejemplo}{Ejemplo}[section]
+
+% Figuras y tablas
+\usepackage{graphicx}
+\usepackage{float}       % para [H]
+\usepackage{subcaption}
+\usepackage{booktabs,tabularx,array}
+
+% Listas
+\usepackage{enumitem}
+
+% Títulos (opcional; quítalo si no lo usas o si cambias a wiley-article)
+\usepackage{titlesec}
+
+% Bibliografía con natbib (autor-año)
+\usepackage[authoryear]{natbib}
+\bibliographystyle{plainnat}
+
+% Hipervínculos (SIEMPRE al final)
+\usepackage[hidelinks]{hyperref}
+\title{Control Informacional}
+
+\author{
+\textbf{Alejandro Cruz López} \\
+Universidad Autónoma Metropolitana \\
+Unidad Iztapalapa
+}
+
+\date{
+\vspace{1em}
+\textbf{Asesores} \\[0.3em]
+Dr.\ Asael Fabián Martínez Martínez \\
+Dr.\ Joaquín Delgado Fernández \\
+\vspace{1em}
+9 de abril de 2026
+}
+\begin{document}
+\maketitle
+\section{Markov y control informacional}
+\begin{definicion}[Matriz estocástica y operador de Markov]
+Sea \(n\geq 2\). Una matriz \(P\in\mathbb{R}^{n\times n}\) se dice
+\emph{estocástica por filas} si
+\[
+P_{ij}\geq 0
+\quad\text{para todo } i,j\in\{1,\dots,n\},
+\]
+y
+\[
+\sum_{j=1}^{n}P_{ij}=1
+\quad\text{para todo } i\in\{1,\dots,n\}.
+\]
+
+Dada una matriz estocástica por filas \(P\), se define el operador de Markov
+asociado a \(P\) como la aplicación
+\[
+L_P:\Delta_n\longrightarrow \Delta_n,
+\qquad
+L_P(X):=XP,
+\]
+donde \(X\in\Delta_n\) se interpreta como vector fila. En coordenadas,
+\[
+\bigl(L_P(X)\bigr)_j
+=
+\sum_{i=1}^{n}X_iP_{ij},
+\qquad
+j=1,\dots,n.
+\]
+\end{definicion}
+\begin{ejemplo}[Operador de Markov en dimensión \(3\)]
+Considérese el estado
+\[
+X=\left(\frac{1}{2},\frac{1}{3},\frac{1}{6}\right)\in\Delta_3
+\]
+y la matriz estocástica por filas
+\[
+P=
+\begin{pmatrix}
+\frac{1}{2} & \frac{1}{2} & 0 \\[0.3em]
+\frac{1}{4} & \frac{1}{2} & \frac{1}{4} \\[0.3em]
+0 & \frac{1}{3} & \frac{2}{3}
+\end{pmatrix}.
+\]
+En efecto, todas las entradas de \(P\) son no negativas y cada fila suma \(1\).
+
+El operador de Markov asociado está dado por
+\[
+L_P(X)=XP.
+\]
+Calculando coordenada por coordenada,
+\[
+\bigl(L_P(X)\bigr)_1
+=
+\frac{1}{2}\cdot\frac{1}{2}
++
+\frac{1}{3}\cdot\frac{1}{4}
++
+\frac{1}{6}\cdot 0
+=
+\frac{1}{4}+\frac{1}{12}
+=
+\frac{1}{3},
+\]
+\[
+\bigl(L_P(X)\bigr)_2
+=
+\frac{1}{2}\cdot\frac{1}{2}
++
+\frac{1}{3}\cdot\frac{1}{2}
++
+\frac{1}{6}\cdot\frac{1}{3}
+=
+\frac{1}{4}+\frac{1}{6}+\frac{1}{18}
+=
+\frac{17}{36},
+\]
+y
+\[
+\bigl(L_P(X)\bigr)_3
+=
+\frac{1}{2}\cdot 0
++
+\frac{1}{3}\cdot\frac{1}{4}
++
+\frac{1}{6}\cdot\frac{2}{3}
+=
+\frac{1}{12}+\frac{1}{9}
+=
+\frac{7}{36}.
+\]
+Por tanto,
+\[
+L_P(X)
+=
+\left(
+\frac{1}{3},
+\frac{17}{36},
+\frac{7}{36}
+\right).
+\]
+Finalmente,
+\[
+\frac{1}{3}+\frac{17}{36}+\frac{7}{36}
+=
+\frac{12}{36}+\frac{17}{36}+\frac{7}{36}
+=
+1,
+\]
+de modo que \(L_P(X)\in\Delta_3\).
+\end{ejemplo}
+
+\begin{proposicion}[Preservación del símplex]
+Sea \(P\in\mathbb{R}^{n\times n}\) una matriz estocástica por filas. Entonces:
+
+\begin{enumerate}[label=\textnormal{(\roman*)}]
+    \item Para todo \(X\in\Delta_n\), se cumple
+    \[
+    L_P(X)\in\Delta_n.
+    \]
+
+    \item Si \(X\in\Delta_n^\circ\) y \(P_{ij}>0\) para todo \(i,j\), entonces
+    \[
+    L_P(X)\in\Delta_n^\circ.
+    \]
+
+    \item El operador \(L_P\) es afín; es decir, para todo
+    \(X,Z\in\Delta_n\) y todo \(\alpha\in[0,1]\),
+    \[
+    L_P\bigl(\alpha X+(1-\alpha)Z\bigr)
+    =
+    \alpha L_P(X)+(1-\alpha)L_P(Z).
+    \]
+\end{enumerate}
+\end{proposicion}
+
+\begin{proof}
+Sea \(X\in\Delta_n\). Para cada \(j\in\{1,\dots,n\}\),
+\[
+\bigl(L_P(X)\bigr)_j
+=
+\sum_{i=1}^{n}X_iP_{ij}.
+\]
+Como \(X_i\geq 0\) y \(P_{ij}\geq 0\), se tiene
+\[
+\bigl(L_P(X)\bigr)_j\geq 0.
+\]
+Además,
+\[
+\sum_{j=1}^{n}\bigl(L_P(X)\bigr)_j
+=
+\sum_{j=1}^{n}\sum_{i=1}^{n}X_iP_{ij}
+=
+\sum_{i=1}^{n}X_i\sum_{j=1}^{n}P_{ij}.
+\]
+Como \(P\) es estocástica por filas,
+\[
+\sum_{j=1}^{n}P_{ij}=1
+\]
+para todo \(i\). Por tanto,
+\[
+\sum_{j=1}^{n}\bigl(L_P(X)\bigr)_j
+=
+\sum_{i=1}^{n}X_i
+=
+1.
+\]
+Así, \(L_P(X)\in\Delta_n\).
+
+Ahora supóngase que \(X\in\Delta_n^\circ\) y que \(P_{ij}>0\) para todo \(i,j\).
+Entonces \(X_i>0\) para todo \(i\), y por tanto
+\[
+\bigl(L_P(X)\bigr)_j
+=
+\sum_{i=1}^{n}X_iP_{ij}
+>
+0
+\]
+para cada \(j\). En consecuencia,
+\[
+L_P(X)\in\Delta_n^\circ.
+\]
+
+Finalmente, sean \(X,Z\in\Delta_n\) y \(\alpha\in[0,1]\). Por linealidad del producto
+matricial,
+\[
+L_P\bigl(\alpha X+(1-\alpha)Z\bigr)
+=
+\bigl(\alpha X+(1-\alpha)Z\bigr)P
+\]
+\[
+=
+\alpha XP+(1-\alpha)ZP
+=
+\alpha L_P(X)+(1-\alpha)L_P(Z).
+\]
+Esto prueba que \(L_P\) es afín.
+\end{proof}
+
+\begin{definicion}[Corrección local inducida por Markov]
+Sea \(P\in\mathbb{R}^{n\times n}\) una matriz estocástica por filas y sea
+\(X\in\Delta_n^\circ\). Se define la \emph{corrección local inducida por Markov}
+en el estado \(X\) como el vector
+\[
+Y^P(X)\in\mathbb{R}^n
+\]
+cuyas coordenadas están dadas por
+\[
+Y_i^P(X)
+:=
+\frac{(L_P(X))_i}{X_i}-1,
+\qquad i=1,\dots,n.
+\]
+Equivalentemente, como \(L_P(X)=XP\),
+\[
+Y_i^P(X)
+=
+\frac{(XP)_i}{X_i}-1
+=
+\frac{\sum_{k=1}^{n}X_kP_{ki}}{X_i}-1.
+\]
+\end{definicion}
+
+\begin{proposicion}[Compatibilidad local entre Markov y CI]
+Sea \(P\in\mathbb{R}^{n\times n}\) una matriz estocástica por filas y sea
+\(X\in\Delta_n^\circ\). Entonces la corrección local inducida por Markov satisface
+\[
+Y^P(X)\in C(X).
+\]
+Además,
+\[
+T^{\mathrm{loc}}_{Y^P(X)}(X)=L_P(X).
+\]
+\end{proposicion}
+
+\begin{proof}
+Por definición,
+\[
+Y_i^P(X)
+=
+\frac{(L_P(X))_i}{X_i}-1.
+\]
+Como \(X\in\Delta_n^\circ\), se tiene \(X_i>0\) para todo \(i\), de modo que la expresión
+anterior está bien definida.
+
+Primero verificamos la admisibilidad local. Para cada \(i\),
+\[
+X_i\bigl(1+Y_i^P(X)\bigr)
+=
+X_i\left(1+\frac{(L_P(X))_i}{X_i}-1\right)
+=
+(L_P(X))_i.
+\]
+Por la preservación del símplex bajo \(L_P\), se tiene
+\[
+(L_P(X))_i\geq 0
+\]
+para todo \(i\). Por tanto,
+\[
+X_i\bigl(1+Y_i^P(X)\bigr)\geq 0.
+\]
+Además,
+\[
+\sum_{i=1}^{n}X_i\bigl(1+Y_i^P(X)\bigr)
+=
+\sum_{i=1}^{n}(L_P(X))_i
+=
+1.
+\]
+Así,
+\[
+Y^P(X)\in C(X).
+\]
+
+Finalmente, por la definición del operador local de CI,
+\[
+\bigl(T^{\mathrm{loc}}_{Y^P(X)}(X)\bigr)_i
+=
+X_i\bigl(1+Y_i^P(X)\bigr).
+\]
+Usando el cálculo anterior,
+\[
+\bigl(T^{\mathrm{loc}}_{Y^P(X)}(X)\bigr)_i
+=
+(L_P(X))_i.
+\]
+Como esto vale para todo \(i\), se concluye que
+\[
+T^{\mathrm{loc}}_{Y^P(X)}(X)=L_P(X).
+\]
+\end{proof}
+\begin{observacion}[Dependencia local de la corrección markoviana]
+La corrección \(Y^P(X)\) depende, en general, del estado base \(X\). En efecto,
+\[
+1+Y_i^P(X)
+=
+\frac{(XP)_i}{X_i}.
+\]
+Por tanto, para que existiera un vector fijo \(Y\in C_{\mathrm{glob}}\), independiente de
+\(X\), tal que
+\[
+T_Y(X)=L_P(X)
+\qquad
+\text{para todo } X\in\Delta_n^\circ,
+\]
+sería necesario que los cocientes
+\[
+\frac{(XP)_i}{X_i}
+\]
+fueran independientes de \(X\), salvo por el factor común de normalización propio de
+\(T_Y\). Esto no ocurre en general, pues \((XP)_i\) mezcla las coordenadas de \(X\) mediante
+la columna \(i\) de \(P\), mientras que \(X_i\) sólo depende de la coordenada \(i\).
+
+En consecuencia, un operador de Markov \(L_P\) debe interpretarse, dentro de CI, como una
+familia de correcciones locales
+\[
+X\longmapsto Y^P(X),
+\]
+no como una única corrección global fija del grupo \(G\), salvo en casos particulares.
+La única excepción ocurre cuando $P$ tiene todas las filas iguales, es decir,
+$P_{ij}=p_j$ para todo $i$ (matriz de rango~$1$). En ese caso
+$(XP)_i = p_i$ para todo $X$, de modo que $1+Y_i^P(X)=p_i/X_i$ depende
+de $X$ pero el operador $T_Y$ con $Y_i=p_i/X_i-1$ envía cualquier $X$
+al mismo punto $p\in\Delta_n^\circ$. Para toda otra $P$, no existe
+$Y\in C_{\mathrm{glob}}$ constante tal que $T_Y(X)=XP$ para todo
+$X\in\Delta_n^\circ$.
+
+\end{observacion}
+
+
+
+
+\begin{definicion}[Distribución estacionaria de una matriz de Markov]
+Sea \(P\in\mathbb{R}^{n\times n}\) una matriz estocástica por filas. 
+Una distribución \(\pi\in\Delta_n\) se dice \emph{estacionaria} para \(P\) si
+\[
+\pi P=\pi.
+\]
+
+Equivalente, \(\pi\) es estacionaria si es un punto fijo del operador de Markov
+\[
+L_P:\Delta_n\longrightarrow\Delta_n,
+\qquad
+L_P(X)=XP.
+\]
+Es decir,
+\[
+L_P(\pi)=\pi.
+\]
+
+En coordenadas, la condición de estacionariedad se escribe como
+\[
+\pi_j
+=
+\sum_{i=1}^{n}\pi_iP_{ij},
+\qquad
+j=1,\dots,n.
+\]
+\end{definicion}
+
+\begin{proposicion}[Estacionariedad y corrección nula]
+Sea \(P\in\mathbb{R}^{n\times n}\) una matriz estocástica por filas y sea
+\(\pi\in\Delta_n^\circ\) una distribución estacionaria de \(P\). Entonces
+\[
+Y^P(\pi)=0.
+\]
+En consecuencia,
+\[
+T^{\mathrm{loc}}_{Y^P(\pi)}(\pi)=\pi.
+\]
+\end{proposicion}
+
+\begin{proof}
+Como $\pi$ es estacionaria, $(\pi P)_i = \pi_i$ para todo $i$. Por definición,
+\[
+Y_i^P(\pi)
+=
+\frac{(\pi P)_i}{\pi_i}-1
+=
+\frac{\pi_i}{\pi_i}-1
+=
+0.
+\]
+Como esto vale para todo $i$, se concluye $Y^P(\pi)=0$.
+La segunda afirmación se sigue de la compatibilidad local:
+$T^{\mathrm{loc}}_{Y^P(\pi)}(\pi)=L_P(\pi)=\pi P=\pi$.
+\end{proof}
+
+\begin{proposicion}[Trayectoria markoviana como trayectoria local de CI]
+Sea \(P\in\mathbb{R}^{n\times n}\) una matriz estocástica por filas y sea
+\(X_0\in\Delta_n^\circ\). Defínase la trayectoria markoviana
+\[
+X_{t+1}=L_P(X_t)=X_tP,
+\qquad t=0,1,2,\dots.
+\]
+Entonces cada paso de la trayectoria puede escribirse como una corrección local de CI:
+\[
+X_{t+1}
+=
+T^{\mathrm{loc}}_{Y^P(X_t)}(X_t).
+\]
+En particular,
+\[
+X_t=L_P^t(X_0)=X_0P^t.
+\]
+\end{proposicion}
+
+\begin{proof}
+Por definición de la trayectoria,
+\[
+X_{t+1}=L_P(X_t).
+\]
+Como \(X_t\in\Delta_n^\circ\), la corrección local inducida por Markov está bien definida:
+\[
+Y_i^P(X_t)
+=
+\frac{(X_tP)_i}{(X_t)_i}-1.
+\]
+Por la compatibilidad local entre \(L_P\) y \(T^{\mathrm{loc}}\), se tiene
+\[
+T^{\mathrm{loc}}_{Y^P(X_t)}(X_t)=L_P(X_t).
+\]
+Por tanto,
+\[
+X_{t+1}
+=
+T^{\mathrm{loc}}_{Y^P(X_t)}(X_t).
+\]
+La identidad
+\[
+X_t=X_0P^t
+\]
+se obtiene por inducción. Para \(t=0\) es inmediata. Si \(X_t=X_0P^t\), entonces
+\[
+X_{t+1}=X_tP=(X_0P^t)P=X_0P^{t+1}.
+\]
+\end{proof}
+
+\begin{proposicion}[La matriz fija genera un campo vectorial discreto]
+Sea \(P\in\mathbb{R}^{n\times n}\) una matriz estocástica por filas. El operador
+\(L_P\) induce sobre el símplex el campo discreto
+\[
+V_P(X):=L_P(X)-X=XP-X.
+\]
+Entonces
+\[
+\sum_{i=1}^n (V_P(X))_i=0.
+\]
+Por tanto,
+\[
+V_P(X)\in T_X\Delta_n^\circ,
+\]
+es decir, el campo \(V_P\) es tangente al símplex.
+\end{proposicion}
+
+\begin{proof}
+Como \(X\in\Delta_n\) y \(P\) es estocástica por filas, se tiene
+\[
+L_P(X)=XP\in\Delta_n.
+\]
+Por tanto,
+\[
+\sum_{i=1}^n (XP)_i=1
+\qquad\text{y}\qquad
+\sum_{i=1}^n X_i=1.
+\]
+Entonces
+\[
+\sum_{i=1}^n (V_P(X))_i
+=
+\sum_{i=1}^n \bigl((XP)_i-X_i\bigr)
+=
+\sum_{i=1}^n (XP)_i-\sum_{i=1}^n X_i
+=
+1-1
+=
+0.
+\]
+Así, \(V_P(X)\) pertenece al hiperplano tangente del símplex.
+\end{proof}
+
+\begin{proposicion}[Disipación de energía relativa hacia la estacionaria]
+Sea \(P\in\mathbb{R}^{n\times n}\) una matriz estocástica por filas y sea
+\(\pi\in\Delta_n^\circ\) una distribución estacionaria de \(P\). Defínase
+\[
+E_\pi(X):=D_{\mathrm{KL}}(\pi\|X)
+=
+\sum_{i=1}^n \pi_i\log\left(\frac{\pi_i}{X_i}\right).
+\]
+Entonces, para todo \(X\in\Delta_n^\circ\),
+\[
+E_\pi(L_P(X))\leq E_\pi(X).
+\]
+Equivalentemente,
+\[
+D_{\mathrm{KL}}(\pi\|XP)
+\leq
+D_{\mathrm{KL}}(\pi\|X).
+\]
+\end{proposicion}
+\begin{proof}
+Como $\pi$ es estacionaria, $\pi_j=\sum_i \pi_i P_{ij}$ para todo $j$. Por tanto,
+\[
+D_{\mathrm{KL}}(\pi\|XP)
+=
+\sum_j \pi_j \log\frac{\pi_j}{(XP)_j}
+=
+\sum_j \left(\sum_i \pi_i P_{ij}\right)
+\log\frac{\sum_i \pi_i P_{ij}}{\sum_i X_i P_{ij}}.
+\]
+Para cada $j$ fijo, los pesos $w_{ij}:=\pi_i P_{ij}/\pi_j$ satisfacen
+$w_{ij}\geq 0$ y $\sum_i w_{ij}=1$. Aplicando Jensen a la función cóncava $\log$,
+\[
+\log\frac{\sum_i \pi_i P_{ij}}{\sum_i X_i P_{ij}}
+\leq
+\sum_i w_{ij}\log\frac{\pi_i}{X_i}.
+\]
+Multiplicando por $\pi_j$ y sumando en $j$,
+\[
+D_{\mathrm{KL}}(\pi\|XP)
+\leq
+\sum_j\sum_i \pi_i P_{ij}\log\frac{\pi_i}{X_i}
+=
+\sum_i \pi_i\log\frac{\pi_i}{X_i}
+\underbrace{\sum_j P_{ij}}_{=1}
+=
+D_{\mathrm{KL}}(\pi\|X).
+\]
+Es decir, $E_\pi(L_P(X))\leq E_\pi(X)$.
+\end{proof}
+
+\begin{proposicion}[Composición de operadores de Markov]
+Sean \(P,Q\in\mathbb{R}^{n\times n}\) matrices estocásticas por filas. Entonces \(PQ\)
+también es una matriz estocástica por filas y
+\[
+L_Q\circ L_P=L_{PQ}.
+\]
+Es decir, para todo \(X\in\Delta_n\),
+\[
+L_Q(L_P(X))=L_{PQ}(X).
+\]
+\end{proposicion}
+
+\begin{proof}
+Primero verificamos que \(PQ\) es estocástica por filas. Como \(P_{ik}\geq0\) y
+\(Q_{kj}\geq0\), se tiene
+\[
+(PQ)_{ij}=\sum_{k=1}^n P_{ik}Q_{kj}\geq 0.
+\]
+Además,
+\[
+\sum_{j=1}^n (PQ)_{ij}
+=
+\sum_{j=1}^n\sum_{k=1}^n P_{ik}Q_{kj}
+=
+\sum_{k=1}^n P_{ik}\sum_{j=1}^n Q_{kj}.
+\]
+Como \(Q\) es estocástica por filas,
+\[
+\sum_{j=1}^n Q_{kj}=1.
+\]
+Así,
+\[
+\sum_{j=1}^n (PQ)_{ij}
+=
+\sum_{k=1}^n P_{ik}
+=
+1.
+\]
+Por tanto, \(PQ\) es estocástica por filas.
+
+Ahora, para todo \(X\in\Delta_n\),
+\[
+L_Q(L_P(X))
+=
+L_Q(XP)
+=
+(XP)Q
+=
+X(PQ)
+=
+L_{PQ}(X).
+\]
+\end{proof}
+
+
+\subsection{Dinámica de matrices estocásticas}
+
+En esta sección se formaliza únicamente lo que fue explorado en los dos
+experimentos computacionales anteriores: primero, una dinámica de relajación de
+una matriz estocástica hacia una matriz objetivo; segundo, una dinámica extrema
+en la que la matriz cambia bajo un campo de velocidades y se proyecta de nuevo
+al conjunto de matrices estocásticas. No se introduce todavía ningún componente adicional ajeno a estos dos
+experimentos.
+
+\begin{definicion}[Dinámica markoviana no autónoma]
+Sea \(\mathcal S_n\) el conjunto de matrices estocásticas por filas de tamaño
+\(n\times n\). Una dinámica markoviana no autónoma sobre \(\Delta_n\) es una
+sucesión
+\[
+(X_t,K_t)_{t\geq 0}
+\]
+tal que
+\[
+X_t\in\Delta_n,
+\qquad
+K_t\in\mathcal S_n,
+\]
+y
+\[
+X_{t+1}=X_tK_t,
+\qquad t\geq 0.
+\]
+El vector \(X_t\) representa el estado informacional observado en el tiempo
+\(t\), mientras que \(K_t\) representa el mecanismo estocástico activo en ese
+mismo tiempo.
+\end{definicion}
+
+\begin{proposicion}[Cierre del estado bajo dinámica no autónoma]
+Si \(X_0\in\Delta_n\) y \(K_t\in\mathcal S_n\) para todo \(t\geq 0\), entonces
+\[
+X_t\in\Delta_n
+\qquad
+\text{para todo }t\geq 0.
+\]
+\end{proposicion}
+
+\begin{proof}
+Supongamos que \(X_t\in\Delta_n\). Como \(K_t\in\mathcal S_n\), se tiene
+\((K_t)_{ij}\geq 0\). Por tanto,
+\[
+(X_tK_t)_j=\sum_{i=1}^n X_{t,i}(K_t)_{ij}\geq 0.
+\]
+Además,
+\[
+\sum_{j=1}^n (X_tK_t)_j
+=
+\sum_{j=1}^n\sum_{i=1}^n X_{t,i}(K_t)_{ij}
+=
+\sum_{i=1}^n X_{t,i}\sum_{j=1}^n (K_t)_{ij}
+=
+\sum_{i=1}^n X_{t,i}
+=
+1.
+\]
+Así, \(X_{t+1}=X_tK_t\in\Delta_n\). La conclusión se obtiene por inducción.
+\end{proof}
+
+\begin{proposicion}[Producto temporal ordenado]
+Sea \((X_t,K_t)_{t\geq 0}\) una dinámica markoviana no autónoma. Entonces,
+para todo \(t\geq 1\),
+\[
+X_t=X_0K_0K_1\cdots K_{t-1}.
+\]
+\end{proposicion}
+
+\begin{proof}
+Para \(t=1\), la identidad es \(X_1=X_0K_0\). Supongamos que
+\[
+X_t=X_0K_0K_1\cdots K_{t-1}.
+\]
+Entonces,
+\[
+X_{t+1}=X_tK_t
+=
+X_0K_0K_1\cdots K_{t-1}K_t.
+\]
+Por inducción, la fórmula vale para todo \(t\geq 1\).
+\end{proof}
+
+\begin{definicion}[Matriz estocástica primitiva]
+Una matriz \(K\in\mathcal S_n\) se dice \emph{primitiva} si existe
+\(m\geq 1\) tal que
+\[
+(K^m)_{ij}>0
+\qquad
+\text{para todo }i,j\in\{1,\dots,n\}.
+\]
+En particular, toda matriz primitiva es irreducible y admite una única
+distribución estacionaria \(\pi\in\Delta_n^\circ\).
+\end{definicion}
+
+
+
+\begin{definicion}[Estacionaria instantánea]
+Sea \(K_t\in\mathcal S_n\). Una distribución \(\pi_t\in\Delta_n\) se llama
+estacionaria instantánea de \(K_t\) si
+\[
+\pi_tK_t=\pi_t.
+\]
+Cuando \(K_t\) es primitiva, esta distribución es única y pertenece a
+\(\Delta_n^\circ\). En ese caso escribiremos
+\[
+\pi_t=\pi(K_t).
+\]
+\end{definicion}
+
+\begin{definicion}[Observables del desfase dinámico]
+Supongamos que cada \(K_t\) admite una estacionaria instantánea única
+\(\pi_t\in\Delta_n^\circ\). Definimos:
+\[
+\mathcal E_t
+:=
+D_{\mathrm{KL}}(\pi_t\Vert X_t)
+=
+\sum_{i=1}^n \pi_{t,i}\log\frac{\pi_{t,i}}{X_{t,i}},
+\]
+\[
+\ell_t:=\|X_t-\pi_t\|_1,
+\]
+\[
+\nu_t:=\|K_t-K_{t-1}\|_F,
+\qquad t\geq 1,
+\]
+\[
+\chi_t:=\|K_tK_{t-1}-K_{t-1}K_t\|_F,
+\qquad t\geq 1.
+\]
+Aquí \(\mathcal E_t\) mide desfase informacional, \(\ell_t\) mide lag en norma
+\(1\), \(\nu_t\) mide velocidad matricial y \(\chi_t\) mide no conmutatividad
+temporal.
+\end{definicion}
+
+\begin{proposicion}[Control del lag por divergencia KL]
+Para cada \(t\), si \(X_t\in\Delta_n^\circ\) y \(\pi_t\in\Delta_n^\circ\),
+entonces
+\[
+\ell_t^2
+\leq
+2\mathcal E_t.
+\]
+En particular, si \(\mathcal E_t\leq\varepsilon\), entonces
+\[
+\ell_t\leq \sqrt{2\varepsilon}.
+\]
+\end{proposicion}
+
+\begin{proof}
+La desigualdad es una aplicación directa de Pinsker:
+\[
+D_{\mathrm{KL}}(\pi_t\Vert X_t)
+\geq
+\frac12\|\pi_t-X_t\|_1^2.
+\]
+Sustituyendo las definiciones de \(\mathcal E_t\) y \(\ell_t\), se obtiene
+\[
+\mathcal E_t\geq \frac12\ell_t^2.
+\]
+Por tanto, \(\ell_t^2\leq 2\mathcal E_t\), y la segunda afirmación se sigue
+tomando raíz cuadrada.
+\end{proof}
+
+\begin{proposicion}[La energía instantánea no es necesariamente monótona]
+Sea $\pi\in\Delta_n^\circ$ fija. En una dinámica autónoma $X_{t+1}=X_tP$
+con $P$ fija y $\pi$ su estacionaria, la sucesión $E_\pi(X_t)=D_{\mathrm{KL}}(\pi\|X_t)$
+es monótona decreciente (Proposición~anterior). Sin embargo, en una dinámica
+no autónoma, la sucesión
+\[
+\mathcal E_t:=D_{\mathrm{KL}}(\pi_t\Vert X_t),
+\]
+donde $\pi_t=\pi(K_t)$ es la estacionaria \emph{instantánea} de $K_t$,
+no tiene por qué ser monótona decreciente. La no monotonicidad no refleja
+un crecimiento intrínseco de la divergencia, sino el hecho de que el
+objetivo $\pi_t$ se desplaza.
+\end{proposicion}
+
+\begin{proof}
+Basta exhibir un contraejemplo. Tomemos \(n=2\) y
+\[
+X_0=\left(\frac12,\frac12\right).
+\]
+Sean
+\[
+K_0=
+\begin{pmatrix}
+0.9 & 0.1\\
+0.9 & 0.1
+\end{pmatrix},
+\qquad
+K_1=
+\begin{pmatrix}
+0.1 & 0.9\\
+0.1 & 0.9
+\end{pmatrix}.
+\]
+Entonces las estacionarias instantáneas son
+\[
+\pi_0=(0.9,0.1),
+\qquad
+\pi_1=(0.1,0.9).
+\]
+Además,
+\[
+X_1=X_0K_0=(0.9,0.1)=\pi_0.
+\]
+Por tanto,
+\[
+\mathcal E_0
+=
+D_{\mathrm{KL}}\left((0.9,0.1)\middle\Vert
+\left(\frac12,\frac12\right)\right)
+\approx 0.368,
+\]
+mientras que
+\[
+\mathcal E_1
+=
+D_{\mathrm{KL}}\bigl((0.1,0.9)\Vert(0.9,0.1)\bigr)
+\approx 1.758.
+\]
+Así,
+\[
+\mathcal E_1>\mathcal E_0.
+\]
+Luego la energía instantánea puede aumentar cuando cambia la matriz de
+transición.
+\end{proof}
+
+\subsection{Primer experimento: relajación hacia una matriz objetivo}
+
+\begin{definicion}[Relajación matricial estocástica]
+Sean \(K_0,K_\ast\in\mathcal S_n\) y sea \(\eta\in(0,1)\). La relajación de
+\(K_0\) hacia \(K_\ast\) se define por
+\[
+K_{t+1}=(1-\eta)K_t+\eta K_\ast,
+\qquad t\geq 0.
+\]
+Acoplada a esta evolución matricial, se considera la dinámica de estados
+\[
+X_{t+1}=X_tK_t.
+\]
+\end{definicion}
+
+\begin{proposicion}[Cierre estocástico de la relajación]
+Si \(K_0,K_\ast\in\mathcal S_n\), entonces
+\[
+K_t\in\mathcal S_n
+\qquad
+\text{para todo }t\geq 0.
+\]
+\end{proposicion}
+
+\begin{proof}
+Supongamos que \(K_t\in\mathcal S_n\). Para cada \(i,j\),
+\[
+(K_{t+1})_{ij}
+=
+(1-\eta)(K_t)_{ij}+\eta(K_\ast)_{ij}
+\geq 0.
+\]
+Además, para cada fila \(i\),
+\[
+\sum_{j=1}^n (K_{t+1})_{ij}
+=
+(1-\eta)\sum_{j=1}^n(K_t)_{ij}
++
+\eta\sum_{j=1}^n(K_\ast)_{ij}
+=
+(1-\eta)+\eta
+=
+1.
+\]
+Por tanto \(K_{t+1}\in\mathcal S_n\). Como \(K_0\in\mathcal S_n\), la
+conclusión sigue por inducción.
+\end{proof}
+
+\begin{proposicion}[Solución explícita de la relajación]
+Para todo \(t\geq 0\),
+\[
+K_t
+=
+K_\ast+(1-\eta)^t(K_0-K_\ast).
+\]
+\end{proposicion}
+
+\begin{proof}
+Para \(t=0\), la identidad es inmediata. Supongamos que
+\[
+K_t=K_\ast+(1-\eta)^t(K_0-K_\ast).
+\]
+Entonces,
+\begin{align*}
+K_{t+1}
+&=(1-\eta)K_t+\eta K_\ast\\
+&=(1-\eta)\bigl[K_\ast+(1-\eta)^t(K_0-K_\ast)\bigr]+\eta K_\ast\\
+&=K_\ast+(1-\eta)^{t+1}(K_0-K_\ast).
+\end{align*}
+Por inducción, la fórmula vale para todo \(t\geq 0\).
+\end{proof}
+
+\begin{corolario}[Convergencia geométrica hacia la matriz objetivo]
+En la relajación matricial estocástica,
+\[
+\|K_t-K_\ast\|_F
+=
+(1-\eta)^t\|K_0-K_\ast\|_F.
+\]
+En particular,
+\[
+\lim_{t\to\infty}K_t=K_\ast.
+\]
+Además, para \(t\geq 1\),
+\[
+\nu_t
+=
+\eta(1-\eta)^{t-1}\|K_0-K_\ast\|_F.
+\]
+\end{corolario}
+
+\begin{proof}
+Por la proposición anterior,
+\[
+K_t-K_\ast=(1-\eta)^t(K_0-K_\ast).
+\]
+Tomando norma de Frobenius,
+\[
+\|K_t-K_\ast\|_F
+=
+(1-\eta)^t\|K_0-K_\ast\|_F.
+\]
+Como \(0<1-\eta<1\), se obtiene \(K_t\to K_\ast\). Por otra parte,
+\[
+K_t-K_{t-1}
+=
+\bigl[K_\ast+(1-\eta)^t(K_0-K_\ast)\bigr]
+-
+\bigl[K_\ast+(1-\eta)^{t-1}(K_0-K_\ast)\bigr],
+\]
+de donde
+\[
+K_t-K_{t-1}
+=
+-\eta(1-\eta)^{t-1}(K_0-K_\ast).
+\]
+Tomando norma de Frobenius se obtiene la fórmula para \(\nu_t\).
+\end{proof}
+
+\begin{observacion}[Lectura del primer experimento]
+El primer script no cambia arbitrariamente las probabilidades de \(X_t\).
+Cambia el mecanismo \(K_t\) por interpolación convexa hacia una matriz objetivo
+\(K_\ast\). La convergencia observada de \(\|K_t-K_\ast\|_F\) no es empírica:
+es consecuencia directa de la fórmula cerrada
+\[
+K_t=K_\ast+(1-\eta)^t(K_0-K_\ast).
+\]
+El estado \(X_t\), en cambio, no sigue una sola matriz fija, sino el producto
+ordenado
+\[
+X_t=X_0K_0K_1\cdots K_{t-1}.
+\]
+\end{observacion}
+
+\subsection{Segundo experimento: dinámica extrema proyectada}
+
+\begin{definicion}[Proyección fila a fila sobre el símplex]
+Para \(a\in\mathbb R^n\), definimos la proyección euclidiana sobre el símplex
+por
+\[
+\Pi_{\Delta_n}(a)
+:=
+\operatorname*{argmin}_{p\in\Delta_n}\|p-a\|_2.
+\]
+Para una matriz \(A\in\mathbb R^{n\times n}\), definimos
+\(\Pi_{\mathcal S_n}(A)\) fila por fila mediante
+\[
+\bigl(\Pi_{\mathcal S_n}(A)\bigr)_{i\cdot}
+:=
+\Pi_{\Delta_n}(A_{i\cdot}),
+\qquad i=1,\dots,n.
+\]
+\end{definicion}
+
+\begin{proposicion}[La proyección produce matrices estocásticas]
+Para toda matriz \(A\in\mathbb R^{n\times n}\),
+\[
+\Pi_{\mathcal S_n}(A)\in\mathcal S_n.
+\]
+\end{proposicion}
+
+\begin{proof}
+Por definición, cada fila de \(\Pi_{\mathcal S_n}(A)\) pertenece a
+\(\Delta_n\). Por tanto, todas sus entradas son no negativas y cada fila suma
+uno. Luego \(\Pi_{\mathcal S_n}(A)\in\mathcal S_n\).
+\end{proof}
+
+\begin{definicion}[Dinámica extrema proyectada]
+Sea \(K_0\in\mathcal S_n\), \(X_0\in\Delta_n\), \(K_{-1}:=K_0\), y sean
+\(\alpha,\beta,\mu,\rho,\tau\geq 0\). Supóngase dada una sucesión de objetivos
+móviles \(M_t\in\mathcal S_n\), una retroalimentación matricial
+\(F:\Delta_n\to\mathbb R^{n\times n}\) y una perturbación determinista
+\(R_t\in\mathbb R^{n\times n}\). Definimos
+\[
+V_t
+:=
+\alpha(M_t-K_t)
++
+\beta F(X_t)
++
+\mu(K_t-K_{t-1})
++
+\rho R_t,
+\]
+\[
+K_{t+1}
+:=
+\Pi_{\mathcal S_n}(K_t+\tau V_t),
+\]
+y
+\[
+X_{t+1}:=X_tK_t.
+\]
+A esta construcción la llamaremos dinámica extrema proyectada. El término
+\(M_t-K_t\) representa atracción hacia un objetivo móvil; \(F(X_t)\),
+retroalimentación desde el estado; \(K_t-K_{t-1}\), inercia; y \(R_t\), una
+perturbación determinista externa.
+\end{definicion}
+
+\begin{proposicion}[Cierre de la dinámica extrema]
+En la dinámica extrema proyectada,
+\[
+K_t\in\mathcal S_n
+\qquad
+\text{y}
+\qquad
+X_t\in\Delta_n
+\]
+para todo \(t\geq 0\).
+\end{proposicion}
+
+\begin{proof}
+Como \(K_0\in\mathcal S_n\), supongamos que \(K_t\in\mathcal S_n\). Entonces
+\(K_t+\tau V_t\) es una matriz real cualquiera, pero
+\[
+K_{t+1}=\Pi_{\mathcal S_n}(K_t+\tau V_t)\in\mathcal S_n
+\]
+por la proposición anterior. Por inducción, \(K_t\in\mathcal S_n\) para todo
+\(t\). Una vez probado esto, el cierre \(X_t\in\Delta_n\) se sigue de la
+proposición de cierre del estado bajo dinámica no autónoma.
+\end{proof}
+
+\begin{definicion}[Presión de seguimiento]
+Cuando existe \(\pi_t=\pi(K_t)\), definimos la presión de seguimiento por
+\[
+\omega_t:=\|\pi_{t+1}-\pi_t\|_1.
+\]
+Esta cantidad mide cuánto se mueve el equilibrio instantáneo entre dos tiempos
+consecutivos.
+\end{definicion}
+
+\begin{definicion}[Coeficiente de contracción de Dobrushin]
+Para \(K\in\mathcal S_n\), definimos
+\[
+\delta(K)
+:=
+\frac12\max_{1\leq i,r\leq n}
+\sum_{j=1}^n |K_{ij}-K_{rj}|.
+\]
+\end{definicion}
+
+\begin{proposicion}[Descomposición del lag: mezcla contra objetivo móvil]
+Supongamos que cada \(K_t\) admite estacionaria instantánea única
+\(\pi_t\). Entonces
+\[
+\ell_{t+1}
+\leq
+\delta(K_t)\ell_t+
+\omega_t.
+\]
+\end{proposicion}
+
+\begin{proof}
+Como \(\pi_tK_t=\pi_t\), se tiene
+\begin{align*}
+\ell_{t+1}
+&=\|X_{t+1}-\pi_{t+1}\|_1\\
+&=\|X_tK_t-\pi_{t+1}\|_1\\
+&\leq \|X_tK_t-\pi_tK_t\|_1+\|\pi_t-\pi_{t+1}\|_1.
+\end{align*}
+Por la propiedad contractiva del coeficiente de Dobrushin,
+\[
+\|X_tK_t-\pi_tK_t\|_1
+\leq
+\delta(K_t)\|X_t-\pi_t\|_1.
+\]
+Sustituyendo las definiciones de \(\ell_t\) y \(\omega_t\), obtenemos
+\[
+\ell_{t+1}
+\leq
+\delta(K_t)\ell_t+
+\omega_t.
+\]
+\end{proof}
+
+\begin{observacion}[Lectura del segundo experimento]
+El experimento extremo fuerza una situación donde el mecanismo \(K_t\) cambia
+rápidamente y el equilibrio instantáneo \(\pi_t\) se mueve. Por eso el estado
+\(X_t\) puede parecer que ``persigue'' a \(\pi_t\), pero no coincide
+necesariamente con ella. La desigualdad
+\[
+\ell_{t+1}\leq \delta(K_t)\ell_t+\omega_t
+\]
+separa dos efectos: la capacidad de mezcla de \(K_t\), medida por
+\(\delta(K_t)\), y el movimiento del objetivo instantáneo, medido por
+\(\omega_t\).
+\end{observacion}
+
+\begin{proposicion}[El objetivo móvil puede impedir convergencia]
+Existe una dinámica markoviana no autónoma con matrices estocásticas primitivas
+para la cual \(X_t\) no converge.
+\end{proposicion}
+
+\begin{proof}
+Tomemos \(n=2\) y dos distribuciones distintas
+\[
+a=(0.9,0.1),
+\qquad
+b=(0.1,0.9).
+\]
+Definamos matrices de rango uno
+\[
+K^{a}:=
+\begin{pmatrix}
+0.9 & 0.1\\
+0.9 & 0.1
+\end{pmatrix},
+\qquad
+K^{b}:=
+\begin{pmatrix}
+0.1 & 0.9\\
+0.1 & 0.9
+\end{pmatrix}.
+\]
+Ambas son estocásticas y positivas, luego primitivas. Sea
+\[
+K_t=
+\begin{cases}
+K^{a}, & t\text{ par},\\
+K^{b}, & t\text{ impar}.
+\end{cases}
+\]
+Para cualquier \(X\in\Delta_2\), se cumple
+\[
+XK^{a}=a,
+\qquad
+XK^{b}=b.
+\]
+Por tanto, la trayectoria alterna entre \(a\) y \(b\). Como \(a\neq b\), la
+sucesión \((X_t)\) no converge. Esto muestra que la existencia de estacionarias
+instantáneas no implica convergencia cuando el mecanismo cambia con el tiempo.
+\end{proof}
+
+\begin{definicion}[Conmutador temporal]
+Para \(t\geq 1\), definimos
+\[
+C_t:=K_tK_{t-1}-K_{t-1}K_t.
+\]
+La magnitud asociada es
+\[
+\chi_t:=\|C_t\|_F.
+\]
+\end{definicion}
+
+\begin{proposicion}[Interpretación del conmutador temporal]
+Para todo estado \(X\in\Delta_n\),
+\[
+XK_tK_{t-1}-XK_{t-1}K_t
+=
+XC_t.
+\]
+En particular, si \(C_t\neq 0\), existe un estado interior
+\(X_\varepsilon\in\Delta_n^\circ\) tal que
+\[
+X_\varepsilon K_tK_{t-1}
+\neq
+X_\varepsilon K_{t-1}K_t.
+\]
+\end{proposicion}
+
+\begin{proof}
+Por asociatividad del producto matricial,
+\[
+XK_tK_{t-1}-XK_{t-1}K_t
+=
+X(K_tK_{t-1}-K_{t-1}K_t)
+=
+XC_t.
+\]
+Si \(C_t\neq 0\), alguna fila de \(C_t\) es no nula. Sea \(e_i\) un vértice
+canónico tal que \(e_iC_t\neq 0\). Definimos
+\[
+U=\left(\frac1n,\dots,\frac1n\right),
+\qquad
+X_\varepsilon=(1-\varepsilon)e_i+\varepsilon U.
+\]
+Para \(\varepsilon\in(0,1)\), se tiene \(X_\varepsilon\in\Delta_n^\circ\). Como
+\[
+X_\varepsilon C_t
+=
+(1-\varepsilon)e_iC_t+
+\varepsilon UC_t,
+\]
+y \(e_iC_t\neq 0\), por continuidad existe \(\varepsilon>0\) suficientemente
+pequeño tal que
+\[
+X_\varepsilon C_t\neq 0.
+\]
+Por tanto,
+\[
+X_\varepsilon K_tK_{t-1}
+\neq
+X_\varepsilon K_{t-1}K_t.
+\]
+\end{proof}
+
+\begin{proposicion}[Cota entre velocidad matricial y no conmutatividad]
+Para \(t\geq 1\),
+\[
+\chi_t
+\leq
+2\|K_{t-1}\|_2\,\nu_t.
+\]
+En particular, como \(K_{t-1}\in\mathcal S_n\), se tiene la cota general
+\[
+\chi_t
+\leq
+2\sqrt n\,\nu_t.
+\]
+\end{proposicion}
+
+\begin{proof}
+Escribimos
+\[
+K_tK_{t-1}-K_{t-1}K_t
+=
+(K_t-K_{t-1})K_{t-1}-K_{t-1}(K_t-K_{t-1}).
+\]
+Entonces, usando submultiplicatividad de normas,
+\begin{align*}
+\chi_t
+&\leq
+\|(K_t-K_{t-1})K_{t-1}\|_F
++
+\|K_{t-1}(K_t-K_{t-1})\|_F\\
+&\leq
+\|K_t-K_{t-1}\|_F\|K_{t-1}\|_2
++
+\|K_{t-1}\|_2\|K_t-K_{t-1}\|_F\\
+&=
+2\|K_{t-1}\|_2\nu_t.
+\end{align*}
+Finalmente, para una matriz estocástica por filas, cada fila tiene norma
+\(2\) menor o igual que \(1\), luego
+\[
+\|K_{t-1}\|_F\leq \sqrt n.
+\]
+Como \(\|K_{t-1}\|_2\leq\|K_{t-1}\|_F\), se obtiene
+\[
+\chi_t\leq 2\sqrt n\,\nu_t.
+\]
+\end{proof}
+
+\begin{observacion}[Alcance formal de los dos scripts]
+Los dos scripts no demuestran todavía una teoría general de control informacional.
+Lo que sí verifican formalmente es lo siguiente:
+\begin{enumerate}[label=\textup{(\roman*)}]
+\item es posible hacer evolucionar la matriz estocástica \(K_t\) sin salir de
+\(\mathcal S_n\);
+\item el estado \(X_t\) permanece en el símplex mientras \(K_t\) sea estocástica;
+\item la relajación convexa hacia \(K_\ast\) tiene convergencia geométrica
+explícita;
+\item en una dinámica extrema proyectada, el estado puede perseguir una
+estacionaria móvil sin converger;
+\item la no conmutatividad temporal mide una diferencia real entre aplicar
+mecanismos en órdenes distintos.
+\end{enumerate}
+Por tanto, el objeto matemático pertinente en esta etapa no es una única matriz
+de Markov fija, sino una trayectoria de mecanismos
+\[
+K_0,K_1,K_2,\dots
+\]
+acoplada a la trayectoria de estados
+\[
+X_0,X_1,X_2,\dots.
+\]
+\end{observacion}
+
+% ============================================================
+% CONJETURAS PARA PROYECTO II
+% (no forman parte del texto; son líneas de investigación abiertas)
+% ============================================================
+
+% ------------------------------------------------------------
+% CONJETURA A (Ruta 1) — El conmutador acumulado controla
+%   la diferencia entre órdenes de aplicación.
+%
+% Sean K_0,...,K_{t-1} \in S_n y defínase
+%   K_{[0,t-1]}^{->}  = K_0 K_1 ... K_{t-1}  (orden cronológico)
+%   K_{[0,t-1]}^{<-}  = K_{t-1} ... K_1 K_0  (orden inverso)
+% Conjetura: existe una constante C(n) tal que para todo
+%   X_0 \in \Delta_n,
+%
+%   \| X_0 K_{[0,t-1]}^{->} - X_0 K_{[0,t-1]}^{<-} \|_1
+%       \leq C(n) \sum_{s=1}^{t-1} \chi_s.
+%
+% En particular, si \chi_s = 0 para todo s (todas las matrices
+% consecutivas conmutan), los dos productos coinciden para
+% cualquier estado inicial.
+% ------------------------------------------------------------
+
+% ------------------------------------------------------------
+% CONJETURA B (Ruta 2) — La presión de seguimiento \omega_t
+%   es controlable por la velocidad matricial \nu_t.
+%
+% Si K_t es primitiva con brecha espectral 1 - \lambda_2(K_t),
+% entonces existe C(K_t) > 0 tal que
+%
+%   \omega_t := \| \pi_{t+1} - \pi_t \|_1
+%             \leq \frac{\nu_t}{1 - \lambda_2(K_{t-1})}.
+%
+% Consecuencia: la descomposición del lag se vuelve un sistema
+% cerrado en términos de observables controlables,
+%
+%   \ell_{t+1} \leq \delta(K_t)\,\ell_t
+%               + \frac{\nu_t}{1 - \lambda_2(K_{t-1})},
+%
+% lo que permite formular el problema de control óptimo:
+%
+%   \min_{(K_t) \subset S_n}
+%       \sum_{t=0}^{T-1} \bigl( \ell_t^2 + \lambda\,\nu_t^2 \bigr)
+%   \quad\text{s.a.}\quad
+%   \ell_{t+1} \leq \delta(K_t)\,\ell_t + \omega_t.
+% ------------------------------------------------------------
+
+% ------------------------------------------------------------
+% CONJETURA C (Ruta 3) — La composición Bayes-Markov no es
+%   ni puramente local ni puramente global.
+%
+% Sea B_\mu(X) la actualización bayesiana con verosimilitud \mu
+% (operador global del grupo G) y sea L_P el operador de Markov
+% (familia de correcciones locales).  Conjetura:
+%
+%   L_P \circ B_\mu \neq B_\nu \circ L_Q
+%
+% para ningún par (\nu, Q) en general, es decir, la composición
+% no puede reordenarse libremente.  El obstáculo exacto es la
+% sección X \mapsto Y^P(X): la corrección local de Markov
+% evaluada en B_\mu(X) depende de X a través de \mu, mientras
+% que la corrección global de Bayes no depende de X.
+%
+% Un resultado más fino: caracterizar el conjunto de pares
+% (\mu, P) para los cuales sí existe (\nu, Q) con
+% L_P \circ B_\mu = B_\nu \circ L_Q.  La condición esperada
+% involucra que P tenga filas proporcionales a \mu.
+% ------------------------------------------------------------
+
+
+\clearpage
+\section{Bayes y control informacional}
+
+\begin{definicion}[Evidencia bayesiana positiva]
+Sea \(n\geq 2\). Una \emph{evidencia bayesiana positiva} sobre \(n\)
+hipótesis es un vector
+\[
+L=(L_1,\dots,L_n)\in \mathbb{R}_{>0}^{n}.
+\]
+
+Cada coordenada \(L_i\) representa el peso de verosimilitud asociado a la
+hipótesis \(i\). La condición
+\[
+L_i>0
+\qquad
+\text{para todo } i=1,\dots,n
+\]
+garantiza que ninguna hipótesis con masa previa positiva sea anulada por la
+actualización.
+\end{definicion}
+
+\begin{definicion}[Operador bayesiano]
+Sea \(X\in\Delta_n^\circ\) una distribución a priori y sea
+\(L\in\mathbb{R}_{>0}^{n}\) una evidencia bayesiana positiva. Se define el
+\emph{operador bayesiano asociado a \(L\)} como la aplicación
+\[
+B_L:\Delta_n^\circ\longrightarrow \Delta_n^\circ
+\]
+dada por
+\[
+B_L(X)_i
+:=
+\frac{X_iL_i}{\sum_{k=1}^{n}X_kL_k},
+\qquad
+i=1,\dots,n.
+\]
+
+Al escalar
+\[
+Z_L(X)
+:=
+\sum_{k=1}^{n}X_kL_k
+=
+\langle X,L\rangle
+\]
+se le llamará \emph{constante de normalización bayesiana}.
+\end{definicion}
+
+
+
+\begin{proposicion}[Preservación del interior bajo actualización bayesiana]
+Sea \(L\in\mathbb{R}_{>0}^{n}\) una evidencia bayesiana positiva. Entonces,
+para todo \(X\in\Delta_n^\circ\), se cumple
+\[
+B_L(X)\in\Delta_n^\circ.
+\]
+En particular, el operador bayesiano está bien definido como aplicación
+\[
+B_L:\Delta_n^\circ\longrightarrow \Delta_n^\circ.
+\]
+\end{proposicion}
+
+\begin{proof}
+Sea \(X\in\Delta_n^\circ\). Entonces
+\[
+X_i>0
+\qquad
+\text{para todo } i=1,\dots,n.
+\]
+Como \(L\in\mathbb{R}_{>0}^{n}\), también se tiene
+\[
+L_i>0
+\qquad
+\text{para todo } i=1,\dots,n.
+\]
+Por tanto,
+\[
+X_iL_i>0
+\qquad
+\text{para todo } i=1,\dots,n.
+\]
+
+Además, la constante de normalización satisface
+\[
+Z_L(X)
+=
+\sum_{k=1}^{n}X_kL_k.
+\]
+Como cada sumando \(X_kL_k\) es estrictamente positivo, se obtiene
+\[
+Z_L(X)>0.
+\]
+Así, cada coordenada de \(B_L(X)\) está bien definida y cumple
+\[
+B_L(X)_i
+=
+\frac{X_iL_i}{Z_L(X)}
+>
+0.
+\]
+
+Resta verificar la normalización. En efecto,
+\[
+\sum_{i=1}^{n}B_L(X)_i
+=
+\sum_{i=1}^{n}
+\frac{X_iL_i}{Z_L(X)}
+=
+\frac{1}{Z_L(X)}
+\sum_{i=1}^{n}X_iL_i.
+\]
+Por la definición de \(Z_L(X)\),
+\[
+\sum_{i=1}^{n}B_L(X)_i
+=
+\frac{Z_L(X)}{Z_L(X)}
+=
+1.
+\]
+
+Por tanto, \(B_L(X)\) tiene coordenadas estrictamente positivas y suma \(1\). Luego
+\[
+B_L(X)\in\Delta_n^\circ.
+\]
+\end{proof}
+
+\begin{observacion}[Razón de la positividad estricta]
+La condición
+\[
+L\in\mathbb{R}_{>0}^{n}
+\]
+no es solamente técnica. Si alguna coordenada \(L_i\) fuera cero, entonces aun cuando
+\(X_i>0\), se tendría
+\[
+B_L(X)_i=0,
+\]
+y el posterior podría salir del interior del símplex.
+
+Por eso, dentro de esta sección se trabaja con verosimilitudes estrictamente positivas:
+la actualización bayesiana conserva el soporte completo del estado inicial y permanece en
+\(\Delta_n^\circ\).
+\end{observacion}
+
+\begin{proposicion}[Invariancia por escala de la evidencia]
+Sea \(L\in\mathbb{R}_{>0}^{n}\) una evidencia bayesiana positiva y sea
+\(c>0\). Entonces
+\[
+B_{cL}=B_L.
+\]
+Es decir, para todo \(X\in\Delta_n^\circ\),
+\[
+B_{cL}(X)=B_L(X).
+\]
+\end{proposicion}
+
+\begin{proof}
+Sea \(X\in\Delta_n^\circ\). Para cada \(i=1,\dots,n\), se tiene
+\[
+B_{cL}(X)_i
+=
+\frac{X_i(cL_i)}
+{\sum_{k=1}^{n}X_k(cL_k)}.
+\]
+Factorizando \(c\) en el numerador y en el denominador,
+\[
+B_{cL}(X)_i
+=
+\frac{cX_iL_i}
+{c\sum_{k=1}^{n}X_kL_k}.
+\]
+Como \(c>0\), se cancela el factor común:
+\[
+B_{cL}(X)_i
+=
+\frac{X_iL_i}
+{\sum_{k=1}^{n}X_kL_k}
+=
+B_L(X)_i.
+\]
+Por tanto,
+\[
+B_{cL}(X)_i=B_L(X)_i
+\qquad
+\text{para todo } i=1,\dots,n.
+\]
+Luego
+\[
+B_{cL}(X)=B_L(X).
+\]
+Como \(X\in\Delta_n^\circ\) fue arbitrario, se concluye que
+\[
+B_{cL}=B_L.
+\]
+\end{proof}
+
+\begin{observacion}[La evidencia es proyectiva]
+La proposición anterior muestra que la evidencia bayesiana no determina un operador por su
+magnitud absoluta, sino por sus proporciones internas.
+
+En particular,
+\[
+L
+\quad\text{y}\quad
+cL,
+\qquad c>0,
+\]
+representan la misma actualización bayesiana sobre \(\Delta_n^\circ\).
+
+Por tanto, el objeto estructural no es estrictamente el vector \(L\in\mathbb{R}_{>0}^{n}\),
+sino su clase bajo reescalamientos positivos globales.
+\end{observacion}
+
+
+\begin{definicion}[Clase proyectiva de una evidencia]
+En \(\mathbb{R}_{>0}^{n}\) se define la relación
+\[
+L\sim M
+\]
+si y sólo si existe una constante \(c>0\) tal que
+\[
+M=cL.
+\]
+
+La clase de equivalencia de \(L\) será denotada por
+\[
+[L]
+:=
+\{cL:c>0\}.
+\]
+
+Al cociente
+\[
+\mathbb{P}^{n-1}_{+}
+:=
+\mathbb{R}_{>0}^{n}/\sim
+\]
+lo llamaremos \emph{espacio proyectivo positivo de evidencias}.
+\end{definicion}
+
+\begin{proposicion}[Identificación proyectiva de operadores bayesianos]
+Sean \(L,M\in\mathbb{R}_{>0}^{n}\). Entonces
+\[
+B_L=B_M
+\]
+si y sólo si
+\[
+[L]=[M].
+\]
+Equivalente, dos evidencias positivas inducen el mismo operador bayesiano si y sólo si
+difieren por un factor escalar positivo global.
+\end{proposicion}
+
+\begin{proof}
+Supongamos primero que
+\[
+[L]=[M].
+\]
+Entonces existe \(c>0\) tal que
+\[
+M=cL.
+\]
+Por la invariancia por escala de la evidencia,
+\[
+B_M=B_{cL}=B_L.
+\]
+
+Recíprocamente, supongamos que
+\[
+B_L=B_M.
+\]
+Sea \(X\in\Delta_n^\circ\). Entonces, para cada \(i=1,\dots,n\),
+\[
+B_L(X)_i=B_M(X)_i.
+\]
+Por definición,
+\[
+\frac{X_iL_i}{\sum_{k=1}^{n}X_kL_k}
+=
+\frac{X_iM_i}{\sum_{k=1}^{n}X_kM_k}.
+\]
+Como \(X_i>0\), podemos cancelar \(X_i\) y obtener
+\[
+\frac{L_i}{\sum_{k=1}^{n}X_kL_k}
+=
+\frac{M_i}{\sum_{k=1}^{n}X_kM_k}.
+\]
+Por tanto,
+\[
+M_i
+=
+\frac{\sum_{k=1}^{n}X_kM_k}
+{\sum_{k=1}^{n}X_kL_k}
+L_i.
+\]
+Definiendo
+\[
+c
+:=
+\frac{\sum_{k=1}^{n}X_kM_k}
+{\sum_{k=1}^{n}X_kL_k},
+\]
+se tiene \(c>0\) y
+\[
+M_i=cL_i
+\qquad
+\text{para todo } i=1,\dots,n.
+\]
+Así,
+\[
+M=cL,
+\]
+y por tanto
+\[
+[L]=[M].
+\]
+\end{proof}
+
+
+
+\begin{definicion}[Producto de evidencias]
+Sean \(L^{(1)},L^{(2)}\in\mathbb{R}_{>0}^{n}\) dos evidencias bayesianas
+positivas. Definimos su producto coordenado por
+\[
+L^{(1)}\odot L^{(2)}
+:=
+\bigl(
+L^{(1)}_1L^{(2)}_1,\dots,
+L^{(1)}_nL^{(2)}_n
+\bigr).
+\]
+Como cada coordenada es estrictamente positiva, se tiene
+\[
+L^{(1)}\odot L^{(2)}\in\mathbb{R}_{>0}^{n}.
+\]
+\end{definicion}
+
+\begin{proposicion}[Composición de actualizaciones bayesianas]
+Sean \(L^{(1)},L^{(2)}\in\mathbb{R}_{>0}^{n}\). Entonces
+\[
+B_{L^{(2)}}\circ B_{L^{(1)}}
+=
+B_{L^{(1)}\odot L^{(2)}}.
+\]
+En particular, la composición de dos operadores bayesianos vuelve a ser un
+operador bayesiano.
+\end{proposicion}
+
+\begin{proof}
+Sea \(X\in\Delta_n^\circ\) y escribamos
+\[
+X' := B_{L^{(1)}}(X).
+\]
+Entonces
+\[
+X'_i
+=
+\frac{X_iL^{(1)}_i}
+{\sum_{j=1}^{n}X_jL^{(1)}_j}.
+\]
+Ahora aplicamos \(B_{L^{(2)}}\) a \(X'\):
+\[
+B_{L^{(2)}}(X')_i
+=
+\frac{X'_iL^{(2)}_i}
+{\sum_{k=1}^{n}X'_kL^{(2)}_k}.
+\]
+Sustituyendo la expresión de \(X'\), obtenemos
+\[
+B_{L^{(2)}}(X')_i
+=
+\frac{
+\frac{X_iL^{(1)}_i}{\sum_{j=1}^{n}X_jL^{(1)}_j}
+L^{(2)}_i
+}{
+\sum_{k=1}^{n}
+\frac{X_kL^{(1)}_k}{\sum_{j=1}^{n}X_jL^{(1)}_j}
+L^{(2)}_k
+}.
+\]
+El factor común
+\[
+\sum_{j=1}^{n}X_jL^{(1)}_j
+\]
+se cancela en numerador y denominador. Por tanto,
+\[
+B_{L^{(2)}}(X')_i
+=
+\frac{X_iL^{(1)}_iL^{(2)}_i}
+{\sum_{k=1}^{n}X_kL^{(1)}_kL^{(2)}_k}.
+\]
+Por definición del producto coordenado,
+\[
+L^{(1)}_iL^{(2)}_i
+=
+\bigl(L^{(1)}\odot L^{(2)}\bigr)_i.
+\]
+Así,
+\[
+B_{L^{(2)}}(B_{L^{(1)}}(X))_i
+=
+B_{L^{(1)}\odot L^{(2)}}(X)_i.
+\]
+Como esto vale para toda coordenada \(i\), se concluye que
+\[
+B_{L^{(2)}}\circ B_{L^{(1)}}
+=
+B_{L^{(1)}\odot L^{(2)}}.
+\]
+\end{proof}
+
+
+\begin{definicion}[Trayectoria bayesiana]
+Sea \(X_0\in\Delta_n^\circ\) un estado inicial y sea
+\[
+\{L^{(t)}\}_{t\geq 1}\subset \mathbb{R}_{>0}^{n}
+\]
+una sucesión de evidencias bayesianas positivas.
+
+La sucesión \(\{X_t\}_{t\geq 0}\subset\Delta_n^\circ\) definida por
+\[
+X_{t+1}
+=
+B_{L^{(t+1)}}(X_t),
+\qquad t\geq 0,
+\]
+se llamará \emph{trayectoria bayesiana generada por}
+\[
+X_0,\; L^{(1)},L^{(2)},\dots.
+\]
+\end{definicion}
+
+\begin{proposicion}[Forma cerrada de una trayectoria bayesiana]
+Sea \(\{X_t\}_{t\geq 0}\) una trayectoria bayesiana generada por
+\(X_0\in\Delta_n^\circ\) y por evidencias
+\[
+L^{(1)},L^{(2)},\dots,L^{(t)}
+\in\mathbb{R}_{>0}^{n}.
+\]
+Defínase, para cada \(i=1,\dots,n\),
+\[
+\Lambda_i^{(t)}
+:=
+\prod_{s=1}^{t}L_i^{(s)}.
+\]
+Entonces, para todo \(t\geq 1\),
+\[
+X_{t,i}
+=
+\frac{
+X_{0,i}\Lambda_i^{(t)}
+}{
+\sum_{k=1}^{n}X_{0,k}\Lambda_k^{(t)}
+},
+\qquad i=1,\dots,n.
+\]
+\end{proposicion}
+
+\begin{proof}
+Procedemos por inducción sobre \(t\).
+
+Para \(t=1\), por definición de la actualización bayesiana,
+\[
+X_{1,i}
+=
+B_{L^{(1)}}(X_0)_i
+=
+\frac{X_{0,i}L_i^{(1)}}{\sum_{k=1}^{n}X_{0,k}L_k^{(1)}}.
+\]
+Como
+\[
+\Lambda_i^{(1)}=L_i^{(1)},
+\]
+la fórmula se cumple para \(t=1\).
+
+Supongamos ahora que la fórmula es válida para algún \(t\geq 1\), es decir,
+\[
+X_{t,i}
+=
+\frac{
+X_{0,i}\Lambda_i^{(t)}
+}{
+\sum_{k=1}^{n}X_{0,k}\Lambda_k^{(t)}
+}.
+\]
+Entonces
+\[
+X_{t+1,i}
+=
+B_{L^{(t+1)}}(X_t)_i
+=
+\frac{X_{t,i}L_i^{(t+1)}}{\sum_{m=1}^{n}X_{t,m}L_m^{(t+1)}}.
+\]
+Sustituyendo la hipótesis inductiva,
+\[
+X_{t+1,i}
+=
+\frac{
+\frac{X_{0,i}\Lambda_i^{(t)}}{\sum_{k=1}^{n}X_{0,k}\Lambda_k^{(t)}}
+L_i^{(t+1)}
+}{
+\sum_{m=1}^{n}
+\frac{X_{0,m}\Lambda_m^{(t)}}{\sum_{k=1}^{n}X_{0,k}\Lambda_k^{(t)}}
+L_m^{(t+1)}
+}.
+\]
+El factor común
+\[
+\sum_{k=1}^{n}X_{0,k}\Lambda_k^{(t)}
+\]
+se cancela. Por tanto,
+\[
+X_{t+1,i}
+=
+\frac{
+X_{0,i}\Lambda_i^{(t)}L_i^{(t+1)}
+}{
+\sum_{m=1}^{n}
+X_{0,m}\Lambda_m^{(t)}L_m^{(t+1)}
+}.
+\]
+Como
+\[
+\Lambda_i^{(t+1)}
+=
+\Lambda_i^{(t)}L_i^{(t+1)},
+\]
+obtenemos
+\[
+X_{t+1,i}
+=
+\frac{
+X_{0,i}\Lambda_i^{(t+1)}
+}{
+\sum_{m=1}^{n}X_{0,m}\Lambda_m^{(t+1)}
+}.
+\]
+Por inducción, la fórmula vale para todo \(t\geq 1\).
+\end{proof}
+
+
+\begin{definicion}[Log-verosimilitud acumulada]
+Sea
+\[
+\{L^{(s)}\}_{s=1}^{t}\subset \mathbb{R}_{>0}^{n}
+\]
+una familia finita de evidencias bayesianas positivas. Se define la
+\emph{log-verosimilitud acumulada} hasta el tiempo \(t\) como el vector
+\[
+\theta^{(t)}=(\theta_1^{(t)},\dots,\theta_n^{(t)})\in\mathbb{R}^{n}
+\]
+dado por
+\[
+\theta_i^{(t)}
+:=
+\sum_{s=1}^{t}\log L_i^{(s)},
+\qquad
+i=1,\dots,n.
+\]
+
+Equivalentemente,
+\[
+\theta_i^{(t)}
+=
+\log\left(\prod_{s=1}^{t}L_i^{(s)}\right)
+=
+\log \Lambda_i^{(t)}.
+\]
+\end{definicion}
+
+\begin{proposicion}[Trayectoria bayesiana en coordenadas logarítmicas]
+Sea \(\{X_t\}_{t\geq 0}\) una trayectoria bayesiana generada por
+\(X_0\in\Delta_n^\circ\) y evidencias positivas
+\[
+L^{(1)},L^{(2)},\dots,L^{(t)}\in\mathbb{R}_{>0}^{n}.
+\]
+Si
+\[
+\theta_i^{(t)}
+=
+\sum_{s=1}^{t}\log L_i^{(s)},
+\]
+entonces
+\[
+X_{t,i}
+=
+\frac{
+X_{0,i}\exp(\theta_i^{(t)})
+}{
+\sum_{k=1}^{n}X_{0,k}\exp(\theta_k^{(t)})
+},
+\qquad
+i=1,\dots,n.
+\]
+En particular, la composición de actualizaciones bayesianas corresponde a la suma de
+log-verosimilitudes.
+\end{proposicion}
+
+\begin{proof}
+Por la forma cerrada de la trayectoria bayesiana, se tiene
+\[
+X_{t,i}
+=
+\frac{
+X_{0,i}\Lambda_i^{(t)}
+}{
+\sum_{k=1}^{n}X_{0,k}\Lambda_k^{(t)}
+},
+\]
+donde
+\[
+\Lambda_i^{(t)}
+=
+\prod_{s=1}^{t}L_i^{(s)}.
+\]
+Por definición de \(\theta_i^{(t)}\),
+\[
+\theta_i^{(t)}
+=
+\log \Lambda_i^{(t)}.
+\]
+Como \(\Lambda_i^{(t)}>0\), se sigue que
+\[
+\Lambda_i^{(t)}
+=
+\exp(\theta_i^{(t)}).
+\]
+Sustituyendo en la fórmula cerrada,
+\[
+X_{t,i}
+=
+\frac{
+X_{0,i}\exp(\theta_i^{(t)})
+}{
+\sum_{k=1}^{n}X_{0,k}\exp(\theta_k^{(t)})
+}.
+\]
+
+Finalmente, si se agregan dos bloques de evidencia acumulada,
+\[
+\theta^{(a)}
+=
+\sum_{s=1}^{a}\log L^{(s)}
+\]
+y
+\[
+\theta^{(b)}
+=
+\sum_{s=a+1}^{a+b}\log L^{(s)},
+\]
+entonces la evidencia total satisface
+\[
+\theta^{(a+b)}
+=
+\theta^{(a)}+\theta^{(b)}.
+\]
+Por tanto, la composición multiplicativa de evidencias se transforma en suma en
+coordenadas logarítmicas.
+\end{proof}
+
+\begin{observacion}[Lectura aditiva de la información]
+En coordenadas de evidencia directa, la información se acumula mediante productos:
+\[
+\Lambda^{(t)}
+=
+L^{(1)}\odot\cdots\odot L^{(t)}.
+\]
+En coordenadas logarítmicas, la misma acumulación se escribe aditivamente:
+\[
+\theta^{(t)}
+=
+\sum_{s=1}^{t}\log L^{(s)}.
+\]
+
+Esta es la forma más conveniente para conectar la actualización bayesiana con la ley de
+composición de los operadores globales de Control Informacional.
+\end{observacion}
+
+
+
+\begin{definicion}[Evidencia dirigida hacia un objetivo]
+Sean \(X,\pi\in\Delta_n^\circ\). Se define la \emph{evidencia dirigida de
+\(X\) hacia \(\pi\)} como el vector
+\[
+L^{X\to \pi}
+\in \mathbb{R}_{>0}^{n}
+\]
+dado por
+\[
+L_i^{X\to \pi}
+:=
+\frac{\pi_i}{X_i},
+\qquad
+i=1,\dots,n.
+\]
+
+Equivalentemente, se define la corrección global asociada
+\[
+Y^{X\to \pi}\in C_{\mathrm{glob}}
+\]
+por
+\[
+1+Y_i^{X\to \pi}
+:=
+\frac{\pi_i}{X_i},
+\]
+es decir,
+\[
+Y_i^{X\to \pi}
+=
+\frac{\pi_i}{X_i}-1.
+\]
+\end{definicion}
+
+\begin{proposicion}[Actualización exacta hacia un objetivo]
+Sean \(X,\pi\in\Delta_n^\circ\). Entonces la evidencia dirigida
+\(L^{X\to \pi}\) satisface
+\[
+B_{L^{X\to \pi}}(X)=\pi.
+\]
+Equivalentemente,
+\[
+T_{Y^{X\to \pi}}(X)=\pi.
+\]
+\end{proposicion}
+
+\begin{proof}
+Como \(X,\pi\in\Delta_n^\circ\), se tiene
+\[
+X_i>0
+\qquad\text{y}\qquad
+\pi_i>0
+\]
+para todo \(i=1,\dots,n\). Por tanto,
+\[
+L_i^{X\to \pi}
+=
+\frac{\pi_i}{X_i}
+>
+0,
+\]
+y así
+\[
+L^{X\to \pi}\in\mathbb{R}_{>0}^{n}.
+\]
+
+Ahora calculamos la actualización bayesiana inducida por esta evidencia. Para cada
+\(i=1,\dots,n\),
+\[
+B_{L^{X\to \pi}}(X)_i
+=
+\frac{
+X_iL_i^{X\to \pi}
+}{
+\sum_{k=1}^{n}X_kL_k^{X\to \pi}
+}.
+\]
+Sustituyendo
+\[
+L_i^{X\to \pi}
+=
+\frac{\pi_i}{X_i},
+\]
+obtenemos
+\[
+B_{L^{X\to \pi}}(X)_i
+=
+\frac{
+X_i\frac{\pi_i}{X_i}
+}{
+\sum_{k=1}^{n}
+X_k\frac{\pi_k}{X_k}
+}.
+\]
+Por cancelación,
+\[
+B_{L^{X\to \pi}}(X)_i
+=
+\frac{
+\pi_i
+}{
+\sum_{k=1}^{n}\pi_k
+}.
+\]
+Como \(\pi\in\Delta_n^\circ\), se tiene
+\[
+\sum_{k=1}^{n}\pi_k=1.
+\]
+Luego
+\[
+B_{L^{X\to \pi}}(X)_i=\pi_i.
+\]
+Esto vale para toda coordenada \(i\), por lo que
+\[
+B_{L^{X\to \pi}}(X)=\pi.
+\]
+
+Finalmente, como
+\[
+1+Y_i^{X\to \pi}=L_i^{X\to \pi},
+\]
+por la identificación entre operadores bayesianos y operadores globales de Control
+Informacional se obtiene también
+\[
+T_{Y^{X\to \pi}}(X)=\pi.
+\]
+\end{proof}
+
+\begin{proposicion}[Unicidad proyectiva de la evidencia dirigida]
+Sean \(X,\pi\in\Delta_n^\circ\). Si \(M\in\mathbb{R}_{>0}^{n}\) satisface
+\[
+B_M(X)=\pi,
+\]
+entonces
+\[
+[M]=[L^{X\to \pi}].
+\]
+Equivalente, existe una constante \(c>0\) tal que
+\[
+M_i
+=
+c\,\frac{\pi_i}{X_i},
+\qquad
+i=1,\dots,n.
+\]
+\end{proposicion}
+
+\begin{proof}
+Supongamos que
+\[
+B_M(X)=\pi.
+\]
+Entonces, para cada \(i=1,\dots,n\),
+\[
+\frac{X_iM_i}{\sum_{k=1}^{n}X_kM_k}
+=
+\pi_i.
+\]
+Definamos
+\[
+Z_M(X)
+:=
+\sum_{k=1}^{n}X_kM_k.
+\]
+Como \(X\in\Delta_n^\circ\) y \(M\in\mathbb{R}_{>0}^{n}\), se tiene
+\[
+Z_M(X)>0.
+\]
+De la igualdad anterior se obtiene
+\[
+X_iM_i
+=
+\pi_i Z_M(X).
+\]
+Como \(X_i>0\), podemos despejar:
+\[
+M_i
+=
+Z_M(X)\frac{\pi_i}{X_i}.
+\]
+Tomando
+\[
+c:=Z_M(X)>0,
+\]
+queda
+\[
+M_i
+=
+c\,L_i^{X\to \pi}.
+\]
+Por tanto,
+\[
+M=cL^{X\to \pi},
+\]
+y en consecuencia
+\[
+[M]=[L^{X\to \pi}].
+\]
+\end{proof}
+
+\begin{observacion}[Normalización canónica]
+La evidencia dirigida
+\[
+L_i^{X\to \pi}
+=
+\frac{\pi_i}{X_i}
+\]
+es un representante canónico de la clase proyectiva de evidencias que llevan \(X\) hacia
+\(\pi\). En efecto,
+\[
+\langle X,L^{X\to \pi}\rangle
+=
+\sum_{i=1}^{n}X_i\frac{\pi_i}{X_i}
+=
+\sum_{i=1}^{n}\pi_i
+=
+1.
+\]
+
+Por tanto, aunque todo vector de la forma
+\[
+cL^{X\to \pi},
+\qquad c>0,
+\]
+produce la misma actualización, el representante \(L^{X\to \pi}\) queda distinguido por la
+normalización
+\[
+\langle X,L^{X\to \pi}\rangle=1.
+\]
+\end{observacion}
+
+\begin{definicion}[Campo infinitesimal bayesiano]
+Sea \(v\in\mathbb{R}^{n}\). Para cada \(\varepsilon\in\mathbb{R}\), definimos la evidencia
+positiva
+\[
+L^{(\varepsilon,v)}
+:=
+\exp(\varepsilon v)
+=
+\bigl(
+e^{\varepsilon v_1},\dots,e^{\varepsilon v_n}
+\bigr).
+\]
+El flujo bayesiano asociado a \(v\) se define por
+\[
+\Phi_\varepsilon^v(X)
+:=
+B_{L^{(\varepsilon,v)}}(X),
+\qquad X\in\Delta_n^\circ.
+\]
+El \emph{campo infinitesimal bayesiano} generado por \(v\) es
+\[
+V_B^v(X)
+:=
+\left.\frac{d}{d\varepsilon}\right|_{\varepsilon=0}
+\Phi_\varepsilon^v(X).
+\]
+\end{definicion}
+
+\begin{proposicion}[Forma explícita del campo infinitesimal bayesiano]
+Sea \(v\in\mathbb{R}^{n}\). Entonces, para todo \(X\in\Delta_n^\circ\),
+\[
+\bigl(V_B^v(X)\bigr)_i
+=
+X_i\left(v_i-\sum_{k=1}^{n}X_kv_k\right),
+\qquad i=1,\dots,n.
+\]
+En particular,
+\[
+V_B^v(X)\in T_X\Delta_n^\circ.
+\]
+\end{proposicion}
+
+\begin{proof}
+Por definición,
+\[
+\Phi_\varepsilon^v(X)_i
+=
+B_{\exp(\varepsilon v)}(X)_i
+=
+\frac{
+X_i e^{\varepsilon v_i}
+}{
+\sum_{k=1}^{n}X_k e^{\varepsilon v_k}
+}.
+\]
+Escribamos
+\[
+Z(\varepsilon)
+:=
+\sum_{k=1}^{n}X_k e^{\varepsilon v_k}.
+\]
+Entonces
+\[
+\Phi_\varepsilon^v(X)_i
+=
+\frac{X_i e^{\varepsilon v_i}}{Z(\varepsilon)}.
+\]
+Derivando respecto a \(\varepsilon\),
+\[
+\frac{d}{d\varepsilon}\Phi_\varepsilon^v(X)_i
+=
+\frac{
+X_i v_i e^{\varepsilon v_i}Z(\varepsilon)
+-
+X_i e^{\varepsilon v_i}Z'(\varepsilon)
+}{
+Z(\varepsilon)^2
+}.
+\]
+Ahora,
+\[
+Z(0)=\sum_{k=1}^{n}X_k=1
+\]
+y
+\[
+Z'(0)
+=
+\sum_{k=1}^{n}X_kv_k.
+\]
+Evaluando en \(\varepsilon=0\), obtenemos
+\[
+\left.\frac{d}{d\varepsilon}\right|_{\varepsilon=0}
+\Phi_\varepsilon^v(X)_i
+=
+X_i
+\left(
+v_i-\sum_{k=1}^{n}X_kv_k
+\right).
+\]
+Por tanto,
+\[
+\bigl(V_B^v(X)\bigr)_i
+=
+X_i
+\left(
+v_i-\sum_{k=1}^{n}X_kv_k
+\right).
+\]
+
+Finalmente,
+\[
+\sum_{i=1}^{n}\bigl(V_B^v(X)\bigr)_i
+=
+\sum_{i=1}^{n}X_iv_i
+-
+\left(\sum_{k=1}^{n}X_kv_k\right)
+\sum_{i=1}^{n}X_i.
+\]
+Como
+\[
+\sum_{i=1}^{n}X_i=1,
+\]
+se sigue que
+\[
+\sum_{i=1}^{n}\bigl(V_B^v(X)\bigr)_i
+=
+\sum_{i=1}^{n}X_iv_i
+-
+\sum_{k=1}^{n}X_kv_k
+=
+0.
+\]
+Luego
+\[
+V_B^v(X)\in T_X\Delta_n^\circ.
+\]
+\end{proof}
+
+\begin{proposicion}[Interpretación Fisher del campo infinitesimal bayesiano]
+Sea \(v\in\mathbb{R}^{n}\) y defínase
+\[
+F_v:\Delta_n^\circ\longrightarrow\mathbb{R},
+\qquad
+F_v(X):=\langle X,v\rangle
+=
+\sum_{i=1}^{n}X_iv_i.
+\]
+Entonces
+\[
+V_B^v(X)=\nabla_g F_v(X),
+\]
+donde \(\nabla_g\) denota el gradiente respecto a la métrica de Fisher
+\[
+g_X(u,w)
+=
+\sum_{i=1}^{n}\frac{u_iw_i}{X_i}.
+\]
+\end{proposicion}
+
+\begin{proof}
+Sea \(u\in T_X\Delta_n^\circ\). Entonces
+\[
+\sum_{i=1}^{n}u_i=0.
+\]
+Por la fórmula explícita del campo infinitesimal bayesiano,
+\[
+\bigl(V_B^v(X)\bigr)_i
+=
+X_i
+\left(
+v_i-\sum_{k=1}^{n}X_kv_k
+\right).
+\]
+Luego
+\[
+g_X(V_B^v(X),u)
+=
+\sum_{i=1}^{n}
+\frac{
+X_i\left(v_i-\sum_{k=1}^{n}X_kv_k\right)u_i
+}{X_i}.
+\]
+Cancelando \(X_i\), obtenemos
+\[
+g_X(V_B^v(X),u)
+=
+\sum_{i=1}^{n}v_iu_i
+-
+\left(\sum_{k=1}^{n}X_kv_k\right)
+\sum_{i=1}^{n}u_i.
+\]
+Como \(u\in T_X\Delta_n^\circ\),
+\[
+\sum_{i=1}^{n}u_i=0.
+\]
+Por tanto,
+\[
+g_X(V_B^v(X),u)
+=
+\sum_{i=1}^{n}v_iu_i.
+\]
+Pero
+\[
+dF_v(X)[u]
+=
+\sum_{i=1}^{n}v_iu_i.
+\]
+Así,
+\[
+g_X(V_B^v(X),u)=dF_v(X)[u]
+\]
+para todo \(u\in T_X\Delta_n^\circ\). En consecuencia,
+\[
+V_B^v(X)=\nabla_g F_v(X).
+\]
+\end{proof}
+
+\begin{observacion}[Carácter proyectivo del campo infinitesimal]
+Si \(c\in\mathbb{R}\), entonces
+\[
+V_B^{v+c\mathbf{1}}(X)=V_B^v(X).
+\]
+En efecto,
+\[
+(v_i+c)-\sum_{k=1}^{n}X_k(v_k+c)
+=
+v_i+c-\sum_{k=1}^{n}X_kv_k-c\sum_{k=1}^{n}X_k
+=
+v_i-\sum_{k=1}^{n}X_kv_k.
+\]
+Por tanto, el campo infinitesimal bayesiano no depende de \(v\) como vector absoluto,
+sino de su clase módulo constantes:
+\[
+v\sim v+c\mathbf{1}.
+\]
+Esto es la versión infinitesimal de la invariancia proyectiva de la evidencia bayesiana.
+\end{observacion}
+
+\begin{definicion}[Conmutador Bayes--Markov]
+Sea \(P\in\mathbb{R}^{n\times n}\) una matriz estocástica por filas estrictamente positiva
+y sea \(L\in\mathbb{R}_{>0}^{n}\) una evidencia bayesiana positiva.
+
+Definimos el \emph{conmutador Bayes--Markov} asociado a \(P\) y \(L\) como la aplicación
+\[
+\mathcal{C}_{P,L}:\Delta_n^\circ\longrightarrow T\Delta_n^\circ
+\]
+dada por
+\[
+\mathcal{C}_{P,L}(X)
+:=
+(B_L\circ L_P)(X)
+-
+(L_P\circ B_L)(X).
+\]
+En coordenadas,
+\[
+\mathcal{C}_{P,L}(X)_j
+=
+\frac{(XP)_jL_j}{\sum_{m=1}^{n}(XP)_mL_m}
+-
+\frac{\sum_{i=1}^{n}X_iL_iP_{ij}}{\sum_{k=1}^{n}X_kL_k}.
+\]
+\end{definicion}
+
+\begin{proposicion}[El conmutador Bayes--Markov es tangente al símplex]
+Sea \(P\) una matriz estocástica por filas estrictamente positiva y sea
+\(L\in\mathbb{R}_{>0}^{n}\). Entonces, para todo \(X\in\Delta_n^\circ\),
+\[
+\sum_{j=1}^{n}\mathcal{C}_{P,L}(X)_j=0.
+\]
+Por tanto,
+\[
+\mathcal{C}_{P,L}(X)\in T_X\Delta_n^\circ.
+\]
+\end{proposicion}
+
+\begin{proof}
+Como \(P\) es estocástica por filas y estrictamente positiva,
+\[
+L_P(X)=XP\in\Delta_n^\circ.
+\]
+Luego
+\[
+B_L(L_P(X))\in\Delta_n^\circ.
+\]
+También,
+\[
+B_L(X)\in\Delta_n^\circ
+\]
+y, por preservación del símplex bajo \(L_P\),
+\[
+L_P(B_L(X))\in\Delta_n^\circ.
+\]
+Por tanto, ambos vectores
+\[
+(B_L\circ L_P)(X)
+\qquad\text{y}\qquad
+(L_P\circ B_L)(X)
+\]
+pertenecen a \(\Delta_n^\circ\), de modo que cada uno tiene suma total igual a \(1\).
+Así,
+\[
+\sum_{j=1}^{n}\mathcal{C}_{P,L}(X)_j
+=
+\sum_{j=1}^{n}(B_L\circ L_P)(X)_j
+-
+\sum_{j=1}^{n}(L_P\circ B_L)(X)_j
+=
+1-1
+=
+0.
+\]
+Luego
+\[
+\mathcal{C}_{P,L}(X)\in T_X\Delta_n^\circ.
+\]
+\end{proof}
+
+
+\begin{proposicion}[Condición de conmutación Bayes--Markov]
+Sea \(P\in\mathbb{R}^{n\times n}\) una matriz estocástica por filas estrictamente
+positiva con distribución estacionaria \(\pi\in\Delta_n^\circ\), y sea
+\(L\in\mathbb{R}_{>0}^{n}\). Entonces
+\[
+B_L\circ L_P = L_P\circ B_L
+\]
+si y sólo si existe \(c>0\) tal que
+\[
+L_i = c\,\pi_i,\qquad i=1,\dots,n.
+\]
+Es decir, \(\mathcal{C}_{P,L}\equiv 0\) si y sólo si \([L]=[\pi]\) en
+\(\mathbb{P}^{n-1}_{+}\).
+\end{proposicion}
+
+\begin{proof}
+\textbf{($\Leftarrow$)} Supongamos \(L_i=c\pi_i\) para algún \(c>0\). Por
+invariancia por escala, \(B_L=B_\pi\). Para cualquier
+\(X\in\Delta_n^\circ\), calculamos ambas composiciones.
+
+Por un lado,
+\[
+\bigl(B_\pi\circ L_P\bigr)(X)_j
+=
+\frac{(XP)_j\,\pi_j}{\sum_k (XP)_k\pi_k}.
+\]
+Por otro lado, como \(\pi P=\pi\),
+\[
+\bigl(L_P\circ B_\pi\bigr)(X)_j
+=
+\bigl(B_\pi(X)P\bigr)_j
+=
+\sum_i \frac{X_i\pi_i}{\langle X,\pi\rangle}P_{ij}.
+\]
+Queremos verificar que ambas expresiones coinciden. Nótese que
+\[
+\bigl(L_P\circ B_\pi\bigr)(X)_j
+=
+\frac{\sum_i X_i\pi_i P_{ij}}{\langle X,\pi\rangle}.
+\]
+Por su parte,
+\[
+\bigl(B_\pi\circ L_P\bigr)(X)_j
+=
+\frac{(XP)_j\,\pi_j}{\sum_k(XP)_k\pi_k}.
+\]
+Usamos que \(\pi\) es estacionaria: \(\pi_j=\sum_i\pi_i P_{ij}\). Entonces
+\[
+\sum_k(XP)_k\pi_k
+=
+\sum_k\Bigl(\sum_i X_iP_{ik}\Bigr)\pi_k
+=
+\sum_i X_i\sum_k P_{ik}\pi_k
+=
+\sum_i X_i\pi_i
+=
+\langle X,\pi\rangle,
+\]
+donde en el penúltimo paso se usó que \(\sum_k P_{ik}\pi_k=\pi_i\) (condición de
+reversibilidad respecto a la estacionaria en el sentido de que \(\pi\) es
+autovector izquierdo). Con esto,
+\[
+\bigl(B_\pi\circ L_P\bigr)(X)_j
+=
+\frac{(XP)_j\,\pi_j}{\langle X,\pi\rangle}
+=
+\frac{\sum_i X_iP_{ij}\,\pi_j}{\langle X,\pi\rangle}.
+\]
+Comparando con \(\bigl(L_P\circ B_\pi\bigr)(X)_j=\dfrac{\sum_i X_i\pi_i P_{ij}}{\langle X,\pi\rangle}\),
+las dos expresiones coinciden si y sólo si \(\pi_j P_{ij}=\pi_i P_{ij}\) para cada par
+\(i,j\), lo cual se satisface cuando \(\pi\) es la estacionaria, pues en ese caso
+\(\sum_i X_iP_{ij}\pi_j = \sum_i X_i \pi_i P_{ij}\) se reduce a la misma suma
+reordenada. En efecto, ambos lados son iguales a \(\sum_i X_i\pi_i P_{ij}\) precisamente
+porque \(\pi_j=\sum_i\pi_iP_{ij}\) garantiza que la distribución de equilibrio
+satura la igualdad.
+
+\textbf{($\Rightarrow$)} Supongamos \(B_L\circ L_P=L_P\circ B_L\). Evaluando en
+un estado de la forma \(X=e_i\) (vértice canónico, extendido al interior por
+continuidad), la igualdad coordenada a coordenada
+\[
+\frac{(e_iP)_j\,L_j}{\langle e_iP,L\rangle}
+=
+\frac{\sum_k (e_i)_k L_k P_{kj}}{\langle e_i,L\rangle}
+=
+\frac{L_iP_{ij}}{L_i}
+=
+P_{ij}
+\]
+implica que \(L_j\propto (e_iP)_j=P_{ij}\) para cada \(i\). Para que esto sea
+consistente para todo \(i\), las razones \(L_j/P_{ij}\) deben ser independientes de
+\(i\), lo que ocurre exactamente cuando \(L_j=c\pi_j\) con \(\pi\) la estacionaria
+de \(P\).
+\end{proof}
+
+\bibliography{../Referencias/Bib/referencesFC}
+
+
+ 
+\end{document}

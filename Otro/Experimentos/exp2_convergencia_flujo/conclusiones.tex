@@ -1,0 +1,37 @@
+\documentclass[10pt]{article}
+\usepackage[margin=2.1cm]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amssymb,booktabs}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.35em}
+\pagestyle{empty}
+
+\begin{document}
+\small
+\begin{center}
+{\Large Conclusiones del Experimento 2}\
+Convergencia discreto--continua hacia $\dot X=P-X$
+\end{center}
+
+\textbf{Configuraci\'on.} Se compar\'o el flujo exacto
+\[
+X(t)=P+(X_0-P)e^{-t},
+\]
+con su discretizaci\'on de Euler en el s\'implex, usando $X_0=(0.72,0.18,0.10)$, $P=(0.15,0.30,0.55)$ y horizonte $T=4$.
+
+\textbf{Resultados.} Para los pasos temporales $h\in\{0.5,0.25,0.125,0.0625\}$ se obtuvieron los errores finales
+\[
+1.6427\times 10^{-2},\quad 9.4541\times 10^{-3},\quad 4.9884\times 10^{-3},\quad 2.5539\times 10^{-3}.
+\]
+Los errores m\'aximos correspondientes fueron
+\[
+1.3438\times 10^{-1},\quad 5.8679\times 10^{-2},\quad 2.7668\times 10^{-2},\quad 1.3458\times 10^{-2}.
+\]
+Las razones de refinamiento del error final fueron aproximadamente $1.74$, $1.90$ y $1.95$.
+
+\textbf{Lectura.} La reducci\'on sistem\'atica del error al disminuir $h$ muestra que el flujo de primer orden es num\'ericamente estable y que la discretizaci\'on de Euler captura bien la direcci\'on del descenso hacia $P$. Adem\'as, la trayectoria se mantiene dentro del s\'implex para el rango de pasos ensayado.
+
+\textbf{Conclusi\'on.} Este experimento respalda visual y num\'ericamente la idea de que el potencial KL induce una din\'amica suave y que las aproximaciones discretas refinadas convergen a la soluci\'on continua esperada. Es la figura natural para ilustrar el puente entre el problema discreto y el l\'imite de primer orden.
+
+\end{document}

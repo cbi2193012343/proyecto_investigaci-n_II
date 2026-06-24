@@ -1,0 +1,40 @@
+\begin{thebibliography}{5}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Amari(2016)]{Amari2016}
+Shun-ichi Amari.
+\newblock \emph{Information Geometry and Its Applications}, volume 194 of
+  \emph{Applied Mathematical Sciences}.
+\newblock Springer Japan, 2016.
+\newblock \doi{10.1007/978-4-431-55978-8}.
+\newblock Corrected publication 2020.
+
+\bibitem[Chentsov(1982)]{Chentsov1982}
+N.~N. Chentsov.
+\newblock \emph{Statistical Decision Rules and Optimal Inference}.
+\newblock American Mathematical Society, Providence, R.I., 1982.
+\newblock ISBN 0-8218-4502-0.
+
+\bibitem[Cruz~L\'{o}pez(2026)]{ControlInformacional2026}
+Alejandro Cruz~L\'{o}pez.
+\newblock Poda (6): Control informacional, 2026.
+\newblock Manuscrito interno validado de trabajo.
+
+\bibitem[Pistone(2018)]{Pistone2018Lagrangian}
+Giovanni Pistone.
+\newblock Lagrangian function on the finite state space statistical bundle.
+\newblock \emph{Entropy}, 20\penalty0 (2):\penalty0 139, 2018.
+\newblock \doi{10.3390/e20020139}.
+
+\bibitem[Pistone and Shoaib(2024)]{PistoneShoaib2024Axioms}
+Giovanni Pistone and Muhammad Shoaib.
+\newblock A unified approach to aitchison's, dually affine, and transport
+  geometries of the probability simplex.
+\newblock \emph{Axioms}, 13\penalty0 (12):\penalty0 823, 2024.
+\newblock \doi{10.3390/axioms13120823}.
+
+\end{thebibliography}

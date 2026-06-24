@@ -1,0 +1,579 @@
+
+%%%%%%%%%%%% TERMINO 3 FINAL MARKOV
+\section{Sección G -- Control Óptimo Informacional y Defecto de Ordenamiento}
+
+\subsection{Observación 0.1 -- Justificación topológica de la dirección de $D_{\mathrm{KL}}(P\|X_T)$}
+
+La Sección~D fija el funcional terminal
+\[
+E_P(X)=D_{\mathrm{KL}}(P\|X)
+\]
+en la Definición~\ref{def:KL}. La Sección~F muestra que el paso markoviano entra como corrección local de la Sección~B en la Proposición~\ref{prop:markov_es_local}, y que dicha corrección no preserva en general el interior del símplex, salvo bajo hipótesis adicionales (Observación~\ref{obs:interior_markov}). Por tanto, una trayectoria admisible puede aproximarse a la frontera de $\Delta_n$ sin que el formalismo local lo impida.
+
+En ese contexto, el costo terminal debe escribirse como $D_{\mathrm{KL}}(P\|X_T)$ y no como $D_{\mathrm{KL}}(X_T\|P)$. Si existe un índice $j$ con $P(j)>0$ y $X_T(j)\to 0$, entonces la Definición~\ref{def:KL} impone
+\[
+D_{\mathrm{KL}}(P\|X_T)\to +\infty.
+\]
+La dirección inversa no penaliza con la misma severidad la pérdida de soporte. La elección de $D_{\mathrm{KL}}(P\|X_T)$ fuerza, por construcción, la reintroducción de masa en toda coordenada del objetivo con peso positivo.
+
+\subsection{Sección 1 -- Límites de velocidad}
+
+Sean $\varepsilon>0$ y $R>0$. Recordemos las restricciones
+\[
+\mathcal{K}_\varepsilon:=\{K\in\mathcal{S}_n:\ K_{ij}\ge \varepsilon>0\ \text{para todo } i,j\},
+\qquad
+\mathcal{U}_R:=\{v\in\mathbb{R}^n:\ \|v\|_\infty\le R\},
+\]
+y la normalización bayesiana componente a componente
+\[
+B_L(X)_i=\frac{X_iL_i}{\langle X,L\rangle}.
+\]
+Denotemos por $\mathcal{R}_t(X_0)$ el conjunto de estados alcanzables desde $X_0\in\Delta_n^\circ$ en exactamente $t$ pasos admisibles, donde cada paso es una corrección markoviana $X\mapsto XK$ con $K\in\mathcal{K}_\varepsilon$ o una corrección bayesiana $X\mapsto B_L(X)$ con $\log L\in\mathcal{U}_R$.
+
+\begin{lema}[1.0a -- Límite de desplazamiento markoviano]\label{lem:limite_desplazamiento_markoviano}
+Sea $K\in\mathcal{K}_\varepsilon$ y sea $X\in\Delta_n$.
+Entonces
+\[
+\|L_K(X)-X\|_1\le 2(1-\varepsilon).
+\]
+\end{lema}
+
+\begin{proof}
+Sea $e_1,\dots,e_n$ la base canónica de $\mathbb{R}^n$. Para cada $i$, el vector $e_iK$ es la fila $i$ de $K$, luego pertenece a $\Delta_n$. Además,
+\[
+\|e_iK-e_i\|_1=2(1-K_{ii})\le 2(1-\varepsilon).
+\]
+Ahora bien,
+\[
+XK-X=\sum_{i=1}^n X_i\,(e_iK-e_i),
+\]
+de modo que, por convexidad de la norma $\ell^1$,
+\[
+\|XK-X\|_1
+\le \sum_{i=1}^n X_i\,\|e_iK-e_i\|_1
+\le 2(1-\varepsilon)\sum_{i=1}^n X_i
+=2(1-\varepsilon).
+\]
+La cota es compatible con la estimación clásica de Doeblin-Dobrushin para operadores de Markov \citep{Seneta2006}, que controla la contracción asociada a una masa mínima uniforme. Por tanto,
+\[
+\|L_K(X)-X\|_1\le 2(1-\varepsilon).
+\]
+\end{proof}
+
+\begin{lema}[1.0b -- Límite de desplazamiento bayesiano]\label{lem:limite_desplazamiento_bayesiano}
+Sea $L\in\mathbb{R}_{>0}^n$ con $\log L\in\mathcal{U}_R$, y sea $X\in\Delta_n^\circ$.
+Entonces
+\[
+\|B_L(X)-X\|_1\le e^{2R}-1.
+\]
+\end{lema}
+
+\begin{proof}
+Escribamos $\beta:=\langle X,L\rangle$. Como $X\in\Delta_n^\circ$ y $e^{-R}\le L_i\le e^R$ para todo $i$, se sigue que
+\[
+e^{-R}\le \beta\le e^R.
+\]
+Por tanto,
+\[
+e^{-2R}\le \frac{L_i}{\beta}\le e^{2R}
+\qquad\text{para todo } i.
+\]
+Luego
+\[
+\|B_L(X)-X\|_1
+=\sum_{i=1}^n X_i\left|\frac{L_i}{\beta}-1\right|
+\le \left(e^{2R}-1\right)\sum_{i=1}^n X_i
+=e^{2R}-1.
+\]
+Este paso no es sino la normalización multiplicativa del símplex en la geometría de Aitchison \citep{Aitchison1986}: el factor común $\beta$ se elimina por cierre, y el desplazamiento restante queda controlado por la ventana logarítmica de $L$.
+\end{proof}
+
+\begin{proposicion}[1.1 -- Inalcanzabilidad en tiempo finito]\label{prop:inalcanzabilidad_tiempo_finito}
+Sean $\varepsilon>0$, $R>0$ y $t\ge 1$.
+Sea $X_0\in\Delta_n^\circ$.
+Si $P\in\Delta_n^\circ$ satisface
+\[
+\|P-X_0\|_1>t\cdot \max\!\bigl(2(1-\varepsilon),\,e^{2R}-1\bigr),
+\]
+entonces $P\notin\mathcal{R}_t(X_0)$.
+En particular, $\mathcal{R}_t(X_0)$ está contenida en la bola $\ell^1$ de radio
+\[
+t\cdot \max\!\bigl(2(1-\varepsilon),\,e^{2R}-1\bigr)
+\]
+centrada en $X_0$.
+\end{proposicion}
+
+\begin{proof}
+Sea $X_0,X_1,\dots,X_t$ una trayectoria admisible de longitud $t$ desde $X_0$.
+En cada paso, o bien $X_{s+1}=L_K(X_s)$ con $K\in\mathcal{K}_\varepsilon$, o bien $X_{s+1}=B_L(X_s)$ con $\log L\in\mathcal{U}_R$.
+Por los Lemas~\ref{lem:limite_desplazamiento_markoviano} y~\ref{lem:limite_desplazamiento_bayesiano},
+\[
+\|X_{s+1}-X_s\|_1\le \max\!\bigl(2(1-\varepsilon),\,e^{2R}-1\bigr)
+\qquad\text{para todo } s=0,\dots,t-1.
+\]
+Por la desigualdad triangular,
+\[
+\|X_t-X_0\|_1
+\le \sum_{s=0}^{t-1}\|X_{s+1}-X_s\|_1
+\le t\cdot \max\!\bigl(2(1-\varepsilon),\,e^{2R}-1\bigr).
+\]
+Por tanto, ningún estado a distancia estrictamente mayor que ese radio puede pertenecer a $\mathcal{R}_t(X_0)$.
+En particular, si $\|P-X_0\|_1$ supera dicha cota, entonces $P$ es inalcanzable en $t$ pasos.
+\end{proof}
+
+\subsection{Definición 2.4 -- Variable de ordenamiento}
+
+En cada paso $t$, el controlador elige una acción compuesta
+\[
+u_t=(K_t,L_t,\sigma_t),
+\]
+donde $K_t\in\mathcal{K}_\varepsilon$, $\log L_t\in\mathcal{U}_R$ y $\sigma_t\in\{MB,BM\}$ es la variable de ordenamiento. La dinámica inducida es
+\[
+X_{t+1}=
+\begin{cases}
+B_{L_t}(X_tK_t), & \text{si } \sigma_t=MB,\\
+B_{L_t}(X_t)K_t, & \text{si } \sigma_t=BM.
+\end{cases}
+\]
+El orden pasa así a ser una decisión explícita del controlador.
+
+\subsection{Definición 2.5 -- Costos secuenciales ordenados}
+
+Para $X\in\Delta_n^\circ$, $K\in\mathcal{K}_\varepsilon$ y $\log L\in\mathcal{U}_R$, se definen los costos de un paso compuesto
+\[
+c_{MB}(X;K,L):=D_{\mathrm{KL}}(XK\|X)+D_{\mathrm{KL}}(B_L(XK)\|XK),
+\]
+\[
+c_{BM}(X;K,L):=D_{\mathrm{KL}}(B_L(X)\|X)+D_{\mathrm{KL}}(B_L(X)K\|B_L(X)).
+\]
+Ambos costos son no negativos y se anulan simultáneamente si y solo si $K=I$ y $L$ es constante.
+
+\subsection{Definición 2.6 -- Q-funciones por orden}\label{def:Q_funciones}
+
+Para $\tau\ge 1$, $X\in\Delta_n^\circ$, $K\in\mathcal{K}_\varepsilon$ y $\log L\in\mathcal{U}_R$, se definen las funciones de acción-valor
+\[
+Q_\tau^{MB}(X;K,L):=c_{MB}(X;K,L)+V_{\tau-1}\!\bigl(B_L(XK)\bigr),
+\]
+\[
+Q_\tau^{BM}(X;K,L):=c_{BM}(X;K,L)+V_{\tau-1}\!\bigl(B_L(X)K\bigr),
+\]
+donde $V_0(X)=D_{\mathrm{KL}}(P\|X)$ y, para $\tau\ge 1$, $V_\tau$ se obtiene por la recurrencia de Bellman sobre el conjunto de acciones admisibles.
+
+\begin{proposicion}[2.2 -- Continuidad local de la función de valor]\label{prop:continuidad_valor}
+Sea $P\in\Delta_n^\circ$ fijo. Sean $\lambda>0$, $\varepsilon>0$, $R>0$ y $\tau\ge 0$.
+Sea $\mathcal{C}\subset\Delta_n^\circ$ un subconjunto compacto, y defínase
+\[
+m(\mathcal{C}):=\min_{X\in\mathcal{C}}\min_i X_i>0.
+\]
+Entonces $V_\tau:\Delta_n^\circ\to[0,+\infty)$ es continua en $\Delta_n^\circ$. Más aún, existe una constante $L_\tau(\mathcal{C})>0$ tal que para todo $X,Y\in\mathcal{C}$,
+\[
+|V_\tau(X)-V_\tau(Y)|\le L_\tau(\mathcal{C})\,\|X-Y\|_1.
+\]
+\end{proposicion}
+
+\begin{proof}
+La afirmación se prueba por inducción en $\tau$. Para $\tau=0$, la función $V_0(X)=D_{\mathrm{KL}}(P\|X)$ es continua en $\Delta_n^\circ$ y, sobre el compacto $\mathcal{C}$, es Lipschitz porque todas las coordenadas de $X$ están uniformemente separadas de cero por $m(\mathcal{C})$.
+
+Supóngase el resultado cierto para $\tau-1$. Las funciones de transición
+\[
+(X,K,L)\mapsto B_L(XK),\qquad (X,K,L)\mapsto B_L(X)K
+\]
+y los costos $c_{MB},c_{BM}$ son continuos en $\mathcal{C}\times\mathcal{K}_\varepsilon\times\mathcal{U}_R$, y sus denominadores quedan uniformemente acotados lejos de cero en ese compacto. Por hipótesis inductiva, $V_{\tau-1}$ es continua y Lipschitz en la imagen de $\mathcal{C}$ bajo todas las acciones admisibles.
+
+La función de valor $V_\tau$ se obtiene como el ínfimo de una familia continua sobre un conjunto de acciones compacto; por tanto, es continua. La misma compacidad, combinada con las cotas uniformes del paso anterior, da una constante de Lipschitz $L_\tau(\mathcal{C})$.
+\end{proof}
+
+\subsection{Sección 3 -- Defecto de ordenamiento}
+
+\subsection{Lema 3.0 -- Fórmula explícita del defecto $\mathcal{D}_{K,L}(X)$}\label{lem:defecto_explicito}
+
+Sean $K\in\mathcal{K}_\varepsilon$, $L\in\mathbb{R}_{>0}^n$ con $\log L\in\mathcal{U}_R$ y $X\in\Delta_n^\circ$.
+Denótense
+\[
+Z:=XK,\qquad \widetilde{X}:=X\circ L,\qquad \alpha:=\langle Z,L\rangle,\qquad \beta:=\langle X,L\rangle.
+\]
+Entonces las coordenadas del defecto de ordenamiento satisfacen
+\[
+\mathcal{D}_{K,L}(X)_i
+=\frac{Z_iL_i}{\alpha}-\frac{(\widetilde{X}K)_i}{\beta},
+\qquad i=1,\dots,n.
+\]
+Equivalentemente,
+\[
+\mathcal{D}_{K,L}(X)=B_L(XK)-B_L(X)K.
+\]
+
+\subsection{Proposición 3.3 -- Caso $n=2$: defecto escalar y subvariedad de conmutación}\label{prop:defecto_n2}
+
+Sea $n=2$,
+\[
+K=\begin{pmatrix}1-k_{12} & k_{12}\\ k_{21} & 1-k_{21}\end{pmatrix},
+\qquad
+k_{12},k_{21}\in[\varepsilon,1-\varepsilon],
+\]
+y sea $L=(L_1,L_2)$ con $e^{-R}\le L_i\le e^R$.
+Sea $X=(x,1-x)$ con $x\in(0,1)$.
+Denótense
+\[
+z(x):=x(1-k_{12})+(1-x)k_{21},\qquad \alpha(x):=z(x)L_1+(1-z(x))L_2,
+\]
+\[
+\beta(x):=xL_1+(1-x)L_2.
+\]
+Entonces el defecto se reduce al escalar
+\[
+d(x):=\mathcal{D}_{K,L}(X)_1=-\mathcal{D}_{K,L}(X)_2
+\]
+dado por
+\[
+d(x)=\frac{z(x)L_1}{\alpha(x)}-\frac{xL_1(1-k_{12})+(1-x)L_2k_{21}}{\beta(x)}.
+\]
+Además, $d$ es un cociente de funciones racionales en $x$. Si $L_1=L_2$ o $K=I$, entonces $d\equiv 0$. Si $L_1\neq L_2$ y $k_{12},k_{21}>0$ con $k_{12}+k_{21}\neq 1$, el conjunto de ceros de $d$ es finito salvo degeneración algebraica.
+
+\begin{proof}
+La identidad $d(x)=\mathcal{D}_{K,L}(X)_1$ es una sustitución directa de la fórmula del Lema~\ref{lem:defecto_explicito}, junto con la definición de $B_L$.
+El hecho de que $\mathcal{D}_{K,L}(X)_1=-\mathcal{D}_{K,L}(X)_2$ sigue de que ambas expresiones pertenecen al símplex y, por tanto, suman cero.
+Las afirmaciones sobre los casos $L_1=L_2$ y $K=I$ son inmediatas.
+Para el caso genérico, $d$ es racional en $x$ y su numerador es un polinomio no trivial salvo relaciones algebraicas adicionales; por ello, su conjunto de ceros en $(0,1)$ es discreto y, en particular, finito.
+\end{proof}
+
+\subsection{Lema 3.4 -- Lipschitz local de $D_{\mathrm{KL}}(P\|\cdot)$}\label{lem:lipschitz_kl_local}
+
+Sea $P\in\Delta_n^\circ$.
+Sean $Y_1,Y_2\in\Delta_n^\circ$ tales que $\min_i (Y_{1,i},Y_{2,i})\ge m>0$.
+Entonces
+\[
+\bigl|D_{\mathrm{KL}}(P\|Y_1)-D_{\mathrm{KL}}(P\|Y_2)\bigr|\le \frac{1}{m}\,\|Y_1-Y_2\|_1.
+\]
+
+\begin{proof}
+La función $f(Y)=D_{\mathrm{KL}}(P\|Y)$ es suave en $\Delta_n^\circ$ y satisface
+\[
+\frac{\partial f}{\partial Y_i}(Y)=-\frac{P_i}{Y_i}.
+\]
+Si $Y$ está en un compacto contenido en $\{Y_i\ge m\}$, entonces
+\[
+\|\nabla f(Y)\|_\infty\le \frac{1}{m}.
+\]
+Aplicando el teorema del valor medio a lo largo del segmento que une $Y_1$ y $Y_2$,
+\[
+\bigl|f(Y_1)-f(Y_2)\bigr|
+\le \sup_{Y}\|\nabla f(Y)\|_\infty\,\|Y_1-Y_2\|_1
+\le \frac{1}{m}\|Y_1-Y_2\|_1.
+\]
+\end{proof}
+
+\subsection{Definición -- Defecto de primer paso $\delta_{K,L}(X)$}\label{def:defecto_primer_paso}
+
+Sean $K\in\mathcal{K}_\varepsilon$, $L\in\mathbb{R}_{>0}^n$ con $\log L\in\mathcal{U}_R$ y $X\in\Delta_n^\circ$. El \emph{defecto de primer paso} es
+\[
+\delta_{K,L}(X):=XK-B_L(X)\in T_X\Delta_n^\circ.
+\]
+Mientras que $\mathcal{D}_{K,L}(X)=B_L(XK)-B_L(X)K$ mide el desacuerdo entre las dos rutas \emph{después} de dos pasos (un conmutador), $\delta_{K,L}(X)$ mide el desacuerdo entre los operadores $L_K$ y $B_L$ ya en su \emph{primera} aplicación. Ambos pertenecen a $T_X\Delta_n^\circ$, pues $\sum_i(XK)_i=\sum_i B_L(X)_i=1$.
+
+\begin{lema}[3.4b -- Lipschitz conjunto de $D_{\mathrm{KL}}(\cdot\|\cdot)$]\label{lem:lipschitz_kl_conjunto}
+Sean $P_1,P_2,Q_1,Q_2\in\Delta_n^\circ$ tales que todas sus coordenadas son $\ge m>0$.
+Entonces
+\[
+\bigl|D_{\mathrm{KL}}(P_1\|Q_1)-D_{\mathrm{KL}}(P_2\|Q_2)\bigr|
+\le \Lambda(m)\Bigl(\|P_1-P_2\|_1+\|Q_1-Q_2\|_1\Bigr),
+\qquad
+\Lambda(m):=2\log\frac{1}{m}+1+\frac{1}{m}.
+\]
+\end{lema}
+
+\begin{proof}
+La función $g(P,Q)=D_{\mathrm{KL}}(P\|Q)=\sum_iP_i\log(P_i/Q_i)$ es suave en $\Delta_n^\circ\times\Delta_n^\circ$, con
+\[
+\frac{\partial g}{\partial P_i}=\log\frac{P_i}{Q_i}+1,
+\qquad
+\frac{\partial g}{\partial Q_i}=-\frac{P_i}{Q_i}.
+\]
+Si $P_i,Q_i\ge m$ para todo $i$ (y $P_i,Q_i\le 1$ por estar en $\Delta_n^\circ$), entonces $\log(P_i/Q_i)\in[\log m,\log(1/m)]$, de modo que
+\[
+\left|\frac{\partial g}{\partial P_i}\right|\le \log\frac{1}{m}+1,
+\qquad
+\left|\frac{\partial g}{\partial Q_i}\right|\le \frac{1}{m}.
+\]
+Aplicando el teorema del valor medio a lo largo del segmento que une $(P_1,Q_1)$ con $(P_2,Q_2)$ en $\Delta_n^\circ\times\Delta_n^\circ$ (segmento contenido en la región $\{P_i,Q_i\ge m\}$ por convexidad del símplex),
+\[
+\bigl|g(P_1,Q_1)-g(P_2,Q_2)\bigr|
+\le \Bigl(\log\tfrac{1}{m}+1\Bigr)\|P_1-P_2\|_1+\frac{1}{m}\|Q_1-Q_2\|_1
+\le \Lambda(m)\bigl(\|P_1-P_2\|_1+\|Q_1-Q_2\|_1\bigr).
+\]
+\end{proof}
+
+\subsection{Proposición 3.4 -- Cota de suboptimalidad de un paso}\label{prop:cota_subopt_un_paso}
+
+Sean $\varepsilon>0$ y $R>0$.
+Sea $K\in\mathcal{K}_\varepsilon$ y sea $L\in\mathbb{R}_{>0}^n$ con $\log L\in\mathcal{U}_R$.
+Sea $X\in\Delta_n^\circ$ y sea $P\in\Delta_n^\circ$ el objetivo.
+Entonces
+\[
+\bigl|J(X;K,L)-J(X;L,K)\bigr|\le \frac{e^{2R}}{\varepsilon}\,\|\mathcal{D}_{K,L}(X)\|_1,
+\]
+donde
+\[
+J(X;K,L)=D_{\mathrm{KL}}(P\|B_L(XK)),
+\qquad
+J(X;L,K)=D_{\mathrm{KL}}(P\|B_L(X)K).
+\]
+
+\begin{proof}
+Por la definición de $\mathcal{D}_{K,L}(X)$,
+\[
+B_L(XK)-B_L(X)K=\mathcal{D}_{K,L}(X).
+\]
+Además, si $K\in\mathcal{K}_\varepsilon$, entonces $XK$ tiene coordenadas uniformemente acotadas inferiormente por $\varepsilon$, y por la ventana logarítmica de $L$ se obtiene
+\[
+\min_i B_L(XK)_i\ge \varepsilon e^{-2R}.
+\]
+De manera análoga, $B_L(X)K$ tiene coordenadas inferiores al menos $\varepsilon e^{-2R}$.
+Aplicando el Lema~\ref{lem:lipschitz_kl_local} con
+\[
+Y_1=B_L(XK),\qquad Y_2=B_L(X)K,\qquad m=\varepsilon e^{-2R},
+\]
+se obtiene
+\[
+\bigl|J(X;K,L)-J(X;L,K)\bigr|
+\le \frac{1}{m}\,\|B_L(XK)-B_L(X)K\|_1
+\le \frac{e^{2R}}{\varepsilon}\,\|\mathcal{D}_{K,L}(X)\|_1.
+\]
+\end{proof}
+
+\subsection{Lema 3.5'' -- Diferencia de costos secuenciales}\label{lem:diferencia_costos_secuenciales}
+
+Sean $\varepsilon>0$, $R>0$.
+Sea $K\in\mathcal{K}_\varepsilon$, $\log L\in\mathcal{U}_R$ y $X\in\Delta_n^\circ$.
+Sea $\mathcal{C}\subset\Delta_n^\circ$ un compacto que contiene a $X$, y sea $m(\mathcal{C}):=\min_{Y\in\mathcal{C}}\min_iY_i>0$.
+Defínase $m_{**}:=\min(m(\mathcal{C}),\varepsilon)\,e^{-2R}$.
+Entonces
+\[
+\bigl|c_{MB}(X;K,L)-c_{BM}(X;K,L)\bigr|
+\le 2\Lambda(m_{**})\Bigl(\|\delta_{K,L}(X)\|_1+\|\mathcal{D}_{K,L}(X)\|_1\Bigr),
+\]
+donde $\Lambda(\cdot)$ es la constante del Lema~\ref{lem:lipschitz_kl_conjunto} y $\delta_{K,L}(X)=XK-B_L(X)$ es el defecto de primer paso de la Definición~\ref{def:defecto_primer_paso}.
+
+\begin{proof}
+Escríbanse $A:=X$, $A_1:=XK$, $A_2:=B_L(XK)$, $B_1:=B_L(X)$, $B_2:=B_L(X)K$, de modo que
+\[
+c_{MB}(X;K,L)=D_{\mathrm{KL}}(A_1\|A)+D_{\mathrm{KL}}(A_2\|A_1),
+\qquad
+c_{BM}(X;K,L)=D_{\mathrm{KL}}(B_1\|A)+D_{\mathrm{KL}}(B_2\|B_1),
+\]
+y por la Definición~\ref{def:defecto_primer_paso} y el Lema~\ref{lem:defecto_explicito},
+\[
+A_1-B_1=\delta_{K,L}(X),
+\qquad
+A_2-B_2=\mathcal{D}_{K,L}(X).
+\]
+
+\emph{Cotas inferiores uniformes.} Como $X\in\mathcal{C}$, $X_i\ge m(\mathcal{C})$ para todo $i$. Como $K\in\mathcal{K}_\varepsilon$ es estocástica con $K_{ij}\ge\varepsilon$, para cualquier $Y\in\Delta_n$ se tiene $(YK)_j=\sum_iY_iK_{ij}\ge\varepsilon$; en particular $A_1\ge\varepsilon$ y $B_2\ge\varepsilon$ coordenada a coordenada. Como $\log L\in\mathcal{U}_R$, $B_L(Y)_i=Y_iL_i/\langle Y,L\rangle\ge Y_ie^{-2R}$ para cualquier $Y\in\Delta_n^\circ$; en particular $B_1=B_L(X)\ge m(\mathcal{C})e^{-2R}$ y $A_2=B_L(A_1)\ge\varepsilon e^{-2R}$. Por tanto, todas las coordenadas de $A,A_1,A_2,B_1,B_2$ son $\ge m_{**}=\min(m(\mathcal{C}),\varepsilon)e^{-2R}$.
+
+\emph{Descomposición.} Se escribe
+\[
+c_{MB}-c_{BM}
+=\underbrace{\bigl[D_{\mathrm{KL}}(A_1\|A)-D_{\mathrm{KL}}(B_1\|A)\bigr]}_{T_1}
++\underbrace{\bigl[D_{\mathrm{KL}}(A_2\|A_1)-D_{\mathrm{KL}}(B_2\|B_1)\bigr]}_{T_2}.
+\]
+
+\emph{Cota de $T_1$.} En $T_1$ el segundo argumento es $A$ en ambos términos, y los primeros argumentos difieren por $A_1-B_1=\delta_{K,L}(X)$. Por el Lema~\ref{lem:lipschitz_kl_conjunto} con $m=m_{**}$,
+\[
+|T_1|\le \Lambda(m_{**})\,\|A_1-B_1\|_1=\Lambda(m_{**})\,\|\delta_{K,L}(X)\|_1.
+\]
+
+\emph{Cota de $T_2$.} En $T_2$ los primeros argumentos difieren por $A_2-B_2=\mathcal{D}_{K,L}(X)$ y los segundos por $A_1-B_1=\delta_{K,L}(X)$. Por el Lema~\ref{lem:lipschitz_kl_conjunto} con $m=m_{**}$,
+\[
+|T_2|\le \Lambda(m_{**})\Bigl(\|A_2-B_2\|_1+\|A_1-B_1\|_1\Bigr)
+=\Lambda(m_{**})\Bigl(\|\mathcal{D}_{K,L}(X)\|_1+\|\delta_{K,L}(X)\|_1\Bigr).
+\]
+
+\emph{Conclusión.} Sumando ambas cotas,
+\[
+|c_{MB}-c_{BM}|\le |T_1|+|T_2|
+\le \Lambda(m_{**})\Bigl(2\|\delta_{K,L}(X)\|_1+\|\mathcal{D}_{K,L}(X)\|_1\Bigr)
+\le 2\Lambda(m_{**})\Bigl(\|\delta_{K,L}(X)\|_1+\|\mathcal{D}_{K,L}(X)\|_1\Bigr).
+\qedhere
+\]
+\end{proof}
+
+\subsection{Teorema 3.3'' -- Cota de suboptimalidad multi-paso (Q-función)}\label{teo:subopt_multi_paso}
+
+Sean $\varepsilon>0$, $R>0$ y $\tau\ge 1$.
+Sea $K\in\mathcal{K}_\varepsilon$, $\log L\in\mathcal{U}_R$ y $X\in\Delta_n^\circ$.
+Sea $\mathcal{C}\subset\Delta_n^\circ$ un compacto que contenga a $X$ y a las imágenes de $X$ bajo todas las composiciones admisibles de $L_K$ y $B_L$ hasta el paso $\tau$.
+Entonces
+\[
+\bigl|Q_\tau^{MB}(X;K,L)-Q_\tau^{BM}(X;K,L)\bigr|
+\le C_\tau(\mathcal{C},\varepsilon,R)\,\Bigl(\|\delta_{K,L}(X)\|_1+\|\mathcal{D}_{K,L}(X)\|_1\Bigr),
+\]
+con $C_\tau(\mathcal{C},\varepsilon,R):=2\Lambda(m_{**})+L_{\tau-1}(\mathcal{C})$, donde $\Lambda(\cdot)$ es la constante del Lema~\ref{lem:lipschitz_kl_conjunto}, $m_{**}=\min(m(\mathcal{C}),\varepsilon)e^{-2R}$, y $L_{\tau-1}(\mathcal{C})$ es la constante de Lipschitz de $V_{\tau-1}$ de la Proposición~\ref{prop:continuidad_valor}.
+
+En particular, si $\delta_{K,L}(X)=0$ y $\mathcal{D}_{K,L}(X)=0$, entonces $Q_\tau^{MB}(X;K,L)=Q_\tau^{BM}(X;K,L)$: en un estado donde los dos operadores producen el mismo primer paso y además conmutan, la política óptima de $\tau$ pasos no depende del ordenamiento elegido en el paso actual.
+
+\begin{proof}
+Por la Definición~\ref{def:Q_funciones} (Q-funciones por orden),
+\[
+Q_\tau^{MB}(X;K,L)-Q_\tau^{BM}(X;K,L)
+=\bigl[c_{MB}(X;K,L)-c_{BM}(X;K,L)\bigr]
++\bigl[V_{\tau-1}(B_L(XK))-V_{\tau-1}(B_L(X)K)\bigr].
+\]
+El primer corchete está acotado por el Lema~\ref{lem:diferencia_costos_secuenciales}:
+\[
+\bigl|c_{MB}(X;K,L)-c_{BM}(X;K,L)\bigr|\le 2\Lambda(m_{**})\bigl(\|\delta_{K,L}(X)\|_1+\|\mathcal{D}_{K,L}(X)\|_1\bigr).
+\]
+Para el segundo corchete, por el Lema~\ref{lem:defecto_explicito}, $B_L(XK)-B_L(X)K=\mathcal{D}_{K,L}(X)$. Por la Proposición~\ref{prop:continuidad_valor},
+\[
+\bigl|V_{\tau-1}(B_L(XK))-V_{\tau-1}(B_L(X)K)\bigr|
+\le L_{\tau-1}(\mathcal{C})\,\|B_L(XK)-B_L(X)K\|_1
+=L_{\tau-1}(\mathcal{C})\,\|\mathcal{D}_{K,L}(X)\|_1.
+\]
+Sumando ambas cotas,
+\[
+\bigl|Q_\tau^{MB}-Q_\tau^{BM}\bigr|
+\le 2\Lambda(m_{**})\bigl(\|\delta_{K,L}(X)\|_1+\|\mathcal{D}_{K,L}(X)\|_1\bigr)+L_{\tau-1}(\mathcal{C})\,\|\mathcal{D}_{K,L}(X)\|_1
+\le C_\tau(\mathcal{C},\varepsilon,R)\bigl(\|\delta_{K,L}(X)\|_1+\|\mathcal{D}_{K,L}(X)\|_1\bigr),
+\]
+con $C_\tau(\mathcal{C},\varepsilon,R)=2\Lambda(m_{**})+L_{\tau-1}(\mathcal{C})$.
+
+Para la última afirmación: si $\delta_{K,L}(X)=\mathcal{D}_{K,L}(X)=0$, el lado derecho se anula, forzando $Q_\tau^{MB}(X;K,L)=Q_\tau^{BM}(X;K,L)$.
+\end{proof}
+
+\begin{observacion}[Dos defectos, dos fuentes de suboptimalidad]\label{obs:dos_defectos}
+El Teorema~\ref{teo:subopt_multi_paso} separa la pérdida por ordenamiento en dos contribuciones geométricas independientes. El defecto de primer paso $\delta_{K,L}(X)=XK-B_L(X)$ mide si Markov y Bayes producen el mismo estado inmediato; el defecto de ordenamiento $\mathcal{D}_{K,L}(X)=B_L(XK)-B_L(X)K$ mide si las dos rutas de dos pasos reconvergen. No hay relación general entre ambos. Para $n=2$, el Teorema~\ref{teo:caracterizacion_n2} muestra que, dentro de $\mathcal{K}_\varepsilon$, $\mathcal{D}_{K,L}\equiv0$ ocurre únicamente cuando $L_1=L_2$ —independientemente del valor de $\delta_{K,L}(X)$—, y la Proposición~\ref{prop:vacio_rho_no_positivo} muestra que en caso contrario el defecto no se anula en ningún punto del símplex (para $\rho\le0$; ver Observación~\ref{obs:caso_rho_positivo} para $\rho>0$). Por ello, una cota que dependiera únicamente de $\|\mathcal{D}_{K,L}(X)\|_1$ no podría sostenerse en general, y el Teorema~\ref{teo:subopt_multi_paso} es, en este sentido, la formulación correcta.
+\end{observacion}
+
+\subsection{Sección 4 -- Caracterización del defecto en $n=2$ y relevancia cuantitativa en $n=3$}
+
+Esta sección cierra el Problema 3.2 de ProyectoII en la dimension $n=2$ mediante una caracterización algebraica completa del caso $\mathcal{D}_{K,L}\equiv0$, y muestra, con un ejemplo explícito en $n=3$, que el defecto de ordenamiento $\mathcal{D}_{K,L}$ tiene consecuencias numéricas reales en el costo de control: no es una corrección de orden superior despreciable.
+
+\begin{teorema}[Caracterización de $\mathcal{D}_{K,L}\equiv0$ para $n=2$]\label{teo:caracterizacion_n2}
+Sea $n=2$, $K=\begin{pmatrix}1-k_{12}&k_{12}\\k_{21}&1-k_{21}\end{pmatrix}\in\mathcal{K}_\varepsilon$ (es decir, $k_{12},k_{21}\in[\varepsilon,1-\varepsilon]\subset(0,1)$) y $L=(L_1,L_2)\in\mathbb{R}_{>0}^2$. Entonces
+\[
+\mathcal{D}_{K,L}(X)=0\ \text{para todo } X\in\Delta_2^\circ
+\quad\Longleftrightarrow\quad
+L_1=L_2.
+\]
+\end{teorema}
+
+\begin{proof}
+($\Leftarrow$) Si $L_1=L_2=:c$, entonces $\langle X,L\rangle=c$ para todo $X\in\Delta_2$, luego $B_L(X)_i=X_ic/c=X_i$, es decir $B_L=\mathrm{id}$. Por tanto
+\[
+\mathcal{D}_{K,L}(X)=B_L(XK)-B_L(X)K=XK-XK=0.
+\]
+
+($\Rightarrow$) Sea $X=(x,1-x)$, $x\in(0,1)$. Denotese
+\[
+a:=1-k_{12},\qquad b:=k_{21},\qquad z(x):=ax+(1-x)b=b+(a-b)x,
+\]
+\[
+\alpha(x):=z(x)L_1+(1-z(x))L_2,\qquad \beta(x):=xL_1+(1-x)L_2.
+\]
+Por el Lema~\ref{lem:defecto_explicito}, la primera coordenada del defecto es
+\[
+d(x):=\mathcal{D}_{K,L}(X)_1=\frac{z(x)L_1}{\alpha(x)}-\frac{xL_1a+(1-x)L_2b}{\beta(x)}.
+\]
+Si $\mathcal{D}_{K,L}(X)=0$ para todo $X\in\Delta_2^\circ$, entonces $d(x)=0$ para todo $x\in(0,1)$. Como $\alpha(x)>0$ y $\beta(x)>0$ en $(0,1)$, al multiplicar se obtiene la identidad polinómica
+\[
+N(x):=\alpha(x)\beta(x)d(x)=z(x)L_1\beta(x)-\alpha(x)\bigl(xL_1a+(1-x)L_2b\bigr)\equiv0
+\quad\text{en }(0,1).
+\]
+Por tanto $N$ es el polinomio nulo en $\mathbb{R}$. Evaluando en $x=0$,
+\[
+0=N(0)=bL_1L_2-bL_2\bigl[bL_1+(1-b)L_2\bigr]=b(1-b)L_2(L_1-L_2).
+\]
+Como $b=k_{21}\in[\varepsilon,1-\varepsilon]\subset(0,1)$ y $L_2>0$, se sigue que $L_1-L_2=0$. En consecuencia, $L_1=L_2$, y el resultado queda probado.
+\end{proof}
+
+\begin{corolario}[Cota de grado para $\mathcal{M}_{K,L}$]\label{cor:cota_grado}
+En las hipótesis del Teorema~\ref{teo:caracterizacion_n2}, si $L_1\ne L_2$ entonces
+\[
+\mathcal{M}_{K,L}\cap(0,1):=\{x\in(0,1):\mathcal{D}_{K,L}(X)=0,\ X=(x,1-x)\}
+\]
+tiene a lo sumo $2$ elementos.
+\end{corolario}
+
+\begin{proof}
+Por el Teorema~\ref{teo:caracterizacion_n2}, $N(x)$ no es el polinomio nulo; siendo de grado $\le2$, tiene a lo sumo $2$ raíces reales, y $d(x)=0\iff N(x)=0$ en $(0,1)$.
+\end{proof}
+
+\begin{proposicion}[$\mathcal{M}_{K,L}\cap(0,1)=\emptyset$ para $\rho\le0$]\label{prop:vacio_rho_no_positivo}
+En las hipótesis del Teorema~\ref{teo:caracterizacion_n2}, sea $\rho:=(1-k_{12})-k_{21}$. Si $\rho\le0$ y $L_1\ne L_2$, entonces
+\[
+\mathcal{D}_{K,L}(X)\ne0\qquad\text{para todo } X\in\Delta_2^\circ.
+\]
+\end{proposicion}
+
+\begin{proof}
+Sea $z(x)=k_{21}+\rho x$ como en la Proposición~\ref{prop:defecto_n2}; nótese que $z(Y_1)=(YK)_1$ para cualquier $Y=(Y_1,1-Y_1)\in\Delta_2$, y que $z$ es afín con pendiente $\rho$, de modo que $z(w_2)-z(w_1)=\rho(w_2-w_1)$ para cualesquiera $w_1,w_2$. Sea $u(w):=B_L((w,1-w))_1=\dfrac{wL_1}{\beta(w)}$, con $\beta(w):=wL_1+(1-w)L_2>0$ para $w\in[0,1]$, y defínase $\phi(w):=\dfrac{w(1-w)}{\beta(w)}$, que satisface $\phi(w)>0$ para $w\in(0,1)$ y la identidad
+\[
+u(w)-w=\frac{wL_1}{\beta(w)}-w=\frac{w\bigl(L_1-\beta(w)\bigr)}{\beta(w)}=\frac{w(1-w)(L_1-L_2)}{\beta(w)}=\lambda\,\phi(w),\qquad \lambda:=L_1-L_2.
+\]
+
+Con esta notación, $d(x)=B_L(XK)_1-(B_L(X)K)_1=u(z(x))-z(u(x))$. Escribiendo
+\[
+d(x)=\bigl[u(z(x))-z(x)\bigr]-\bigl[z(u(x))-z(x)\bigr],
+\]
+el primer corchete es $u(z(x))-z(x)=\lambda\phi(z(x))$ por la identidad anterior aplicada en $w=z(x)$, y el segundo corchete es $z(u(x))-z(x)=\rho\bigl(u(x)-x\bigr)=\rho\lambda\phi(x)$, usando la afinidad de $z$ y la misma identidad en $w=x$. Por tanto
+\[
+d(x)=\lambda\phi(z(x))-\rho\lambda\phi(x)=\lambda\bigl[\phi(z(x))-\rho\,\phi(x)\bigr].
+\]
+
+Para $x\in(0,1)$, $z(x)\in(\min(a,b),\max(a,b))\subset(0,1)$ con $a:=1-k_{12}$, $b:=k_{21}$, luego $\phi(z(x))>0$. Si $\rho\le0$, entonces $-\rho\,\phi(x)\ge0$, y por tanto
+\[
+\phi(z(x))-\rho\,\phi(x)=\phi(z(x))+(-\rho)\phi(x)>0.
+\]
+Luego $d(x)=\lambda\cdot(\text{positivo})$ tiene el signo de $\lambda\ne0$ para todo $x\in(0,1)$, en particular $d(x)\ne0$.
+\end{proof}
+
+\begin{observacion}[Caso $\rho>0$]\label{obs:caso_rho_positivo}
+Cuando $\rho>0$ (equivalentemente $k_{12}+k_{21}<1$), $0<\rho<1$ y la forma reducida $d(x)=\lambda[\phi(z(x))-\rho\phi(x)]$ requiere $\phi(z(x))>\rho\,\phi(x)$. En el punto fijo $\pi_1:=k_{21}/(k_{12}+k_{21})\in(0,1)$ de $z$ (la distribución estacionaria de $K$), $z(\pi_1)=\pi_1$ y la identidad da directamente $d(\pi_1)=\lambda\phi(\pi_1)(1-\rho)\ne0$, con el mismo signo que $N(0)$. Una verificación numérica exhaustiva sobre $2\times10^5$ pares $(K,L)\in\mathcal{K}_{0.05}\times\mathcal{U}_3$ aleatorios no produjo ningún cero de $d(x)$ en $(0,1)$, lo que sugiere que la Proposición~\ref{prop:vacio_rho_no_positivo} se extiende a $\rho>0$.
+\end{observacion}
+
+\begin{problema}[Desigualdad $\phi(z(x))>\rho\,\phi(x)$ para $\rho\in(0,1)$]\label{prob:phi_rho}
+Sean $a,b\in(0,1)$, $\rho:=a-b\in(0,1)$, $z(x)=b+\rho x$, $\lambda\in\mathbb{R}\setminus\{0\}$ con $L_2+\lambda w>0$ para $w\in[0,1]$, y $\phi(w):=w(1-w)/(L_2+\lambda w)$. Demostrar que $\phi(z(x))>\rho\,\phi(x)$ para todo $x\in(0,1)$. Junto con la Proposición~\ref{prop:vacio_rho_no_positivo}, esto extendería el Corolario~\ref{cor:cota_grado} a $\mathcal{M}_{K,L}\cap(0,1)=\emptyset$ sin restricción sobre $\rho$.
+\end{problema}
+
+\begin{ejemplo}[Relevancia cuantitativa del defecto, $n=3$]\label{ej:n3_relevancia}
+Sean $\varepsilon=0.1$, $R=\log10$,
+\[
+K=\begin{pmatrix}0.7&0.2&0.1\\0.1&0.7&0.2\\0.2&0.1&0.7\end{pmatrix}\in\mathcal{K}_{0.1},\qquad
+L=(10,1,1),\ \log L\in\mathcal{U}_{\log10},
+\]
+\[
+X_0=(0.6,\,0.3,\,0.1)\in\Delta_3^\circ,\qquad P=(0.2,\,0.3,\,0.5)\in\Delta_3^\circ.
+\]
+Calculando directamente:
+\[
+X_0K=(0.470,\,0.340,\,0.190),\qquad B_L(X_0)=(0.9375,\,0.046875,\,0.015625),
+\]
+\[
+X_{MB}=B_L(X_0K)=(0.89866,\,0.06501,\,0.03633),\qquad X_{BM}=B_L(X_0)K=(0.66406,\,0.22188,\,0.11406).
+\]
+Los defectos en $X_0$ son
+\[
+\delta_{K,L}(X_0)=X_0K-B_L(X_0)=(-0.4675,\,0.29313,\,0.17438),\quad \|\delta_{K,L}(X_0)\|_1=0.935,
+\]
+\[
+\mathcal{D}_{K,L}(X_0)=X_{MB}-X_{BM}=(0.23460,\,-0.15687,\,-0.07773),\quad \|\mathcal{D}_{K,L}(X_0)\|_1=0.4692.
+\]
+Para $\tau=1$, con $V_0(X)=D_{\mathrm{KL}}(P\|X)$ (Definición~\ref{def:Q_funciones}):
+\[
+c_{MB}(X_0;K,L)=D_{\mathrm{KL}}(X_0K\|X_0)+D_{\mathrm{KL}}(X_{MB}\|X_0K)=0.46457,
+\]
+\[
+c_{BM}(X_0;K,L)=D_{\mathrm{KL}}(B_L(X_0)\|X_0)+D_{\mathrm{KL}}(X_{BM}\|B_L(X_0))=0.64506,
+\]
+\[
+V_0(X_{MB})=D_{\mathrm{KL}}(P\|X_{MB})=1.46925,\qquad V_0(X_{BM})=D_{\mathrm{KL}}(P\|X_{BM})=0.58942.
+\]
+Por tanto
+\[
+Q_1^{MB}(X_0;K,L)=1.93382,\qquad Q_1^{BM}(X_0;K,L)=1.23447,\qquad Q_1^{MB}-Q_1^{BM}=0.6993.
+\]
+La política $\sigma_0=BM$ tiene costo estrictamente menor que $\sigma_0=MB$ en $X_0$: el orden importa de manera cuantitativa, no solo asintótica. Como verificación de consistencia con el Teorema~\ref{teo:subopt_multi_paso}, $\|\delta_{K,L}(X_0)\|_1+\|\mathcal{D}_{K,L}(X_0)\|_1=1.404$ y $|Q_1^{MB}-Q_1^{BM}|=0.699$, de modo que la constante $C_1$ del teorema satisface $C_1\ge0.699/1.404\approx0.498$: la cota no es vacía.
+\end{ejemplo}
+
+\begin{corolario}[Síntesis: caracterización y relevancia]\label{cor:sintesis_n2_n3}
+Para $n=2$ y $K\in\mathcal{K}_\varepsilon$: $\mathcal{D}_{K,L}\equiv0$ en $\Delta_2^\circ$ si y solo si $L_1=L_2$ (Teorema~\ref{teo:caracterizacion_n2}); si $L_1\ne L_2$, $\mathcal{M}_{K,L}\cap(0,1)$ tiene a lo sumo $2$ puntos (Corolario~\ref{cor:cota_grado}) y es vacío al menos cuando $k_{12}+k_{21}\ge1$ (Proposición~\ref{prop:vacio_rho_no_positivo}). Para $n=3$, el Ejemplo~\ref{ej:n3_relevancia} exhibe $(K,L,X_0,P)$ admisibles con $\mathcal{D}_{K,L}(X_0)\ne0$ y $Q_1^{MB}\ne Q_1^{BM}$ con diferencia $\approx0.70$, confirmando que la cota del Teorema~\ref{teo:subopt_multi_paso} es no vacía y que el defecto de ordenamiento tiene consecuencias numéricas sustanciales en el costo de control.
+\end{corolario}

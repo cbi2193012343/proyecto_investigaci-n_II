@@ -1,0 +1,11 @@
+\babel@toc {spanish}{}\relax 
+\contentsline {section}{\numberline {1}Mapa de trabajo}{2}{section.1}%
+\contentsline {section}{\numberline {2}Sección A -- Probabilidad y símplex}{2}{section.2}%
+\contentsline {section}{\numberline {3}Sección B -- Correcciones locales y cambio de medida}{3}{section.3}%
+\contentsline {section}{\numberline {4}Sección C -- Operadores globales multiplicativos y composición}{4}{section.4}%
+\contentsline {section}{\numberline {5}Sección D -- Divergencia KL, métrica de Fisher y dinámica inducida}{5}{section.5}%
+\contentsline {section}{\numberline {6}Sección E -- Semántica bayesiana}{7}{section.6}%
+\contentsline {subsection}{\numberline {6.1}Ruta de lectura}{7}{subsection.6.1}%
+\contentsline {subsection}{\numberline {6.2}Modelos continuos como estados informacionales discretos}{10}{subsection.6.2}%
+\contentsline {section}{\numberline {7}Ejercicios de referencia bayesiana}{12}{section.7}%
+\contentsline {section}{\numberline {8}Sección F --- Semántica markoviana}{17}{section.8}%

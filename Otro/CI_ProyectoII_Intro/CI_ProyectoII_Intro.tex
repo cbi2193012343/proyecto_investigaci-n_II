@@ -1,0 +1,634 @@
+\documentclass[12pt]{article}
+\usepackage[spanish]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amssymb}
+\usepackage{amsthm}
+\usepackage{geometry}
+\geometry{margin=2.5cm}
+\usepackage{comment}
+\renewcommand{\familydefault}{\sfdefault} % texto en sans serif
+% \usepackage{lmodern} % alternativa si prefieres serif moderna
+\usepackage{mathrsfs}
+
+% Matemáticas y entornos
+\usepackage{amsmath,amssymb}
+% (amsthm no es obligatorio, pero útil si quieres \begin{proof})
+\usepackage{amsthm}
+\newtheorem{definicion}{Definición}[section]
+\newtheorem{lema}{Lema}[section]
+\newtheorem{proposicion}{Proposición}[section]
+\newtheorem{teorema}{Teorema}[section]
+\newtheorem{corolario}{Corolario}[section]
+\newtheorem{observacion}{Observación}[section]
+\newtheorem{ejemplo}{Ejemplo}[section]
+\newtheorem{conjetura}{Conjetura}[section]
+\newtheorem{problema}{Problema abierto}[section]
+
+% Figuras y tablas
+\usepackage{graphicx}
+\usepackage{float}       % para [H]
+\usepackage{subcaption}
+\usepackage{booktabs,tabularx,array}
+
+% Listas
+\usepackage{enumitem}
+
+% Títulos (opcional; quítalo si no lo usas o si cambias a wiley-article)
+\usepackage{titlesec}
+
+% Bibliografía con natbib (autor-año)
+\usepackage[authoryear]{natbib}
+\bibliographystyle{plainnat}
+
+% Hipervínculos (SIEMPRE al final)
+\usepackage[hidelinks]{hyperref}
+
+\title{Control Informacional\\
+\large Proyecto de Investigación II --- Introducción}
+
+\author{
+\textbf{Alejandro Cruz López} \\
+Universidad Autónoma Metropolitana \\
+Unidad Iztapalapa
+}
+
+\date{
+\vspace{1em}
+\textbf{Asesores} \\[0.3em]
+Dr.\ Asael Fabián Martínez Martínez \\
+Dr.\ Joaquín Delgado Fernández \\
+\vspace{1em}
+25 de mayo de 2026
+}
+
+\begin{document}
+\maketitle
+
+\input{CI_ProyectoII_Intro_base.tex}
+
+\section*{Introducción}
+
+Este documento fija el punto de partida del Proyecto de Investigación II.
+La meta es estudiar transformaciones sobre el símplex de probabilidades finitas
+cuando dos mecanismos actúan de manera conjunta: la evolución tipo Markov y la
+actualización tipo Bayes. El interés principal no es solo describir cada
+operador por separado, sino entender qué ocurre cuando se aplican en distinto
+orden, cuánto cambia el resultado y cómo medir esa diferencia de forma
+geométrica e informacional.
+
+La estrategia de trabajo será gradual. Primero se consolidará el marco ya
+validado en \texttt{ProInv\_I.tex}, que proporciona la base estructural sobre el
+símplex, las correcciones multiplicativas y la geometría informacional. Después
+se tratará \texttt{CI.tex} como un repositorio exploratorio de ideas, sin
+asumir todavía que sus proposiciones sean definitivas. Finalmente,
+\texttt{CI\_ProyectoII.tex} servirá como el documento activo del proyecto,
+pero cada resultado deberá quedar sustentado con referencias claras y con
+demostraciones revisadas antes de considerarse válido.
+
+En esta etapa, el objetivo central es formular con precisión el problema de
+conmutatividad entre Markov y Bayes y, si es posible, obtener cotas que
+cuantifiquen el defecto de ordenamiento. Una cota de este tipo no solo diría si
+dos operaciones conmutan, sino qué tan costoso es intercambiarlas. Eso la
+convierte en una herramienta útil para análisis de robustez, filtrado,
+asimilación de datos y control secuencial.
+
+\begin{observacion}
+El papel de la bibliografía será decisivo. Ninguna afirmación se tomará como
+definitiva mientras no esté respaldada por referencias verificables o por una
+demostración interna completa. En este sentido, el trabajo combinará lectura
+crítica, depuración matemática y construcción progresiva del esquema final.
+\end{observacion}
+
+\section*{Objetivo general}
+
+Construir un marco matemático en el que la interacción entre actualización
+bayesiana y evolución markoviana pueda describirse, compararse y cuantificarse
+de forma precisa sobre el símplex de probabilidad.
+
+\section*{Líneas de avance}
+
+\begin{itemize}[nosep]
+  \item Consolidar la base teórica validada.
+  \item Revisar cuidadosamente las referencias bibliográficas.
+  \item Reescribir o depurar las proposiciones que aún sean exploratorias.
+  \item Formular y analizar la cota de no conmutatividad Bayes-Markov.
+  \item Traducir esa cota a interpretaciones concretas en control, filtrado y
+        actualización secuencial.
+\end{itemize}
+
+\section*{Enunciados propuestos}
+
+Los siguientes enunciados están formulados como un bloque de trabajo para
+desarrollar el proyecto con rigor. La intención no es adelantar demostraciones,
+pero sí fijar con precisión el lenguaje formal mínimo que hará falta para la
+parte central de la investigación.
+
+\begin{definicion}[Símplex de probabilidad e interior]
+Sea $n\geq 2$. El \emph{símplex de probabilidad} es
+\[
+\Delta_n:=\Bigl\{X\in\mathbb{R}^n:\ X_i\geq 0\ \text{para todo } i,\ 
+\sum_{i=1}^n X_i=1\Bigr\}.
+\]
+Su interior relativo es
+\[
+\Delta_n^\circ:=\{X\in\Delta_n:\ X_i>0\ \text{para todo } i\}.
+\]
+\end{definicion}
+
+\begin{definicion}[Matriz estocástica por filas]
+Una matriz $K\in\mathbb{R}^{n\times n}$ se llama \emph{estocástica por filas}
+si satisface
+\[
+K_{ij}\geq 0
+\quad\text{y}\quad
+\sum_{j=1}^n K_{ij}=1
+\qquad\text{para todo } i\in\{1,\dots,n\}.
+\]
+\end{definicion}
+
+\begin{definicion}[Acciones admisibles]
+Fijados parámetros $R>0$ y $0<\varepsilon\leq 1/n$, se definen:
+\[
+\mathcal{K}_\varepsilon
+:=
+\Bigl\{K\in\mathbb{R}^{n\times n}:\ K \text{ es estocástica por filas y } K_{ij}\geq \varepsilon\ \forall i,j\Bigr\},
+\]
+\[
+\mathcal{U}_R
+:=
+\bigl\{v\in\mathbb{R}^n:\ \|v\|_\infty\leq R\bigr\},
+\]
+y
+\[
+\mathcal{E}_R
+:=
+\bigl\{L\in\mathbb{R}_{>0}^n:\ \log L\in\mathcal{U}_R\bigr\}
+=
+\bigl\{L\in\mathbb{R}_{>0}^n:\ e^{-R}\leq L_i\leq e^{R}\ \forall i\bigr\}.
+\]
+\end{definicion}
+
+\begin{definicion}[Operador bayesiano]
+Para $L\in\mathbb{R}_{>0}^n$ y $X\in\Delta_n^\circ$, el \emph{operador bayesiano}
+asociado a $L$ es
+\[
+B_L(X):=\frac{X\circ L}{\langle X,L\rangle},
+\qquad
+\langle X,L\rangle:=\sum_{i=1}^n X_iL_i.
+\]
+En coordenadas,
+\[
+\bigl(B_L(X)\bigr)_i=\frac{X_iL_i}{\sum_{j=1}^n X_jL_j},
+\qquad i=1,\dots,n.
+\]
+\end{definicion}
+
+\begin{definicion}[Defecto de ordenamiento]
+Sean $K\in\mathcal{K}_\varepsilon$ y $L\in\mathcal{E}_R$. El \emph{defecto de
+ordenamiento} en el estado $X\in\Delta_n^\circ$ es
+\[
+\mathcal{D}_{K,L}(X):=B_L(XK)-B_L(X)K.
+\]
+\end{definicion}
+
+\begin{definicion}[Política admisible de horizonte $T$]
+Fijados un horizonte $T\geq 1$, un estado inicial $X_0\in\Delta_n^\circ$, un
+objetivo $P\in\Delta_n^\circ$ y un parámetro $\lambda>0$, una \emph{política
+admisible} es una sucesión $\pi=\{(a_t,A_t)\}_{t=0}^{T-1}$ tal que:
+\begin{itemize}[nosep]
+  \item $a_t\in\{M,B\}$ para todo $t$;
+  \item si $a_t=M$, entonces $A_t\in\mathcal{K}_\varepsilon$;
+  \item si $a_t=B$, entonces $A_t\in\mathcal{E}_R$;
+  \item el estado evoluciona por
+  \[
+  X_{t+1}=
+  \begin{cases}
+  X_tA_t & \text{si } a_t=M,\\[0.2em]
+  B_{A_t}(X_t) & \text{si } a_t=B.
+  \end{cases}
+  \]
+\end{itemize}
+El costo asociado a $\pi$ es
+\[
+J_T(X_0;\pi)
+:=
+D_{\mathrm{KL}}(P\|X_T)
+\lambda\sum_{t=0}^{T-1} c_{a_t}(A_t,X_t),
+\]
+donde
+\[
+c_M(K,X):=D_{\mathrm{KL}}(XK\|X),
+\qquad
+c_B(L,X):=D_{\mathrm{KL}}(B_L(X)\|X).
+\]
+La función de valor óptimo se define por
+\[
+V_T(X_0):=\inf_{\pi}J_T(X_0;\pi),
+\]
+donde el ínfimo se toma sobre todas las políticas admisibles de horizonte $T$.
+\end{definicion}
+
+\begin{lema}[Compacidad de las acciones admisibles]
+El conjunto $\mathcal{K}_\varepsilon$ es un poliedro compacto y convexo. El
+conjunto $\mathcal{E}_R$ es un cubo compacto y convexo. En particular, ambos
+conjuntos son no vacíos si y solo si $0<\varepsilon\leq 1/n$ y $R>0$.
+\end{lema}
+
+\begin{lema}[Cotas elementales de los operadores]
+Sea $K\in\mathcal{K}_\varepsilon$ y $X\in\Delta_n$. Entonces
+\[
+(XK)_j\geq \varepsilon
+\qquad\text{para todo } j,
+\]
+y en particular $XK\in\Delta_n^\circ$. Sea ahora $L\in\mathcal{E}_R$ y
+$X\in\Delta_n^\circ$. Entonces
+\[
+e^{-2R}X_i\leq \bigl(B_L(X)\bigr)_i\leq e^{2R}X_i
+\qquad\text{para todo } i,
+\]
+y, en particular, $B_L(X)\in\Delta_n^\circ$.
+\end{lema}
+
+\begin{corolario}[Trayectorias admisibles en el interior]
+Toda trayectoria generada a partir de un estado inicial de $\Delta_n^\circ$ por
+una política admisible de horizonte finito permanece en $\Delta_n^\circ$ en
+todos sus tiempos intermedios.
+\end{corolario}
+
+\begin{proposicion}[Regularidad del defecto]
+La aplicación
+\[
+\mathcal{D}_{K,L}:\Delta_n^\circ\longrightarrow \mathbb{R}^n
+\]
+es de clase $C^\infty$ en $X$. Además,
+\[
+\sum_{i=1}^n \mathcal{D}_{K,L}(X)_i=0,
+\]
+de modo que $\mathcal{D}_{K,L}(X)\in T_X\Delta_n^\circ$ para todo
+$X\in\Delta_n^\circ$.
+\end{proposicion}
+
+\begin{teorema}[Existencia de políticas óptimas de horizonte finito]
+Para todo $T\geq 1$, todo $X_0\in\Delta_n^\circ$, todo $P\in\Delta_n^\circ$,
+todo $\lambda>0$, todo $R>0$ y todo $0<\varepsilon\leq 1/n$, el problema de
+optimización definido por $V_T(X_0)$ admite al menos una política óptima.
+\end{teorema}
+
+\begin{corolario}[Continuidad de la función de valor]
+Para cada horizonte fijo $T$, la función de valor óptimo $V_T$ es continua en
+$\Delta_n^\circ$.
+\end{corolario}
+
+\begin{teorema}[Cota local de suboptimalidad por defecto]
+Sea $\mathcal{C}\subset\Delta_n^\circ$ un compacto. Entonces existe una
+constante $C_{\mathcal{C},P}>0$ tal que, siempre que
+\[
+B_L(XK),\ B_L(X)K\in\mathcal{C},
+\]
+se tiene
+\[
+\bigl|D_{\mathrm{KL}}(P\|B_L(XK)) - D_{\mathrm{KL}}(P\|B_L(X)K)\bigr|
+\leq
+C_{\mathcal{C},P}\,\|\mathcal{D}_{K,L}(X)\|_1.
+\]
+\end{teorema}
+
+\begin{corolario}[Invarianza por defecto nulo]
+Si $\mathcal{D}_{K,L}(X)=0$, entonces
+\[
+D_{\mathrm{KL}}(P\|B_L(XK))=D_{\mathrm{KL}}(P\|B_L(X)K).
+\]
+Más generalmente, cualquier funcional terminal continuo que dependa solo del
+estado final es invariante bajo el intercambio de orden cuando el defecto se
+anula.
+\end{corolario}
+
+\section*{Resultados preliminares por ruta}
+
+Los enunciados siguientes se ordenan de menor a mayor ambición. Los primeros
+son puentes técnicos desde la base validada; los últimos son metas abiertas que
+todavía requieren demostración o refinamiento. La idea no es cerrar el
+problema, sino fijar con rigor qué piezas hacen falta para llegar a un punto no
+trivial.
+
+\subsection*{Ruta 0: Puente desde la base validada}
+
+\begin{proposicion}[Bayes como automorfismo del interior]\label{prop:bayes-automorfismo}
+Sea $L\in\mathbb R_{>0}^n$. Entonces la aplicación
+$B_L:\Delta_n^\circ\to\Delta_n^\circ$ es de clase $C^\infty$. Si se define
+$L^{-1}:=(L_1^{-1},\dots,L_n^{-1})$, entonces
+\[
+B_{L^{-1}}\circ B_L=\operatorname{id}_{\Delta_n^\circ}
+\qquad\text{y}\qquad
+B_L\circ B_{L^{-1}}=\operatorname{id}_{\Delta_n^\circ}.
+\]
+\end{proposicion}
+
+\begin{proposicion}[Ley de composición bayesiana]\label{prop:bayes-composicion}
+Para cualesquiera $L,M\in\mathbb R_{>0}^n$ se cumple
+\[
+B_L\circ B_M=B_{L\circ M},
+\qquad
+L\circ M:=(L_1M_1,\dots,L_nM_n).
+\]
+En particular, $B_{\alpha L}=B_L$ para todo $\alpha>0$, y la familia de
+operadores bayesianos es conmutativa bajo composición.
+\end{proposicion}
+
+\begin{teorema}[Gradiente Fisher de la divergencia KL]\label{teo:gradiente-kl}
+Para cada $P\in\Delta_n^\circ$, el funcional
+$E_P(X):=D_{\mathrm{KL}}(P\|X)$ tiene gradiente riemanniano respecto de la
+métrica de Fisher dado por
+\[
+\operatorname{grad}_g E_P(X)=X-P.
+\]
+En consecuencia, el flujo de gradiente satisface
+\[
+\dot X=P-X
+\]
+y su solución explícita es
+\[
+X(t)=P+e^{-t}(X_0-P).
+\]
+\end{teorema}
+
+\begin{corolario}[Descenso estricto y mínimo global]\label{cor:minimo-kl}
+A lo largo del flujo Fisher--KL, el valor de $E_P$ no aumenta y es
+estrictamente decreciente fuera del equilibrio. Además, $P$ es el único
+minimizador global de $E_P$ en $\Delta_n^\circ$.
+\end{corolario}
+
+\begin{proposicion}[Lipschitz local de las transiciones]\label{prop:lipschitz-transiciones}
+Sea $C\subset\Delta_n^\circ$ un compacto. Entonces existen constantes
+$L_M(C,\varepsilon)>0$ y $L_B(C,R)>0$ tales que, para todo $X,Y\in C$, todo
+$K\in\mathcal K_\varepsilon$ y todo $L\in\mathcal E_R$,
+\[
+\|XK-YK\|_1\le L_M(C,\varepsilon)\|X-Y\|_1,
+\qquad
+\|B_L(X)-B_L(Y)\|_1\le L_B(C,R)\|X-Y\|_1.
+\]
+\end{proposicion}
+
+\subsection*{Ruta 1: Alcanzabilidad restringida}
+
+\begin{definicion}[Conjunto alcanzable restringido]
+Dado $X_0\in\Delta_n^\circ$ y un horizonte $t\ge 0$, el \emph{conjunto
+alcanzable restringido} $\mathcal R_t(X_0)$ es el conjunto de todos los
+estados finales que pueden obtenerse a partir de $X_0$ mediante una sucesión de
+$t$ acciones, donde cada paso es o bien una acción de Markov $X\mapsto XK$ con
+$K\in\mathcal K_\varepsilon$, o bien una acción bayesiana $X\mapsto B_L(X)$ con
+$L\in\mathcal E_R$.
+\end{definicion}
+
+\begin{definicion}[Conjunto alcanzable cuantizado]
+Fijado $M\ge 1$, el \emph{conjunto alcanzable cuantizado} $\mathcal R_t^{(M)}(X_0)$
+es el subconjunto de $\mathcal R_t(X_0)$ formado por las trayectorias cuyos
+estados intermedios pertenecen al retículo
+\[
+\Delta_n^{(M)}:=\{X\in\Delta_n:\ MX_i\in\mathbb Z_{\ge 0}\ \text{para todo }i\}.
+\]
+\end{definicion}
+
+\begin{proposicion}[Recursión del conjunto alcanzable]\label{prop:recursion-alcanzable}
+Para todo $t\ge 0$ y todo $X_0\in\Delta_n^\circ$,
+\[
+\mathcal R_{t+1}(X_0)
+=
+\bigl\{YK:\ Y\in\mathcal R_t(X_0),\ K\in\mathcal K_\varepsilon\bigr\}
+\cup
+\bigl\{B_L(Y):\ Y\in\mathcal R_t(X_0),\ L\in\mathcal E_R\bigr\}.
+\]
+\end{proposicion}
+
+\begin{teorema}[Compacidad del conjunto alcanzable]\label{teo:compacticidad-alcanzable}
+Para todo horizonte finito $t\ge 0$ y todo $X_0\in\Delta_n^\circ$, el conjunto
+$\mathcal R_t(X_0)$ es no vacío y compacto en $\Delta_n^\circ$.
+\end{teorema}
+
+\begin{corolario}[Persistencia uniforme del interior]\label{cor:interior-persistente}
+Para cada $t$ finito y cada $X_0\in\Delta_n^\circ$, existe $\delta_t>0$ tal
+que
+\[
+\mathcal R_t(X_0)\subset \Delta_{n,\delta_t},
+\qquad
+\Delta_{n,\delta}:=\{X\in\Delta_n:\ X_i\ge\delta\ \text{para todo }i\}.
+\]
+\end{corolario}
+
+\begin{teorema}[Inalcanzabilidad robusta en tiempo finito]\label{teo:inalcanzabilidad-robusta}
+Para todo $t\ge 0$ y todo $X_0\in\Delta_n^\circ$, existe $P\in\Delta_n^\circ$
+tal que
+\[
+P\notin\mathcal R_t(X_0)
+\quad\text{y}\quad
+\operatorname{dist}_1\!\bigl(P,\mathcal R_t(X_0)\bigr)>0.
+\]
+En particular, la alcanzabilidad restringida es no trivial en todo horizonte
+finito.
+\end{teorema}
+
+\begin{conjetura}[Pérdida por cuantización de orden $O(1/M)$]\label{conj:cuantizacion}
+Para $M$ suficientemente grande, la pérdida de alcanzabilidad debida a la
+cuantización satisface una cota del tipo
+\[
+\inf_{Q\in\mathcal R_t^{(M)}(X_0)}D_{\mathrm{KL}}(P\|Q)\le \frac{C}{M},
+\]
+para una constante $C>0$ que depende del horizonte y de las restricciones, pero
+no de $M$.
+\end{conjetura}
+
+\begin{problema}[Caracterización geométrica de $\mathcal R_t(X_0)$]\label{prob:caracterizacion-reach}
+Determinar condiciones necesarias y suficientes sobre $X_0$, $P$,
+$\mathcal K_\varepsilon$, $\mathcal E_R$ y $t$ para que $P\in\mathcal R_t(X_0)$.
+En particular, describir la geometría de $\mathcal R_t(X_0)$ dentro de
+$\Delta_n^\circ$.
+\end{problema}
+
+\subsection*{Ruta 2: Control óptimo informacional}
+
+\begin{proposicion}[Compacidad del espacio de políticas]\label{prop:politicas-compactas}
+Fijado un horizonte $T$, el espacio de políticas admisibles de horizonte $T$
+es compacto como unión finita de productos compactos. Además, el funcional
+$\pi\mapsto J_T(X_0;\pi)$ es continuo sobre dicho espacio.
+\end{proposicion}
+
+\begin{teorema}[Existencia de política óptima de horizonte finito]\label{teo:existencia-politica-optima}
+Para todo $T\ge 1$, todo $X_0\in\Delta_n^\circ$, todo $P\in\Delta_n^\circ$,
+todo $\lambda>0$, todo $R>0$ y todo $0<\varepsilon\le 1/n$, el problema de
+optimización definido por $V_T(X_0)$ admite al menos una política óptima.
+\end{teorema}
+
+\begin{proposicion}[Ecuación de Bellman restringida]\label{prop:bellman}
+La función de valor satisface la recursión hacia atrás
+\[
+\begin{aligned}
+V_\tau(X)
+&=
+D_{\mathrm{KL}}(P\|X)
++\min\!\Bigl(
+\inf_{K\in\mathcal K_\varepsilon}
+\bigl[\lambda\,c_M(K,X)+V_{\tau-1}(XK)\bigr],\\
+&\hspace{4.2em}
+\inf_{\log L\in\mathcal U_R}
+\\
+&\hspace{6.2em}
+\bigl[\lambda\,c_B(L,X)+V_{\tau-1}(B_L(X))\bigr]
+\Bigr).
+\end{aligned}
+\]
+Además, bajo las restricciones $(\mathcal K_\varepsilon,\mathcal U_R)$, el
+ínfimo no se anula de manera trivial para $\tau$ finito.
+\end{proposicion}
+
+\begin{corolario}[Cota de referencia para el valor óptimo]\label{cor:cota-referencia}
+Para todo horizonte $T$ y todo $X\in\Delta_n^\circ$ se cumple
+\[
+0\le V_T(X)\le D_{\mathrm{KL}}(P\|X).
+\]
+\end{corolario}
+
+\begin{proposicion}[Monotonicidad con respecto al horizonte]\label{prop:monotonia-horizonte}
+Para todo $X\in\Delta_n^\circ$ y todo $T\ge 0$,
+\[
+V_{T+1}(X)\le V_T(X).
+\]
+En particular, la sucesión $\{V_T(X)\}_{T\ge 0}$ es decreciente y está
+acotada inferiormente por $0$.
+\end{proposicion}
+
+\begin{corolario}[Límite asintótico de la función de valor]\label{cor:valor-limite}
+Para cada $X\in\Delta_n^\circ$, existe el límite
+\[
+V_\infty(X):=\lim_{T\to\infty}V_T(X),
+\]
+y satisface $0\le V_\infty(X)\le D_{\mathrm{KL}}(P\|X)$.
+\end{corolario}
+
+\begin{corolario}[Separación del objetivo]\label{cor:valor-cero}
+Para todo $T\ge 0$, se tiene $V_T(P)=0$. Además, si $X\neq P$, entonces
+$V_T(X)>0$.
+\end{corolario}
+
+\begin{conjetura}[Política de tipo \emph{bang-bang} para $n=2$]\label{conj:bangbang}
+Para $n=2$ y restricciones simétricas (mismos parámetros $\varepsilon$ y $R$
+para ambas acciones), existe una partición de $\Delta_2^\circ$ en dos regiones
+$\mathcal M$ y $\mathcal B$ tal que la política óptima es $a^*=M$ en
+$\mathcal M$ y $a^*=B$ en $\mathcal B$. En particular, la política óptima es de
+acción pura en cada región y no requiere alternancia.
+\end{conjetura}
+
+\begin{conjetura}[Ventaja de la alternancia para $n\ge 3$]\label{conj:alternancia}
+Para $n\ge 3$, existen configuraciones $(X_0,P,\mathcal K_\varepsilon,
+\mathcal U_R)$ para las cuales
+\[
+J_T^*(X_0)<\min\!\bigl(J_T^M(X_0),\,J_T^B(X_0)\bigr),
+\]
+donde $J_T^*$ es el costo de la política óptima y $J_T^M$, $J_T^B$ son los
+costos de las políticas puras (solo Markov y solo Bayes, respectivamente). Es
+decir, la alternancia de operadores produce un costo estrictamente menor que
+cualquier política pura.
+\end{conjetura}
+
+\begin{conjetura}[Límite continuo igual al flujo Fisher--KL]\label{conj:limite-continuo}
+Para $T$ fijo y $\Delta t=T/N$ con costo de acción $c_M(K,X)$, en el límite
+$N\to\infty$ la trayectoria de la política óptima converge a la solución de la
+ecuación diferencial
+\[
+\dot X=P-X,
+\]
+que es el flujo de gradiente Fisher--KL de $D_{\mathrm{KL}}(P\|\cdot)$.
+\end{conjetura}
+
+\subsection*{Ruta 3: Defecto de ordenamiento}
+
+\begin{proposicion}[Regularidad conjunta del defecto]\label{prop:defecto-suave}
+La aplicación
+\[
+\mathcal D:\Delta_n^\circ\times\mathcal K_\varepsilon\times\mathcal E_R
+\longrightarrow \mathbb R^n,
+\qquad
+(X,K,L)\longmapsto \mathcal D_{K,L}(X),
+\]
+es de clase $C^\infty$. En particular, para cada compacto $C\subset\Delta_n^\circ$
+existe una constante $M_C>0$ tal que
+\[
+\|\mathcal D_{K,L}(X)-\mathcal D_{K,L}(Y)\|_1\le M_C\|X-Y\|_1
+\]
+para todo $X,Y\in C$, todo $K\in\mathcal K_\varepsilon$ y todo $L\in\mathcal E_R$.
+\end{proposicion}
+
+\begin{proposicion}[Criterios triviales de anulación]\label{prop:defecto-trivial}
+Si $K=I_n$ o si $L=c\,\mathbf 1$ para alguna constante $c>0$, entonces
+\[
+\mathcal D_{K,L}(X)=0
+\qquad\text{para todo }X\in\Delta_n^\circ.
+\]
+\end{proposicion}
+
+\begin{proposicion}[Lipschitz local de la divergencia terminal]\label{prop:lipschitz-terminal}
+Sea $C\subset\Delta_n^\circ$ un compacto y sea $P\in\Delta_n^\circ$ fijo.
+Entonces existe una constante $G_{C,P}>0$ tal que, para todo $U,V\in C$,
+\[
+\bigl|D_{\mathrm{KL}}(P\|U)-D_{\mathrm{KL}}(P\|V)\bigr|
+\le G_{C,P}\,\|U-V\|_1.
+\]
+\end{proposicion}
+
+\begin{problema}[Caracterización algebraica de $\mathcal D_{K,L}\equiv 0$]\label{prob:conmutacion}
+Determinar condiciones necesarias y suficientes sobre $K$ y $L$ para que
+\[
+\mathcal D_{K,L}(X)=0
+\quad\text{para todo }X\in\Delta_n^\circ.
+\]
+\end{problema}
+
+\begin{proposicion}[Subvariedad de conmutación]\label{prop:subvariedad}
+Sea
+\[
+\mathcal M_{K,L}:=\bigl\{X\in\Delta_n^\circ:\ \mathcal D_{K,L}(X)=0\bigr\}.
+\]
+Si en un punto $X_0\in\mathcal M_{K,L}$ el diferencial
+$D_X\mathcal D_{K,L}(X_0):T_{X_0}\Delta_n^\circ\to T_{X_0}\Delta_n^\circ$
+tiene rango constante $r$, entonces $\mathcal M_{K,L}$ es, localmente cerca de
+$X_0$, una subvariedad inmersa de codimensión $r$.
+\end{proposicion}
+
+\begin{teorema}[Cota local de suboptimalidad por defecto]\label{teo:cota-defecto}
+Sea $\mathcal C\subset\Delta_n^\circ$ un compacto. Entonces existe una
+constante $C_{\mathcal C,P}>0$ tal que, siempre que
+\[
+B_L(XK),\ B_L(X)K\in\mathcal C,
+\]
+se tiene
+\[
+\bigl|D_{\mathrm{KL}}(P\|B_L(XK)) - D_{\mathrm{KL}}(P\|B_L(X)K)\bigr|
+\le
+C_{\mathcal C,P}\,\|\mathcal D_{K,L}(X)\|_1.
+\]
+\end{teorema}
+
+\begin{corolario}[Invariancia por defecto nulo]
+Si $\mathcal{D}_{K,L}(X)=0$, entonces
+\[
+D_{\mathrm{KL}}(P\|B_L(XK))=D_{\mathrm{KL}}(P\|B_L(X)K).
+\]
+Más generalmente, cualquier funcional terminal continuo que dependa solo del
+estado final es invariante bajo el intercambio de orden cuando el defecto se
+anula.
+\end{corolario}
+
+\begin{conjetura}[Cota global uniforme de suboptimalidad]\label{conj:cota-global}
+Existe una constante $C=C(\varepsilon,R)>0$ tal que, para toda
+$K\in\mathcal K_\varepsilon$, toda $L$ con $\log L\in\mathcal U_R$ y todo
+$X\in\Delta_n^\circ$,
+\[
+\bigl|J(X;K,L)-J(X;L,K)\bigr|
+\le
+C\cdot\|\mathcal D_{K,L}(X)\|_1,
+\]
+donde $J(X;K,L):=D_{\mathrm{KL}}(P\|B_L(XK))$ y
+$J(X;L,K):=D_{\mathrm{KL}}(P\|B_L(X)K)$.
+\end{conjetura}
+
+\end{document}

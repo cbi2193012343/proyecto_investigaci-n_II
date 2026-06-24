@@ -1,0 +1,641 @@
+           entropy
+Article
+Lagrangian Function on the Finite State Space
+Statistical Bundle
+Giovanni Pistone ID
+ De Castro Statistics, Collegio Carlo Alberto, 10122 Torino, Italy; giovanni.pistone@carloalberto.org
+
+ Received: 26 December 2017; Accepted: 24 January 2018; Published: 22 February 2018
+
+ Abstract: The statistical bundle is the set of couples (Q, W) of a probability density Q and a random
+ variable W such that EQ [W ] = 0. On a finite state space, we assume Q to be a probability density with
+ respect to the uniform probability and give an affine atlas of charts such that the resulting manifold is
+ a model for Information Geometry. Velocity and acceleration of a one-dimensional statistical model
+ are computed in this set up. The Euler–Lagrange equations are derived from the Lagrange action
+ integral. An example Lagrangian using minus the entropy as potential energy is briefly discussed.
+
+ Keywords: Information Geometry; statistical bundle; Lagrangian function
+
+
+
+
+1. Introduction
+      The set-up of classical Lagrangian Mechanics is a finite-dimensional Riemannian manifold.
+For example, see the monographs by V.I. Arnold ([1], Chapters III–IV), R. Abraham and
+J.E. Mardsen ([2], Chapter 3), J.E. Marsden and T.S. Ratiu ([3], Chapter 7). Classical Information
+geometry, as it was first defined in the monograph by S.-I. Amari and H. Nagaoka [4], views parametric
+statistical models as a manifold endowed with a dually-flat connection. In a recent paper, M. Leok and
+J. Zhang [5] have pointed out the natural relation between these two topics and have given a wide
+overview of the mathematical structures involved.
+      In the present paper, we take up the same research program with two further qualifications.
+First, we assume a non-parametric approach by considering the full set of positive probability functions
+on a finite set, as it was done, for example, in our review paper [6]. The discussion is restricted here
+to a finite state space to avoid difficult technical problems. Second, we consider a specific expression
+of the tangent space of the statistical manifold, which is a Hilbert bundle that we call a statistical
+bundle. Our aim is to emphasize the basic statistical intuition of the geometric quantities involved.
+Because of that, we chose to systematically use the language of non-parametric differential geometry
+as it is developed in the monography of S. Lang [7].
+      Herein, we use our version of Information Geometry; see the review paper [6]. Preliminary
+versions of this paper have been presented at the SigmaPhy2017 Conference held in Corfu, Greece,
+10–14 July 2017, and at a seminar held at Collegio Carlo Alberto, Moncalieri, on 5 September 2017.
+In these early versions, we did not refer to Leok and Zhang’s work, which we were unaware of at
+that time.
+      In Section 2, we review the definition and properties of the statistical bundle, and of the affine atlas
+that endows it with both a manifold structure and a natural family of transports between the fibers.
+In Section 3, we develop the formalism of the tangent space of the statistical bundle and derive the
+expression of the velocity and the acceleration of a one-dimensional statistical model in the given affine
+atlas. The derivation of the Euler–Lagrange equations, together with a relevant example, is discussed
+in Section 4.
+
+
+
+
+Entropy 2018, 20, 139; doi:10.3390/e20020139                                      www.mdpi.com/journal/entropy
+Entropy 2018, 20, 139                                                                                             2 of 9
+
+
+
+2. Statistical Bundle
+       We consider a finite sample space Ω, with #Ω = N. The probability simplex is ∆(Ω), and ∆◦ (Ω)
+is its interior. The uniform probability on Ω is denoted as µ, µ( x ) = N1 , x ∈ Ω. The maximal exponential
+family E (µ) is the set of all strictly positive probability densities of (Ω, µ). The expected value of
+ f : Ω → R with respect to the density P ∈ E (µ) is denoted EP [ f ] = Eµ [ f P] = N1 ∑ x∈Ω f ( x ) P( x ).
+       In [6,8,9], we made the case for the statistical bundle being the key structure of Information
+Geometry. The statistical bundle with base Ω is
+                                             
+                                    S E (µ) = ( Q, V ) Q ∈ E (µ) , EQ [V ] = 0                     .
+
+     The statistical bundle is a semi-algebraic subset of R2N ; i.e., it is defined by algebraic equations
+and strict inequalities. It is trivially a real manifold. At each Q ∈ E (µ), the fiber SQ E (µ) is endowed
+with the scalar product
+
+                               (V1 , V2 ) 7→ hV1 , V2 iQ = EQ [V1 V2 ] = CovQ (V1 , V2 ) .
+
+    To this structure we add a special affine atlas of charts in order to show a structure of affine
+manifold, which is of interest in the statistical applications. The exponential atlas of the statistical
+manifold S E (µ) is the collection of charts given for each P ∈ E (µ) by
+
+                         s P : S E (µ) 3 ( Q, V ) 7→ (s P ( Q), e UQ
+                                                                   P
+                                                                     V ) ∈ SP E (µ) × SP E (µ) ,                    (1)
+
+where (with a slight abuse of notation)
+                                                       
+                                            Q         Q                      e    P
+                              s P ( Q) = log − EP log     ,                      UQ V = V − E P [V ] .              (2)
+                                            P         P
+
+      As s P ( P, V ) = (0, V ), we say that s P is the chart centered at P. If s P ( Q) h= U,i it is easy to derive
+                                                                               P                  U −E   log Q
+the exponential form hof Q ias a density with respect
+                                                h     i
+                                                       to P; namely, Q = e          P
+                                                                                       · P. As Eµ [ Q] = 1,
+                            
+                          P
+                U −EP log Q                         P
+                                      U  − EP log Q
+then 1 = E p e                 = Ep e e                 , so that the cumulant function K P is defined on
+SP E (µ) by                                                                      
+                                                     h
+                                                         U
+                                                             i                  P
+                                K p (U ) = log EP e              = EP       log     = D ( P k Q) ;
+                                                                                Q
+that is, K P (V ) is the expression in the chart at P of Kullback–Leibler divergence of Q 7→ D ( P k Q),
+and we can write
+                                        Q = eU −KP (U ) × P = eP (U ) .
+
+      The patch centered at P is
+
+                                                                                       e (U )
+                        s− 1                     2                        e
+                         P = e P : ( S P E ( µ )) 3 (U, W ) 7 → (e P (U ), U P
+                                                                              P
+                                                                                                W ) ∈ S E (µ) .
+
+      In statistical terms, the random variable log ( Q/P) is the relative point-wise information about Q
+relative to the reference P, while s P ( Q) is the deviation from its mean value at P. The expression of the
+other divergence in the chart centered at P is
+                                                    
+                                                   Q
+                        D ( Q k P ) = EQ       log     = EQ [U − K P (U )] = EQ [U ] − K P (U ) .
+                                                   P
+
+     The equation above shows that the two divergences are convex conjugate functions in the proper
+charts; see [10].
+Entropy 2018, 20, 139                                                                                                            3 of 9
+
+
+
+      The transition maps of the exponential atlas in Equations (1) and (2) are
+                                                                                                                        
+                                                             e P (U )
+                     s P2 ◦ e P1 (U, W ) = s P2 eP1 (U ), e UP1       W = s P2 eU −KP1 (U ) × P1 , W − EeP (U ) [W ] =
+                                                                                                              1
+                                                                                                                      i
+                               P1                               P1                              h
+        U − K P1 (U ) + log        − EP2 U − K P1 (U ) + log          , W − EeP (U ) [W ] − EP2 W − EeP (U ) [W ]            =
+                               P2                               P2             1                            1
+                                                                                                                           
+                                                                                            e P2
+                                                                                             UP1 U + s P2 ( P1 ), e UPP21 W ,
+
+so that the exponential atlas is indeed affine. Notice that the linear part is e UPP21 .
+
+3. The Tangent Space of the Statistical Bundle
+     Let us compute the expression of the velocity at time t of a smooth curve t 7→ γ(t) =
+( Q(t), W (t)) ∈ S E (µ) in the chart centered at P. The expression of the curve is
+                                                                                        
+                                      γP (t) = s P (γ(t)) = s P ( Q(t)), e UQ
+                                                                            P
+                                                                              (t) W ( t ) ,
+
+
+and hence we have, by denoting the derivative in R N by the dot,
+                                                                                
+          d                d              Q(t)          Q(t)      Q̇(t)        Q̇(t)                Q̇(t)
+             s P ( Q(t)) =            log      − EP log         =       − EP           = e UQ
+                                                                                            P
+                                                                                              ( t )       ,                        (3)
+          dt               dt              P             P        Q(t)         Q(t)                 Q(t)
+
+and
+  d e P              d                                                                               
+                        (W (t) − EP [W (t)]) = Ẇ (t) − EP Ẇ (t) = e UQ
+                                                                       P
+                                                                                             
+     UQ(t) W ( t ) =                                                     ( t )   Ẇ (t) − EQ(t) Ẇ (t) . (4)
+  dt                 dt
+
+      If we define the velocity of t 7→ Q(t) = eU (t)−K p (U (t)) × P to be
+
+                    ?           Q̇(t)   d
+                    Q(t) =            =    log Q(t) = U̇ (t) − dK P (U (t))[U̇ (t)] ∈ SQ(t) E (µ) ,
+                                Q(t)    dt
+                        ?
+then t 7→ ( Q(t), Q(t)) is a curve in the statistical bundle whose expression in the chart centered
+at P is t 7→ (U (t), U̇ (t)). The velocity as defined above is nothing else as the score function of the
+one-dimensional statistical model; see e.g., the textbook by B. Efron and T. Haste (Section 4.2, [11]).
+                                                              ?
+The variance of the score function (i.e., the squared norm of Q(t) in SQ(t) E (µ)) is classically known as
+Fisher information at t.
+     We define the second statistical bundle to be
+
+                            S2 E (µ) = ( Q, W, X, Y ) ( Q, W ) ∈ S E (µ) , X, Y ∈ SQ E (µ)
+                                      
+                                                                                                          ,
+
+with charts                                                                            
+                                       s P ( Q, V, X, Y ) = s P ( Q, V ), e UQ
+                                                                             P
+                                                                               X, e UQ
+                                                                                     P
+                                                                                       Y ,
+
+we can identify the second bundle with the tangent space of the first bundle as follows.
+    For each curve t 7→ γ(t) = ( Q(t), W (t)) in the statistical bundle, define its velocity at t to be
+
+                                  ?
+                                                     ?                         
+                                  γ(t) = Q(t), W (t), Q(t), Ẇ (t) − EQ(t) Ẇ (t) ,
+
+                ?
+because t 7→ γ(t) is a curve in the second statistical bundle, and its expression in the chart at P has the
+last two components equal to the values given in Equations (3) and (4).
+                                                              ?
+      In particular, consider the a curve t 7→ χ(t) = ( Q(t), Q(t)). The velocity is
+
+                                             ?
+                                                               ?        ?        ∗∗     
+                                             χ ( t ) = Q ( t ), Q ( t ), Q ( t ), Q ( t ) ,
+Entropy 2018, 20, 139                                                                                                          4 of 9
+
+
+                                    ∗∗
+where the acceleration Q(t) is
+                                                      
+                      ∗∗     d Q̇(t)           d Q̇(t)     Q̈(t)  ? 2               h?        i
+                      Q(t) =         − EQ(t)             =      − Q ( t ) − E Q ( t ) Q ( t )2                                   (5)
+                             dt Q(t)           dt Q(t)     Q(t)
+
+     It should be noted that the acceleration has been defined without explicitly mentioning the relevant
+connection. In fact, the connection here is implicitly defined by the transports e UQ     P , which is unusual
+in Differential Geometry, but is quite natural from the probabilistic point of view; see P. Gibilisco and
+G. Pistone [12]. We shall see below that the non-parametric approach to Information Geometry allows
+the definition of a dual transport, hence a dual connection as it was in [4]. Because of that, we could
+have defined other types of acceleration together with the one we have defined. Namely, we could
+                                                 ∗∗
+consider an exponential acceleration e D2 Q(t) = Q(t), a mixture acceleration m D2 Q(t) = Q̈(t)/Q(t), and a
+Riemannian acceleration
+                                                                           2         "          2 #!
+                     1 
+                         e 2
+                                                   Q̈ ( t )   1   Q̇ ( t )               Q̇ ( t )
+         0 2
+          D Q(t) =        D Q(t) + m D2 Q(t) =               −                 − EQ(t)                   , (6)
+                     2                              Q(t) 2         Q(t)                   Q(t)
+
+each acceleration being associated with a specific connection; see the review paper [6]. We do not
+further discuss the different second-order geometries associated with the statistical bundle in this paper.
+
+Example 1 (Boltzmann–Gibbs). Let us compare the formalism we have introduced above with
+standard computations in Statistical Physics. The Boltzmann–Gibbs distribution gives to point x ∈ Ω the
+probability e−(1/θ ) H ( x) /Z (θ ), with Z (θ ) = ∑ x∈Ω e−(1/θ ) H ( x) and θ > 0, see Landau and Lifshitz ([13],
+Chapter 3). As a curve in E (µ), it is Q(θ ) = Ne−(1/θ ) H /Z (θ ) because of the reference to the
+                                                                                        ?
+uniform probability. The velocity defined above becomes in this case Q(θ ) = θ −2 ( H − Eθ [ H ]),
+                                                 ∗∗
+while the acceleration of Equation (5) is Q(θ ) = −θ −3 ( H − Eθ [ H ]). Notice that we have the equation
+  ∗∗      ?
+θ Q(θ ) + Q(θ ) = 0.
+
+      Following the original construction of Amari’s Information Geometry [4], we have defined
+on the statistical bundle a manifold structure which is both an affine and a Riemannian manifold.
+The base manifold E (µ) is actually a Hessian manifold with respect to any of the convex functions
+K p (U ) = log E p eU , U ∈ S p E (µ) (see [14]). Many computations are actually performed using the
+                   
+
+Hessian structure. The following equations are easily checked and frequently used:
+
+                                         EeP (U ) [ H ] = dK P (U )[ H ] ;                                                       (7)
+                                    e e P (U )
+                                     UP        H = H − dK P (U )[ H ] ;                                                          (8)
+                                                   D                       E
+                                                       e (U )       e (U )
+                            d K P (U )[ H1 , H2 ] = e UPP H1 , e UPP H2
+                             2
+                                                                                    ;                                            (9)
+                                                                             e (U )             P
+                                                                    h                                                     i
+                                                                        e    e (U )           e (U )           e (U )
+                     d3 K p (U )[ H1 , H2 , H3 ] = EeP (U )                 UPP       H1 × e UPP       H2 × e UPP       H3 .   (10)
+
+      We have defined a centering operation that can be thought of as a transport among fibers,
+
+                                                       e
+                                                           UQ
+                                                            P : S p E ( µ ) → Sq E ( µ ) ,
+
+                                p         q                                             q
+whose adjoint is m Uq V = p V. In fact, is the adjoint of e U p ,
+                                                                            D
+          D                 E                                            Q                 E
+              e
+                  UQ                                                           = U, m UQ
+                                                                                       P
+                                                    
+                   P U, V         = EQ (U − EQ [U ])V = EQ [UV ] = EP U    V             V
+                                Q                                        P                   P
+Entropy 2018, 20, 139                                                                                                           5 of 9
+
+
+
+      Moreover, iff U, V ∈ SP E (µ), then
+                              D                     E            D                     E
+                                  e
+                                      UQ   m Q
+                                       P U, U P V           =        e    P e Q
+                                                                         UQ  UP U, V           = hU, V i P .
+                                                        Q                                  P
+
+Example 2 (Entropy flow). This example is taken from [8]. In the scalar field H ( Q) = − EQ [log Q],
+there is no dependence on the fiber. If t 7→ Q(t) = eV (t)−KP (V (t)) · P is a smooth curve in E (µ)
+expressed in the chart centered at P, then we can write
+
+     H ( Q(t)) = − EQ(t) [V (t) − K P (V (t)) + log P] =
+                                                                K P (V (t)) − EQ(t) [V (t) + log P + H ( P)] + H ( P) =         (11)
+                                                                K P (V (t)) − dK P (V (t))[V (t) + log P + H ( P)] + H ( P) ,
+
+where the argument of the last expectation belongs to the fiber SP E (µ) and we have expressed the
+expected value as a derivative by using Equation (7).
+    Again using Equations (7) and (9), we compute the derivative of the entropy along the given
+curve as
+     d               d                 d
+        H ( Q(t)) = K P (V (t)) − dK P (V (t))[V (t) + log P + H ( P)] =
+     dt              dt                dt
+                 dK P (V (t))[V̇ (t)] − d2 K P (V (t))[V (t) + log P + H ( P) , V̇ (t)] − dK P (V (t))[V̇ (t)] =
+                           h                                      i
+                               Q(t)                     Q(t)
+                  − EQ(t) e UP (V (t) + log P) e UP V̇ (t) .
+
+We use now the equations
+
+                                                            e    Q(t)
+    V (t) + log P = log Q(t) + K P (V (t)) ,                    UP        (log Q(t) + K P (V (t))) = log Q(t) + H ( Q(t)) ,
+
+        Q(t)            ?
+and e UP       V̇ (t) = Q(t) to obtain
+
+                              d               D                       ?    E
+                                 H ( Q(t)) = − log Q(t) + H ( Q(t)) , Q(t)        .
+                              dt                                             Q(t)
+
+      We have identified the gradient of the entropy in the statistical bundle,
+
+                                           grad H ( Q) = −(log Q + H ( Q)) .                                                    (12)
+
+    Notice that the previous computation could have been done using the exponential family
+Q(t) = eP (tV ). See the computation of the gradient flow in [8].
+
+     In the next section, we extend the computation illustrated in the example above to scalar fields on
+the statistical bundle.
+
+4. Lagrangian Function
+      A Lagrangian function is a smooth scalar field on the statistical bundle
+
+                                         L : S E (µ) 3 ( Q, W ) 7→ L( Q, W ) ∈ R .
+
+      At each fixed density Q ∈ E (µ), the partial mapping
+
+                                               SQ E (µ) 3 W 7→ L( Q, W )                                                        (13)
+
+is defined on the vector space Sq E (µ); hence, we can use the ordinary derivative, which in this case is
+called the fiber derivative,
+Entropy 2018, 20, 139                                                                                                               6 of 9
+
+
+
+                                                    d
+                            d2 L( Q, W )[ H2 ] =       L( Q, W + tH2 )      ,            H2 ∈ SQ E (µ) .                            (14)
+                                                    dt                 t =0
+
+Example 3 (Running Example 1). If
+
+                                                     1
+                                     L( Q, W ) =       hW, W iQ + κ H ( Q) ,               κ≥o,                                     (15)
+                                                     2
+
+then d2 L( Q, W )[ H2 ] = hW, H2 iQ . The example is suggested by the form of the classical Lagrangian
+function in mechanics, where the first term is the kinetic energy and −κ H ( Q) is the potential energy.
+
+     As the statistical bundle S E (µ) is non-trivial, the computation of the partial derivative of the
+Lagrangian with respect to the first variable requires some care. We want to compute the expression of
+the total derivative in a chart of the affine atlas defined in Equations (1) and (2).
+     Let t 7→ γ(t) = ( Q(t), W (t)) be a smooth curve in the statistical bundle. In the chart centered at P,
+we have
+                                                                           e (U (t))
+                   Q(t) = eU (t)−KP (U (t)) × P = eP (U (t)), W (t) = e UPP          V (t) ,
+
+with t 7→ γP (t) = (U (t), V (t)) being a smooth curve in (SP E (µ))2 . Let us compute the velocity of
+variation of the Lagrangian L along the curve γ.
+
+          d           d                 d                 e (U (t))         d
+             L(γ(t)) = L( Q(t), W (t)) = L(eP (U (t)), e UPP        V (t)) = L P (U (t), V (t)) ,
+          dt          dt                dt                                  dt
+                                      e (U )
+with L P (U, V ) = L(eP (U ), e UPP            V ). It follows that
+
+                    d
+                       L( Q(t), W (t)) = d1 L P (U (t), V (t))[U̇ (t)] + d2 L P (U (t), V (t))[V̇ (t)] .                            (16)
+                    dt
+                                                     e (U )
+      If we write Q = eP (U ) and W = e UPP                       V, then we have
+
+                                    d
+             d2 L P (U, V )[ H2 ] = dt L P (U, V + tH2 )          = dtd L( Q, W + t e UQ
+                                                                                       P H2 )          = d2 L( Q, W )[e UQ
+                                                                                                                         P H2 ] ,   (17)
+                                                           t =0                                 t =0
+                                                                                 ?                 e (U (t))               ?
+                                                        P Q ( t ) and e U P
+where d2 L is the fiber derivative of L. As U̇ (t) = e UQ (t)            P                                     V̇ (t) = W (t), it follows
+from Equations (16) and (17) that
+
+                d                                                   ?                                   ?
+                   L( Q(t), W (t)) = d1 L P (U (t), V (t))[e UQ
+                                                              P
+                                                                (t) Q ( t )] + d2 L ( Q ( t ), W ( t ))[W ( t )] .
+                dt
+     In the equation above, the first term on the RHS does not depend on P because the LHS and
+the second term of the RHS do not depend on P. Hence, we define the first partial derivative of the
+Lagrangian function to be
+
+                           d1 ( Q, W )[ H1 ] = d1 L P (U, V )[e UePP (U ) H1 ] ,         H1 ∈ SQ E (µ) ,                            (18)
+
+so that the derivative of L along γ becomes
+
+                    d                                        ?                          ?
+                       L( Q(t), W (t)) = d1 L( Q(t), W (t))[ Q(t)] + d2 L( Q(t), W (t))[W (t)] .                                    (19)
+                    dt
+                                      ?
+      In particular, if W (t) = Q(t), then
+
+                        d           ?                   ?      ?                   ?      ∗∗
+                           L( Q(t), Q(t)) = d1 L( Q(t), Q(t))[ Q(t)] + d2 L( Q(t), Q(t))[ Q(t)] ,
+                        dt
+see Equation (5).
+Entropy 2018, 20, 139                                                                                                             7 of 9
+
+
+
+Example 4 (Running Example 2). With the Lagrangian of Equation (15), we have
+
+                                     1 D e e P (U ) e e P (U ) E
+                 L P (U, V ) =            UP       V, UP      V           − κ EeP (U ) [U − K P (U ) + log P] =
+                                     2                           e P (U )
+                         1 2
+                           d K P (U )[V, V ] + κ (K P (U ) − dK P (U )[U + log P + H ( P)] + H ( P)) ,
+                         2
+see Equations (9) and (11). The first partial derivative is
+
+    d1 L P (U, V )[ H1 ] =
+                             1 3                                                                                                 
+                               d K P (U )[V, V, H1 ] + κ dK P (U )[ H1 ] − d2 K P (U )[U + log P + H ( P) , H1 ] − dK P (U )[ H1 ] =
+                             2
+                             1 3
+                               d K P (U )[V, V, H1 ] − κd2 K P (U )[U + log P + H ( P) , H1 ] =
+                             2
+                             1     h
+                                           e (U )
+                                                     i         h
+                                                                                       e (U )
+                                                                                                i
+                               EQ W 2 e UPP H1 − κ EQ (log Q + H ( Q)) e UPP H1 =
+                             2                                                                 
+                                     1 2           h i
+                                                                                         e (U )
+                             EQ          W − EQ W 2 − κ (log Q + H ( Q)) e UPP H1 ,
+                                     2
+
+                                                                                   e (U )
+where we have used Equations (9) and (10) together with e UPP (U + log P + H ( P)) = log Q + H ( Q).
+    We have found that
+                                                                    
+                          1   2
+                                     h i
+                                        2
+    d1 L( Q, W )[ H1 ] =     W − EQ W        − κ (log Q + H ( Q)), H1     , H1 ∈ SQ E (µ) ,    (20)
+                          2                                             Q
+
+and also
+                                                                                                    
+                              ?       ?          1 ? 2            ?      2                          ?
+           d1 L( Q(t), Q(t))[ Q(t)] =               Q ( t ) − EQ Q ( t )      − κ (log Q + H ( Q)), Q(t)     .
+                                                 2                                                         Q
+
+      Using the fiber derivative computed in the first part of the running example, we find
+                                                                                      
+    d           ?                  1 ? 2            ?      2                          ?         D?        ∗∗      E
+       L( Q(t), Q(t)) =               Q ( t ) − EQ Q ( t )      − κ (log Q + H ( Q)), Q(t)     + Q ( t ), Q ( t )     .
+    dt                             2                                                         Q                      Q
+
+
+      Notice that Equation (12) shows that one of the terms in the equations above is grad H ( Q).
+
+5. Action Integral
+      If [0, 1] 3 t 7→ Q(t) is a smooth curve in the exponential manifold, then the action integral
+                                                               Z 1             ?
+                                                   A( Q) =           L( Q(t), Q(t)) dt
+                                                                0
+
+is well defined. We consider the expression of Q in the chart centered at P, Q(t) = eU (t)−KP (U (t)) × P.
+     Given ϕ ∈ C1 ([0, 1]) with ϕ(0) = ϕ(1) = 0, for each δ ∈ R and H ∈ SP E (µ), we define the
+perturbed curve
+                             Qδ (t) = e(U (t)+δϕ(t) H )−KP (U (t)+δϕ(t) H ) × P .
+
+      We have Qδ (0) = Q(0), Qδ (1) = Q(1), and
+                                   ?                                                        
+                                   Qδ (t) = U̇ (t) + δ ϕ̇(t) H − EQδ (t) (U̇ (t) + δ ϕ̇(t)) H ,
+
+whose expression in the chart centered at P is U̇ (t) + δ ϕ̇(t) H.
+    Let us consider the variation in δ of the action integral. We apply Equation (19) applied to the
+smooth curve in S E (µ) given by
+                                                        ?
+                                        δ 7→ ( Qδ (t), Qδ (t)) ,
+Entropy 2018, 20, 139                                                                                                         8 of 9
+
+
+
+where t is fixed. As
+                                                                            
+      d               d                                 d
+         log Qδ (t) =    (U (t) + δϕ(t) H ) − EQδ (t)      (U (t) + δϕ(t) H ) = ϕ(t)( H − EQδ (t) [ H ])
+      dδ              dδ                                dδ
+
+and
+                                 e    Q (t) d
+                                     UP δ        (U̇ (t) + δ ϕ̇(t) H ) = ϕ̇(t)( H − EQδ (t) [ H ]) ,
+                                            dδ
+we obtain
+                                                                                             Z 1
+                                                                            d         d             ?
+                                                                               A( Qδ ) = L( Qδ (t), Qδ (t)) dt =
+                                                                            dδ     0 dδ
+      Z 1                    ?                                                ?                          
+            ϕ(t)d1 L( Qδ (t), Qδ (t))[ H − EQδ (t) [ H ]] + ϕ̇(t)d2 L( Qδ (t), Qδ (t))[ H − EQδ (t) [ H ]] dt =
+       0
+         Z 1                                                                                              
+                                  ?                             d                ?
+             ϕ(t) d1 L( Qδ (t), Qδ (t))[ H − EQδ (t) [ H ]] − d2 L( Qδ (t), Qδ (t))[ H − EQδ (t) [ H ]] dt .
+          0                                                     dt
+
+                                                                    d
+      If t 7→ Q(t) is a critical curve of the action integral, then dδ A( Qδ )                        = 0; hence, for all ϕ and H,
+                                                                                               δ =0
+we have
+      Z 1                                                                              
+                           ?                        d            ?
+          ϕ(t) d1 L( Q(t), Q(t))[ H − EQ(t) [ H ]] − d2 L( Q(t), Q(t))[ H − EQ(t) [ H ]] dt = 0 .                             (21)
+        0                                           dt
+
+      This in turn implies that for each t ∈ [0, 1] and H ∈ SQ(t) E (µ), the Euler–Lagrange equation holds:
+                                                          ?       d              ?
+                                       d1 L( Q(t), Q(t))[ H ] −      d2 L( Q(t), Q(t))[ H ] = 0 .                              (22)
+                                                                  dt
+
+Example 5 (Running Example 3). For the Lagrangian of Equation (15), we can use Equation (20) in
+the form
+                ?
+  d1 L( Q(t), Q(t))[ H − EQ(t) [ H ]] =
+                                                                                                     
+                        1 ? 2             h?
+                                                   2
+                                                     i
+                           Q ( t ) − EQ(t) Q ( t )      − κ (log ( Q(t)) + H ( Q(t))), H − EQ(t) [ H ]        ,
+                        2                                                                                Q(t)
+
+with H ∈ SP E (µ). For the other term, we have
+                   ?
+                                            D?                     E
+       d2 L( Q(t), Q(t))[ H − EQ(t) [ H ]] = Q(t), H − EQ(t) [ H ]                           = d2 K P (U (t))[U̇ (t), H ] ,
+                                                                                      Q(t)
+whose derivative is
+                    d 2
+                       d K P (U (t))[U̇ (t), HR] = d3 K P (U (t))[U̇ (t), U̇ (t), H ] + d2 K P (U (t))[Ü (t), H ] =
+                    dt                        h       ?                  i            h ∗∗                      i
+                                EQ(t) Q(t)2 ( H − EQ(t) [ H ]) + EQ(t) Q(t)( H − EQ(t) [ H ]) =
+                      h ?          h?    i                   i       h ∗∗                   i
+                 EQ(t) Q(t)2 − EQ(t) Q(t)2 ( H − EQ(t) [ H ]) + EQ(t) Q(t)( H − EQ(t) [ H ]) .
+
+
+      Dropping the generic H, the Euler–Lagrange equation becomes
+      ∗∗
+               ?                   h?       i 1? 2          h?    i
+      Q ( t ) + Q ( t )2 − E Q ( t ) Q ( t )2 =    Q(t) − EQ(t) Q(t)2 − κ (log ( Q(t)) + H ( Q(t))) ;
+                                                2
+that is,
+                       ∗∗      1? 2              h?    i
+                      Q(t) +         Q(t) − EQ(t) Q(t)2 = −κ (log ( Q(t)) + H ( Q(t))) .
+                               2
+      The equation above has been derived using the exponential affine geometry of the statistical
+                          ∗∗
+bundle and involves Q(t). However, by using Equations (5), (6), and (12), we find the equivalent form
+                                                  0
+                                                      D2 Q(t) = κ grad H ( Q(t)) .
+Entropy 2018, 20, 139                                                                                           9 of 9
+
+
+
+6. Discussion
+     We have shown that the research program consisting of applying concepts taken from Classical
+Mechanics to Statistics makes sense, even if no practical application has been produced in this paper.
+Some simple examples have been discussed in order to show clearly that the language from classical
+mechanics is indeed suggestive when applied to typical concepts in Statistics such as Fisher score
+and statistical entropy. The derivation of the Euler–Lagrange equations is classically done in the
+set-up of the Riemannian geometry, while here we have used the affine structure of Information
+Geometry. The present provisional results prompt a generalization to non-finite sample spaces and the
+development of applications. Finally, the related Hamiltonian formalism remains to be investigated.
+
+Acknowledgments: The Author gratefully thanks Hiroshi Matsuzoe (Nagoya Institute of Technology, Japan),
+Lamberto Rondoni (Politecnico di Torino, Italy), Antonio Scarfone (CNR and Politecnico di Torino, Italy),
+Tatsuaki Wada (Ibaraki University, Japan), for their interesting comments on early versions of this piece of
+research. He thanks two anonymous referees for their useful and enlightening comments. He acknowledges the
+support of de Castro Statistics, Collegio Carlo Alberto, and of GNAMPA-INdAM.
+Conflicts of Interest: The author declares no conflict of interest.
+
+References
+1.    Arnold, V.I. Mathematical Methods of Classical Mechanics, 2nd ed.; Graduate Texts in Mathematics;
+      Springer: New York, NY, USA, 1989; Volume 60, p. xvi+516.
+2.    Abraham, R.; Marsden, J.E. Foundations of Mechanics, 2nd ed.; Advanced Book Program, Reading, Mass;
+      Benjamin/Cummings Publishing Co., Inc.: San Francisco, CA, USA, 1978; pp. xxii+m–xvi+806.
+3.    Marsden, J.E.; Ratiu, T.S. Introduction to Mechanics and Symmetry: A Basic Exposition of Classical Mechanical
+      Systems, 2nd ed.; Texts in Applied Mathematics; Springer: New York, NY, USA, 1999; Volume 17, p. xviii+582.
+4.    Amari, S.; Nagaoka, H. Methods of Information Geometry; American Mathematical Society: Providence, RI,
+      USA, 2000; p. x+206.
+5.    Leok, M.; Zhang, J. Connecting Information Geometry and Geometric Mechanics. Entropy 2017, 19, 518,
+      doi:10.3390/e19100518.
+6.    Pistone, G. Nonparametric information geometry. In Geometric Science of Information, Proceedings of the First
+      International Conference, GSI 2013, Paris, France, 28–30 August 2013; Nielsen, F., Barbaresco, F., Eds.; Lecture
+      Notes in Computer Science; Springer: Heidelberg, Germany, 2013; Volume 8085, pp. 5–36.
+7.    Lang, S. Differential and Riemannian Manifolds, 3rd ed.; Graduate Texts in Mathematics; Springer: Berlin,
+      Germany, 1995; Volume 160, p. xiv+364.
+8.    Pistone, G. Examples of the application of nonparametric information geometry to statistical physics. Entropy
+      2013, 15, 4042–4065.
+9.    Lods, B.; Pistone, G. Information Geometry Formalism for the Spatially Homogeneous Boltzmann Equation.
+      Entropy 2015, 17, 4323–4363.
+10.   Pistone, G.; Rogantin, M. The exponential statistical manifold: mean parameters, orthogonality and space
+      transformations. Bernoulli 1999, 5, 721–760.
+11.   Efron, B.; Hastie, T. Computer Age Statistical Inference: Algorithms, Evidence, and Data Science; Cambridge
+      University Press: New York, NY, USA, 2016; Volume 5, p. xix+475.
+12.   Gibilisco, P.; Pistone, G. Connections on non-parametric statistical manifolds by Orlicz space geometry.
+      IDAQP 1998, 1, 325–347.
+13.   Landau, L.D.; Lifshits, E.M. Course of Theoretical Physics. Statistical Physics, 3rd ed.; Butterworth-Heinemann:
+      Oxford, UK, 1980; Volume 5.
+14.   Shima, H. The Geometry of Hessian Structures; World Scientific Publishing Co. Pte. Ltd.: Hackensack, NJ, USA,
+      2007; p. xiv+246.
+
+                         c 2018 by the author. Licensee MDPI, Basel, Switzerland. This article is an open access
+                        article distributed under the terms and conditions of the Creative Commons Attribution
+                        (CC BY) license (http://creativecommons.org/licenses/by/4.0/).
+

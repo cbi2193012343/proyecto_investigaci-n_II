@@ -1,0 +1,907 @@
+﻿\documentclass[12pt]{article}
+\usepackage[spanish]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{amsmath,amssymb}
+\usepackage{amsthm}
+\usepackage{geometry}
+\geometry{margin=2.5cm}
+\usepackage{comment}
+\renewcommand{\familydefault}{\sfdefault}
+\usepackage{mathrsfs}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{subcaption}
+\usepackage{booktabs,tabularx,array}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage[authoryear]{natbib}
+\bibliographystyle{plainnat}
+\usepackage[hidelinks]{hyperref}
+
+\newcommand{\fuente}[1]{\textnormal{(#1)}}
+\newcommand{\fuentecite}[2]{\textnormal{(#1; \citealp{#2})}}
+\newcommand{\fuentemakecite}[2]{\textnormal{(#1 + make; \citealp{#2})}}
+
+\newtheorem{definicion}{Definición}[section]
+\newtheorem{lema}{Lema}[section]
+\newtheorem{proposicion}{Proposición}[section]
+\newtheorem{teorema}{Teorema}[section]
+\newtheorem{corolario}{Corolario}[section]
+\newtheorem{observacion}{Observación}[section]
+\newtheorem{ejemplo}{Ejemplo}[section]
+\newtheorem{conjetura}{Conjetura}[section]
+\newtheorem{problema}{Problema abierto}[section]
+
+\title{Control Informacional\\
+\large Proyecto de Investigación II --- ProInt\_II}
+
+\author{
+\textbf{Alejandro Cruz López} \\
+Universidad Autónoma Metropolitana \\
+Unidad Iztapalapa
+}
+
+\date{
+\vspace{1em}
+\textbf{Asesores} \\[0.3em]
+Dr.\ Asael Fabián Martínez Martínez \\
+Dr.\ Joaquín Delgado Fernández
+\vspace{1em}
+26 de mayo de 2026
+}
+
+\begin{document}
+\maketitle
+
+\section{Bloque variacional de alcanzabilidad}
+
+\subsection{Objetivo del bloque}
+El objetivo de este bloque es reformular la pregunta
+\[
+\text{¿Es }P\text{ alcanzable desde }X_0\text{ en }t\text{ pasos bajo acciones admisibles }(\mathcal K_\varepsilon,\mathcal U_R)?
+\]
+como un problema geométrico y variacional sobre el interior del símplex de probabilidad. La base estructural se toma del marco validado en \cite{ControlInformacional2026}, la geometría afín del símplex y sus arcos elementales se toman de \cite{PistoneShoaib2024Axioms}, y el formalismo del statistical bundle, la acción y las ecuaciones de Euler--Lagrange se toman de \cite{Pistone2018Lagrangian}. El punto de partida informacional será el potencial
+\[
+E_P(X)=D_{\mathrm{KL}}(P\|X),
+\]
+ya fijado en \cite{ControlInformacional2026}. Antes de pasar a una formulación variacional, examinaremos si la clase markoviana admisible resulta demasiado amplia y, por tanto, trivializa la pregunta discreta de alcanzabilidad; si eso ocurre, introduciremos una subclase no degenerada para el estudio efectivo. La interpretación local del costo se apoya además en la geometría dual afín y en el teorema de Chentsov, que justifican el uso de la métrica de Fisher como referencia intrínseca de comparación (\cite{Chentsov1982,Amari2016}).
+
+\subsection{Hipótesis de trabajo}
+Fijemos \(n\ge 2\), un objetivo \(P\in\Delta_n^\circ\), un estado inicial \(X_0\in\Delta_n^\circ\) y parámetros \(\varepsilon>0\), \(R>0\), \(\delta\in(0,1)\). En adelante, todo paso discreto se estudiará bajo las restricciones refinadas introducidas más abajo.
+
+\begin{definicion}[Matrices estocásticas por filas \fuente{make}]
+Definimos
+\[
+\mathcal S_n:=\Bigl\{K\in\mathbb R^{n\times n}:\ K_{ij}\ge 0,\ \sum_{j=1}^n K_{ij}=1\text{ para todo }i\Bigr\}.
+\]
+Los elementos de \(\mathcal S_n\) serán las matrices de transición admisibles para la parte markoviana del problema.
+\end{definicion}
+
+\begin{definicion}[Acciones admisibles \fuente{make}]
+Definimos
+\[
+\mathcal K_\varepsilon:=\bigl\{K\in\mathcal S_n:\ K_{ij}\ge \varepsilon\text{ para todo }i,j\bigr\},
+\qquad
+\mathcal U_R:=\bigl\{v\in\mathbb R^n:\ \|v\|_\infty\le R\bigr\}.
+\]
+Las acciones de Markov admisibles son los \(K\in\mathcal K_\varepsilon\) y las acciones bayesianas admisibles son las evidencias \(L\) tales que \(\log L\in\mathcal U_R\). Esta clase marca el punto de partida preliminar; la clase de trabajo no degenerada se introducirá más adelante.
+\end{definicion}
+
+\begin{lema}[Degeneración de la clase markoviana actual \fuente{make}]
+Sea \(Y\in \Delta_n^\circ\) tal que \(Y_i\ge \varepsilon\) para todo \(i\). Definimos la matriz constante por filas
+\[
+K^Y_{ij}:=Y_j,\qquad 1\le i,j\le n.
+\]
+Entonces \(K^Y\in \mathcal K_\varepsilon\) y, para todo \(X\in\Delta_n^\circ\), se tiene
+\[
+L_{K^Y}(X)=XK^Y=Y.
+\]
+En particular, \(\mathcal K_\varepsilon\) contiene matrices de rango uno.
+\end{lema}
+\begin{proof}
+Para cada \(i\),
+\[
+\sum_{j=1}^n K^Y_{ij}=\sum_{j=1}^n Y_j=1,
+\]
+y, por hipotesis, \(K^Y_{ij}=Y_j\ge \varepsilon\). Luego \(K^Y\in\mathcal K_\varepsilon\).
+
+Si \(X\in\Delta_n^\circ\), entonces para cada \(j\),
+\[
+(L_{K^Y}(X))_j
+=
+\sum_{i=1}^n X_iK^Y_{ij}
+=
+\sum_{i=1}^n X_iY_j
+=
+Y_j\sum_{i=1}^n X_i
+=
+Y_j.
+\]
+Por tanto, \(L_{K^Y}(X)=Y\).
+\end{proof}
+
+\begin{corolario}[Alcanzabilidad markoviana en un paso \fuente{make}]
+Si \(P\in\Delta_{n,\varepsilon}\), entonces \(P\) es alcanzable desde cualquier \(X_0\in\Delta_n^\circ\) en un solo paso mediante una acción de Markov admisible.
+\end{corolario}
+\begin{proof}
+Aplicar el lema anterior con \(Y=P\).
+\end{proof}
+
+\begin{observacion}[Necesidad de no degeneración \fuente{make}]
+La definición actual de \(\mathcal K_\varepsilon\) no basta, por sí sola, para sostener una teoría discreta no trivial de alcanzabilidad. Para obtener una pregunta genuina de control será necesario imponer alguna restricción adicional, por ejemplo una condición de proximidad a la identidad, una cota espectral uniforme o una hipótesis de irreducibilidad más fuerte.
+\end{observacion}
+
+\begin{definicion}[Clase markoviana no degenerada \fuente{make}]
+Definimos
+\[
+\mathcal K_{\varepsilon,\delta}^{\mathrm{nd}}
+:=
+\left\{
+K\in\mathcal S_n:\ 
+K_{ij}\ge \varepsilon\ \text{para todo }i,j,
+\ \max_{1\le i\le n}\sum_{j=1}^n \bigl|K_{ij}-\delta_{ij}\bigr|\le \delta
+\right\},
+\]
+donde \(\delta_{ij}\) denota la delta de Kronecker. Esta clase excluye el colapso de rango uno y fuerza cada paso markoviano a permanecer a distancia controlada de la identidad.
+\end{definicion}
+
+\begin{proposicion}[Paso markoviano acotado \fuente{make}]
+Si \(K\in\mathcal K_{\varepsilon,\delta}^{\mathrm{nd}}\), entonces para todo \(X\in\Delta_n\) se tiene
+\[
+\|L_K(X)-X\|_1\le \delta.
+\]
+En particular, ninguna acción de Markov en esta clase puede enviar arbitrariamente un estado a otro en un solo paso.
+\end{proposicion}
+
+\begin{proof}
+Como \(L_K(X)=XK\), se tiene
+\[
+L_K(X)-X=X(K-I).
+\]
+Luego,
+\[
+\|L_K(X)-X\|_1
+\le
+\sum_{i=1}^n X_i\sum_{j=1}^n |K_{ij}-\delta_{ij}|.
+\]
+Por la definicion de \(\mathcal K_{\varepsilon,\delta}^{\mathrm{nd}}\),
+\[
+\sum_{j=1}^n |K_{ij}-\delta_{ij}|\le \delta
+\qquad \forall i,
+\]
+y, como \(\sum_i X_i=1\),
+\[
+\|L_K(X)-X\|_1\le \delta.
+\]
+\end{proof}
+
+\begin{definicion}[Núcleo markoviano de suavizado \fuente{make}]
+Fijado \(\varepsilon\in(0,1/n)\), definimos la matriz
+\[
+K_\varepsilon^{\mathrm{sm}}
+:=
+\bigl(k_{ij}\bigr)_{i,j=1}^n,
+\qquad
+k_{ij}:=
+\begin{cases}
+1-(n-1)\varepsilon, & i=j,\\
+\varepsilon, & i\neq j.
+\end{cases}
+\]
+Este núcleo es estocástico por filas, tiene todas sus entradas al menos iguales a \(\varepsilon\) y representa una suavización uniforme de proximidad controlada a la identidad.
+\end{definicion}
+
+\begin{proposicion}[Propiedades del núcleo de suavizado \fuente{make}]
+Si \(0<\varepsilon<1/n\) y \(\delta\ge 2(n-1)\varepsilon\), entonces \(K_\varepsilon^{\mathrm{sm}}\in\mathcal K_{\varepsilon,\delta}^{\mathrm{nd}}\). Además, para todo \(X\in\Delta_n\),
+\[
+L_{K_\varepsilon^{\mathrm{sm}}}(X)
+=(1-n\varepsilon)X+\varepsilon(1,\dots,1).
+\]
+En particular, \(L_{K_\varepsilon^{\mathrm{sm}}}(X)\in\Delta_n^\circ\) y cada componente queda uniformemente separada de cero por una cota que depende solo de \(\varepsilon\).
+\end{proposicion}
+\begin{proof}
+Para todo \(i\),
+\[
+\sum_{j=1}^n k_{ij}
+=(1-(n-1)\varepsilon)+(n-1)\varepsilon
+=1.
+\]
+Luego \(K_\varepsilon^{\mathrm{sm}}\in\mathcal S_n\) y \(K_{ij}\ge\varepsilon\) para todo \(i,j\). Además, si \(X\in\Delta_n\), entonces para cada \(j\),
+\[
+(L_{K_\varepsilon^{\mathrm{sm}}}(X))_j
+=\sum_{i=1}^n X_i k_{ij}
+=(1-(n-1)\varepsilon)X_j+\varepsilon\sum_{i\ne j}X_i
+=(1-n\varepsilon)X_j+\varepsilon.
+\]
+En particular,
+\[
+\sum_{j=1}^n (L_{K_\varepsilon^{\mathrm{sm}}}(X))_j=1
+\quad\text{y}\quad
+(L_{K_\varepsilon^{\mathrm{sm}}}(X))_j\ge \varepsilon.
+\]
+Si \(\delta\ge 2(n-1)\varepsilon\), entonces
+\[
+\sum_{j=1}^n |k_{ij}-\delta_{ij}|
+=2(n-1)\varepsilon\le\delta,
+\]
+y por tanto \(K_\varepsilon^{\mathrm{sm}}\in\mathcal K_{\varepsilon,\delta}^{\mathrm{nd}}\).
+\end{proof}
+
+\begin{definicion}[Familia one-step refinada \fuente{make}]
+Asociamos a estas restricciones la familia de pasos compuestos
+\[
+\mathcal A_{\varepsilon,R,\delta}^{\mathrm{nd}}
+:=
+\Bigl\{\,T_Y\circ L_K:\ K\in\mathcal K_{\varepsilon,\delta}^{\mathrm{nd}},\ Y\in C_{\mathrm{glob}},\ \|Y\|_\infty\le e^R-1\,\Bigr\},
+\]
+donde \(L_K(X):=XK\) y \(T_Y\) es el operador informacional global de \cite{ControlInformacional2026}. Equivalentemente, si \(L:=1+Y\), cada paso tiene la forma
+\[
+X_{t+1}=T_Y(X_tK_t)=B_L(X_tK_t).
+\]
+Esta es la familia que se usará en adelante para la pregunta de alcanzabilidad no trivial.
+\end{definicion}
+
+
+\begin{definicion}[Trayectoria discreta admisible \fuente{make}]
+Sea \(T\in\mathbb N\). Una sucesión \(X_0,\dots,X_T\in\Delta_n^\circ\) se llama \emph{trayectoria discreta admisible} si existe una sucesión \(A_0,\dots,A_{T-1}\) con \(A_t\in\mathcal A_{\varepsilon,R,\delta}^{\mathrm{nd}}\) tal que
+\[
+X_{t+1}=A_t(X_t),\qquad t=0,\dots,T-1.
+\]
+\end{definicion}
+
+\begin{definicion}[Símplex truncado \fuente{make}]
+Si \(\eta>0\), definimos
+\[
+\Delta_{n,\eta}:=\bigl\{x\in\Delta_n^\circ:\ x_i\ge \eta\ \text{para todo }i\bigr\}.
+\]
+\end{definicion}
+
+\begin{lema}[Carta bayesiana local \fuente{make}]
+Fijado \(X\in\Delta_n^\circ\), consideramos la aplicación
+\[
+\Phi_X:\mathcal U_R\to \Delta_n^\circ,
+\qquad
+\Phi_X(v):=B_{e^v}(X).
+\]
+Entonces \(\Phi_X\) es de clase \(C^\infty\), satisface \(\Phi_X(0)=X\) y su diferencial en el origen es
+\[
+D\Phi_X(0)(h)_i
+=
+X_i\Bigl(h_i-\sum_{j=1}^n X_j h_j\Bigr),
+\qquad h\in\mathbb R^n.
+\]
+En particular, \(\ker D\Phi_X(0)=\operatorname{span}\{(1,\dots,1)\}\) y \(\operatorname{Im}D\Phi_X(0)=T_X\Delta_n^\circ\).
+\end{lema}
+\begin{proof}
+Escribimos
+\[
+\Phi_X(v)_i=\frac{X_ie^{v_i}}{Z(v)},
+\qquad
+Z(v):=\sum_{j=1}^n X_je^{v_j}.
+\]
+Como \(Z(v)>0\), \(\Phi_X\) es de clase \(C^\infty\). Ademas, \(Z(0)=1\), luego \(\Phi_X(0)=X\).
+
+Para \(h\in\mathbb R^n\),
+\[
+D\Phi_X(0)(h)_i
+=
+\left.\frac{d}{ds}\right|_{s=0}
+\frac{X_ie^{sh_i}}{\sum_{j=1}^n X_je^{sh_j}}
+=
+X_i\Bigl(h_i-\sum_{j=1}^n X_jh_j\Bigr).
+\]
+Si \(h=(1,\dots,1)\), entonces \(D\Phi_X(0)(h)=0\). Reciprocamente, si \(D\Phi_X(0)(h)=0\), entonces \(h_i=\sum_j X_jh_j\) para todo \(i\), y por tanto \(h\in\operatorname{span}\{(1,\dots,1)\}\). Luego
+\[
+\ker D\Phi_X(0)=\operatorname{span}\{(1,\dots,1)\}.
+\]
+Ademas,
+\[
+\sum_{i=1}^n D\Phi_X(0)(h)_i
+=
+\sum_{i=1}^n X_ih_i-\sum_{j=1}^n X_jh_j\sum_{i=1}^n X_i
+=
+0,
+\]
+por lo que \(\operatorname{Im}D\Phi_X(0)\subset T_X\Delta_n^\circ\). Como ambos espacios tienen dimension \(n-1\), la inclusion es igualdad.
+\end{proof}
+
+\begin{corolario}[Inversion local de la carta bayesiana \fuente{make}]
+Sea
+\[
+H_X:=\bigl\{h\in\mathbb R^n:\ \sum_{j=1}^n X_j h_j=0\bigr\}.
+\]
+La restriccion \(\Phi_X|_{H_X}\) es un difeomorfismo local de clase \(C^\infty\) entre un entorno de \(0\in H_X\) y un entorno de \(X\) en \(\Delta_n^\circ\). En particular, todo estado suficientemente cercano a \(X\) se escribe de manera unica como \(B_{e^v}(X)\) con \(v\in H_X\) pequeno.
+\end{corolario}
+\begin{proof}
+Sea
+\[
+H_X=\bigl\{h\in\mathbb R^n:\ \sum_{j=1}^n X_jh_j=0\bigr\}.
+\]
+Si \(h\in H_X\), entonces
+\[
+D\Phi_X(0)(h)_i=X_ih_i.
+\]
+Por tanto, \(D\Phi_X(0)|_{H_X}\) es inyectiva. Como
+\[
+\dim H_X=n-1=\dim T_X\Delta_n^\circ,
+\]
+es un isomorfismo lineal. El teorema de la funcion inversa aplica a \(\Phi_X|_{H_X}\), y la conclusion sigue.
+\end{proof}
+
+\begin{proposicion}[Control multiplicativo bajo evidencia acotada \fuente{make}]
+Sea \(L\in\mathbb R_{>0}^n\) tal que \(\log L\in\mathcal U_R\). Entonces, para todo \(X\in\Delta_n^\circ\) y todo \(i=1,\dots,n\),
+\[
+e^{-2R}X_i\le B_L(X)_i\le e^{2R}X_i.
+\]
+En particular,
+\[
+B_L(X)\in \Delta_{n,\eta_R(X)},
+\qquad
+\eta_R(X):=e^{-2R}\min_{1\le i\le n}X_i.
+\]
+\end{proposicion}
+\begin{proof}
+De \(\log L\in\mathcal U_R\) se sigue
+\[
+e^{-R}\le L_i\le e^R,\qquad i=1,\dots,n.
+\]
+Si \(c:=\sum_{j=1}^n X_jL_j\), entonces
+\[
+e^{-R}\le c\le e^R.
+\]
+Por definicion,
+\[
+B_L(X)_i=\frac{X_iL_i}{c}.
+\]
+Luego,
+\[
+\frac{e^{-R}}{e^R}X_i\le B_L(X)_i\le \frac{e^R}{e^{-R}}X_i,
+\]
+esto es,
+\[
+e^{-2R}X_i\le B_L(X)_i\le e^{2R}X_i.
+\]
+La cota inferior implica
+\[
+B_L(X)_i\ge e^{-2R}\min_{1\le j\le n}X_j=\eta_R(X).
+\]
+\end{proof}
+
+\begin{proposicion}[Identificacion con la correccion multiplicativa \fuentecite{ProInv\_I}{ControlInformacional2026}]
+Sea \(L\in\mathbb R_{>0}^n\) y defínase \(Y:=L-1\). Entonces, para todo \(X\in\Delta_n^\circ\),
+\[
+B_L(X)=T_Y(X),
+\]
+es decir, la actualización bayesiana usada aquí coincide con la corrección multiplicativa global introducida en \cite{ControlInformacional2026} bajo el cambio de variable \(L=1+Y\).
+\end{proposicion}
+\begin{proof}
+Por la definicion de \(T_Y\) en \cite{ControlInformacional2026},
+\[
+T_Y(X)_i=\frac{X_i(1+Y_i)}{\sum_{j=1}^n X_j(1+Y_j)}.
+\]
+Como \(L=1+Y\), resulta
+\[
+T_Y(X)_i=\frac{X_iL_i}{\sum_{j=1}^n X_jL_j}=B_L(X)_i.
+\]
+Luego \(B_L(X)=T_Y(X)\).
+\end{proof}
+
+\begin{proposicion}[Cota del campo de correccion \fuente{make}]
+Si \(\log L\in\mathcal U_R\) y \(Y:=L-1\), entonces \(\|Y\|_\infty\le e^R-1\). En particular, la correccion multiplicativa global \(T_Y\) usada aqui actua con amplitud uniformemente acotada por \(R\).
+\end{proposicion}
+\begin{proof}
+De \(\log L\in\mathcal U_R\) se sigue
+\[
+e^{-R}\le L_i\le e^R,
+\qquad i=1,\dots,n.
+\]
+Si \(Y:=L-1\), entonces
+\[
+|Y_i|=|L_i-1|\le e^R-1.
+\]
+Luego
+\[
+\|Y\|_\infty\le e^R-1.
+\]
+\end{proof}
+
+\begin{proposicion}[Cota del paso compuesto \fuente{make}]
+Sea \(X\in\Delta_n^\circ\), \(K\in\mathcal K_{\varepsilon,\delta}^{\mathrm{nd}}\) y \(L\in\mathbb R_{>0}^n\) con \(\log L\in\mathcal U_R\). Entonces
+\[
+\|B_L(XK)-X\|_1\le \delta + e^{2R}-1.
+\]
+Si ademas \(X\in\Delta_{n,\eta}\) para algún \(\eta>0\), entonces
+\[
+g_X\bigl(B_L(XK)-X,\ B_L(XK)-X\bigr)\le \eta^{-1}\bigl(\delta + e^{2R}-1\bigr)^2.
+\]
+\end{proposicion}
+\begin{proof}
+Sea \(Y:=XK\). Por la proposición de paso markoviano acotado,
+\[
+\|Y-X\|_1\le \delta.
+\]
+Además, si \(c:=\sum_{j=1}^n Y_jL_j\), entonces
+\[
+e^{-R}\le c\le e^R,
+\qquad
+e^{-R}\le L_i\le e^R.
+\]
+Por tanto,
+\[
+e^{-2R}\le \frac{L_i}{c}\le e^{2R},
+\qquad i=1,\dots,n.
+\]
+Luego
+\[
+|B_L(Y)_i-Y_i|
+=Y_i\left|\frac{L_i}{c}-1\right|
+\le Y_i\,(e^{2R}-1),
+\]
+y al sumar en \(i\) se obtiene
+\[
+\|B_L(Y)-Y\|_1\le e^{2R}-1.
+\]
+Finalmente,
+\[
+\|B_L(XK)-X\|_1
+\le \|B_L(Y)-Y\|_1+\|Y-X\|_1
+\le \delta+e^{2R}-1.
+\]
+Si además \(X\in\Delta_{n,\eta}\), entonces para \(u:=B_L(XK)-X\),
+\[
+g_X(u,u)=\sum_{i=1}^n \frac{u_i^2}{X_i}
+\le \eta^{-1}\sum_{i=1}^n u_i^2
+\le \eta^{-1}\left(\sum_{i=1}^n |u_i|\right)^2
+=\eta^{-1}\|u\|_1^2.
+\]
+\end{proof}
+
+\begin{observacion}[Comparabilidad de la métrica de Fisher]
+La definición del costo elemental fija el punto base en \(X\); por ello la evaluación en \(g_X\) es la adecuada. En subconjuntos compactos \(\Delta_{n,\eta}\), las métricas de Fisher son uniformemente equivalentes, de modo que medir en el extremo inicial o en el extremo final produce cotas comparables hasta una constante uniforme.
+\end{observacion}
+\begin{definicion}[Costo elemental discreto \fuente{make}]
+Sea \(X\in\Delta_n^\circ\), \(K\in\mathcal K_{\varepsilon,\delta}^{\mathrm{nd}}\) y \(L\in\mathbb R_{>0}^n\) con \(\log L\in\mathcal U_R\). Definimos el costo elemental del paso compuesto \(X\mapsto B_L(XK)\) por
+\[
+\mathfrak c_{P,\lambda}(X,K,L):=\frac12\,g_X\bigl(B_L(XK)-X,\ B_L(XK)-X\bigr)+\lambda\,E_P\bigl(B_L(XK)\bigr).
+\]
+Si \((X_t,K_t,L_t)_{t=0}^{T-1}\) es una trayectoria discreta admisible, su costo total es
+\[
+\mathfrak A_{P,\lambda}:=\sum_{t=0}^{T-1}\mathfrak c_{P,\lambda}(X_t,K_t,L_t).
+\]
+\end{definicion}
+
+\begin{observacion}[Lagrangiano como relajacion continua \fuente{make}]
+El funcional \(\mathcal A_P\) se interpreta aqui como la relajacion formal de \(\mathfrak A_{P,\lambda}\) cuando el mallado temporal se refina y los incrementos discretos son de primer orden. En este bloque no se afirma una teoria completa de \(\Gamma\)-convergencia; solo se fija el funcional continuo que servira como blanco variacional.
+\end{observacion}
+
+\begin{proposicion}[Persistencia en el interior \fuente{make}]
+Sea \(T\in\mathbb N\) y sea \(X_0,\dots,X_T\) una trayectoria discreta admisible. Entonces existe
+\[
+ \eta_*:=e^{-2R}\min\!\bigl\{\varepsilon,\min_{1\le i\le n}(X_0)_i\bigr\}>0
+\]
+tal que \(X_t\in \Delta_{n,\eta_*}\) para todo \(t=0,\dots,T\). En particular, la imagen de la trayectoria queda contenida en un subconjunto compacto de \(\Delta_n^\circ\), con cota uniforme independiente de \(T\).
+\end{proposicion}
+\begin{proof}
+Escribamos
+\[
+X_{t+1}=B_{L_t}(X_tK_t).
+\]
+Para cada \(i\),
+\[
+(X_tK_t)_i=\sum_{j=1}^n (X_t)_j (K_t)_{ji}
+\ge \varepsilon\sum_{j=1}^n (X_t)_j
+=\varepsilon.
+\]
+Por la proposición de control multiplicativo,
+\[
+(X_{t+1})_i\ge e^{-2R}(X_tK_t)_i\ge e^{-2R}\varepsilon.
+\]
+Como \(X_0\in\Delta_n^\circ\), se tiene también \((X_0)_i\ge \min_j(X_0)_j\). En consecuencia, si
+\[
+\eta_*:=e^{-2R}\min\Bigl\{\varepsilon,\min_{1\le j\le n}(X_0)_j\Bigr\},
+\]
+entonces \(X_t\in\Delta_{n,\eta_*}\) para todo \(t=0,\dots,T\).
+\end{proof}
+
+\begin{definicion}[Arcos geométricos elementales \fuentecite{ref1}{PistoneShoaib2024Axioms}]
+Para \(p,q\in\Delta_n^\circ\), definimos el \emph{arco de mezcla} y el \emph{arco exponencial} por
+\[
+m_{p,q}(s):=(1-s)p+sq,
+\qquad
+e_{p,q}(s)_i:=\frac{p_i^{1-s}q_i^s}{\sum_{j=1}^n p_j^{1-s}q_j^s},
+\qquad s\in[0,1].
+\]
+\end{definicion}
+
+\begin{proposicion}[Regularidad de los arcos \fuentecite{ref1}{PistoneShoaib2024Axioms}]
+Para cualesquiera \(p,q\in\Delta_n^\circ\), las aplicaciones \(m_{p,q}\) y \(e_{p,q}\) son curvas \(C^\infty\) en \([0,1]\) con valores en \(\Delta_n^\circ\), y satisfacen
+\[
+m_{p,q}(0)=e_{p,q}(0)=p,
+\qquad
+m_{p,q}(1)=e_{p,q}(1)=q.
+\]
+\end{proposicion}
+\begin{proof}
+El arco de mezcla
+\[
+m_{p,q}(s)=(1-s)p+sq
+\]
+es afín en \(s\); por tanto, es \(C^\infty\). Para el arco exponencial, si
+\[
+D(s):=\sum_{j=1}^n p_j^{1-s}q_j^s,
+\]
+entonces \(D(s)>0\) y \(D\in C^\infty([0,1])\). Cada componente
+\[
+e_{p,q}(s)_i=\frac{p_i^{1-s}q_i^s}{D(s)}
+\]
+es cociente de funciones \(C^\infty\) con denominador positivo; luego \(e_{p,q}\in C^\infty([0,1];\Delta_n^\circ)\). Además,
+\[
+m_{p,q}(0)=e_{p,q}(0)=p,
+\qquad
+m_{p,q}(1)=e_{p,q}(1)=q.
+\]
+\end{proof}
+
+\begin{observacion}[Interpolación continua auxiliar \fuente{make}]
+Toda trayectoria discreta admisible \(X_0,\dots,X_T\) admite una interpolación continua por concatenación de arcos de mezcla o de arcos exponenciales. Esta interpolación se usa solo como representante geométrico de la sucesión discreta; no se afirma ninguna propiedad minimizante para la acción.
+\end{observacion}
+
+\begin{definicion}[Función potencial de referencia \fuentecite{ProInv\_I}{ControlInformacional2026}]
+Para \(P\in\Delta_n^\circ\), definimos
+\[
+E_P(X):=D_{\mathrm{KL}}(P\|X)
+=\sum_{i=1}^n P_i\log\!\left(\frac{P_i}{X_i}\right),
+\qquad X\in\Delta_n^\circ.
+\]
+\end{definicion}
+
+\begin{proposicion}[Propiedades del potencial KL \fuentecite{ProInv\_I}{ControlInformacional2026}]
+La función \(E_P:\Delta_n^\circ\to\mathbb R\) es de clase \(C^\infty\), convexa en toda carta afín del símplex, y posee un único minimizador global, dado por \(X=P\). Además, su gradiente respecto de la métrica de Fisher satisface
+\[
+\operatorname{grad}_g E_P(X)=X-P,
+\qquad X\in\Delta_n^\circ.
+\]
+\end{proposicion}
+\begin{proof}
+Se tiene
+\[
+E_P(X)=\sum_{i=1}^n P_i\log P_i-\sum_{i=1}^n P_i\log X_i.
+\]
+Por tanto \(E_P\in C^\infty(\Delta_n^\circ)\). Para \(u\in T_X\Delta_n^\circ\), \(\sum_i u_i=0\), y
+\[
+DE_P(X)[u]=-\sum_{i=1}^n \frac{P_i}{X_i}u_i.
+\]
+Si \(g_X(u,v)=\sum_i u_iv_i/X_i\), entonces
+\[
+g_X(X-P,u)=\sum_{i=1}^n \frac{X_i-P_i}{X_i}u_i
+=\sum_{i=1}^n u_i-\sum_{i=1}^n \frac{P_i}{X_i}u_i
+=-\sum_{i=1}^n \frac{P_i}{X_i}u_i.
+\]
+Luego
+\[
+\operatorname{grad}_g E_P(X)=X-P.
+\]
+Además,
+\[
+D^2E_P(X)[u,u]=\sum_{i=1}^n \frac{P_i}{X_i^2}u_i^2>0
+\qquad(u\neq 0,\ \sum_i u_i=0),
+\]
+por lo que \(E_P\) es estrictamente convexa en cada carta afín. Finalmente,
+\[
+E_P(X)=D_{\mathrm{KL}}(P\|X)\ge 0,
+\qquad
+E_P(X)=0\iff X=P,
+\]
+y por tanto \(P\) es el único minimizador global.
+\end{proof}
+
+\begin{proposicion}[Cuadraticidad local del potencial \fuentemakecite{ProInv\_I}{ControlInformacional2026}]
+El diferencial de \(E_P\) se anula en \(P\) y el hessiano de \(E_P\) en \(P\) coincide con la métrica de Fisher. En particular, en coordenadas tangentes centradas en \(P\),
+\[
+E_P(P+\xi)=\frac12\,g_P(\xi,\xi)+o(\|\xi\|^2)
+\qquad (\xi\to 0,\ \sum_i \xi_i=0).
+\]
+\end{proposicion}
+\begin{proof}
+Por la proposición anterior, \(DE_P(P)=0\). Además, para \(\xi\in T_P\Delta_n^\circ\),
+\[
+D^2E_P(P)[\xi,\xi]
+=\sum_{i=1}^n \frac{P_i}{P_i^2}\,\xi_i^2
+=\sum_{i=1}^n \frac{\xi_i^2}{P_i}
+=g_P(\xi,\xi).
+\]
+El desarrollo de Taylor en una carta afín centrada en \(P\) da
+\[
+E_P(P+\xi)
+=E_P(P)+DE_P(P)[\xi]+\frac12 D^2E_P(P)[\xi,\xi]+o(\|\xi\|^2)
+=\frac12 g_P(\xi,\xi)+o(\|\xi\|^2).
+\]
+\end{proof}
+
+\begin{definicion}[Statistical bundle finito \fuentecite{ref2}{Pistone2018Lagrangian}]
+Denotamos por
+\[
+S\Delta_n^\circ:=\{(q,w)\in \Delta_n^\circ\times\mathbb R^n:\ \sum_{i=1}^n w_i=0\}
+\]
+el statistical bundle finito. En cada fibra \(T_q\Delta_n^\circ\) se considera la forma bilineal de Fisher
+\[
+g_q(u,v):=\sum_{i=1}^n \frac{u_i v_i}{q_i}.
+\]
+\end{definicion}
+
+\begin{definicion}[Lagrangiano de alcanzabilidad \fuentemakecite{ref2}{Pistone2018Lagrangian}]
+Fijado \(\lambda>0\), definimos el Lagrangiano
+\[
+\mathcal L_P(q,w):=\frac12\,g_q(w,w)+\lambda\,E_P(q),
+\qquad (q,w)\in S\Delta_n^\circ.
+\]
+Si \(q:[0,T]\to \Delta_n^\circ\) es una curva de clase \(C^1\), su acción es
+\[
+\mathcal A_P(q):=\int_0^T \mathcal L_P\bigl(q(t),\dot q(t)\bigr)\,dt.
+\]
+\end{definicion}
+
+\begin{proposicion}[Levantamiento al statistical bundle \fuentemakecite{ref2}{Pistone2018Lagrangian}]
+Si \(q:[0,T]\to\Delta_n^\circ\) es de clase \(C^2\), entonces
+\[
+\gamma(t):=\bigl(q(t),\dot q(t)\bigr)
+\]
+define una curva de clase \(C^1\) en \(S\Delta_n^\circ\). En particular, la velocidad y la aceleración de \(q\) quedan bien definidas en el marco afín del statistical bundle descrito en \cite{Pistone2018Lagrangian}.
+\end{proposicion}
+\begin{proof}
+Si \(q\in C^2([0,T];\Delta_n^\circ)\), entonces \(\dot q\in C^1([0,T];\mathbb R^n)\). Como
+\[
+\sum_{i=1}^n q_i(t)=1,
+\]
+al derivar se obtiene
+\[
+\sum_{i=1}^n \dot q_i(t)=0.
+\]
+Por tanto,
+\[
+\gamma(t):=(q(t),\dot q(t))\in S\Delta_n^\circ
+\qquad\text{para todo }t\in[0,T],
+\]
+y \(\gamma\in C^1([0,T];S\Delta_n^\circ)\).
+\end{proof}
+
+\begin{teorema}[Existencia de minimizador para el problema relajado \fuente{make}]
+Sean \(X_0,P\in\Delta_n^\circ\) y \(T>0\). Consideremos la clase de curvas
+\[
+\mathcal C_{\eta_T}(X_0,P;T)
+:=
+\bigl\{q\in H^1([0,T];\Delta_n^\circ):\ q(0)=X_0,\ q(T)=P,\ q([0,T])\subset \Delta_{n,\eta_T}\bigr\}.
+\]
+Entonces la acción \(\mathcal A_P\) es acotada inferiormente en \(\mathcal C_{\eta_T}(X_0,P;T)\) y, bajo la coercividad del término cinético, admite al menos un minimizador en dicha clase.
+\end{teorema}
+\begin{proof}
+Sea \((q^m)_{m\in\mathbb N}\subset \mathcal C_{\eta_T}(X_0,P;T)\) una sucesión minimizante. Como \(q^m([0,T])\subset\Delta_{n,\eta_T}\) y \(\Delta_{n,\eta_T}\) es compacto, el término potencial \(E_P(q^m)\) es uniformemente acotado inferiormente. La coercividad del término cinético implica acotación de \((\dot q^m)\) en \(L^2([0,T])\); por tanto, \((q^m)\) es acotada en \(H^1([0,T])\).
+
+Por reflexividad, existe una subsucesión, todavía denotada \(q^m\), y una curva \(q^*\in H^1([0,T])\) tales que
+\[
+q^m\rightharpoonup q^* \text{ en } H^1,
+\qquad
+q^m\to q^* \text{ en } C^0([0,T]).
+\]
+Luego \(q^*(0)=X_0\), \(q^*(T)=P\) y \(q^*([0,T])\subset\Delta_{n,\eta_T}\). Por semicontinuidad inferior del término cinético y continuidad de \(E_P\) respecto de la convergencia uniforme,
+\[
+\mathcal A_P(q^*)\le \liminf_{m\to\infty}\mathcal A_P(q^m)=\inf_{q\in\mathcal C_{\eta_T}(X_0,P;T)}\mathcal A_P(q).
+\]
+Por consiguiente, \(q^*\) es minimizador.
+\end{proof}
+
+\begin{proposicion}[Ecuaciones de Euler--Lagrange \fuentecite{ref2}{Pistone2018Lagrangian}]
+Si \(q\in \mathcal C_{\eta_T}(X_0,P;T)\) es un minimizador de \(\mathcal A_P\) y \(q\) es de clase \(C^2\), entonces satisface la ecuación de Euler--Lagrange
+\[
+\frac{d}{dt}\bigl(\partial_w \mathcal L_P(q(t),\dot q(t))\bigr)
+-\partial_q \mathcal L_P(q(t),\dot q(t))=0
+\]
+en cualquier carta del statistical bundle.
+\end{proposicion}
+\begin{proof}
+Sea \(\varphi\in C_c^\infty((0,T);\mathbb R^n)\) tal que \(\sum_{i=1}^n \varphi_i=0\). Para \(q^\epsilon:=q+\epsilon\varphi\),
+\[
+0=\frac{d}{d\epsilon}\Big|_{\epsilon=0}\mathcal A_P(q^\epsilon)
+=\int_0^T \sum_{i=1}^n\left(
+\frac{\dot q_i}{q_i}\dot\varphi_i
+-\frac12\frac{\dot q_i^2}{q_i^2}\varphi_i
+-\lambda\frac{P_i}{q_i}\varphi_i
+\right)dt.
+\]
+Integrando por partes y usando \(\varphi(0)=\varphi(T)=0\), queda
+\[
+\int_0^T \sum_{i=1}^n \left(
+-\frac{d}{dt}\Bigl(\frac{\dot q_i}{q_i}\Bigr)
+-\frac12\frac{\dot q_i^2}{q_i^2}
+-\lambda\frac{P_i}{q_i}
+\right)\varphi_i\,dt=0.
+\]
+El anulador del subespacio \(\{\varphi:\sum_i\varphi_i=0\}\) es \(\operatorname{span}\{(1,\dots,1)\}\); por tanto existe \(\mu(t)\) tal que
+\[
+\frac{d}{dt}\Bigl(\partial_w\mathcal L_P(q(t),\dot q(t))\Bigr)-\partial_q\mathcal L_P(q(t),\dot q(t))=0
+\]
+en cualquier carta del statistical bundle.
+\end{proof}
+
+\begin{corolario}[Caso puramente cinético \textnormal{(ref1+ref2; \citealp{PistoneShoaib2024Axioms,Pistone2018Lagrangian})}]
+Si \(\lambda=0\), entonces las trayectorias críticas de \(\mathcal A_P\) son geodésicas de la geometría afín del símplex. En las cartas exponenciales y de mezcla de \cite{PistoneShoaib2024Axioms}, estas trayectorias son precisamente las curvas de aceleración nula.
+\end{corolario}
+\begin{proof}
+Si \(\lambda=0\), entonces
+\[
+\mathcal L_P(q,w)=\frac12\,g_q(w,w).
+\]
+Las curvas críticas de la energía cinética en una variedad riemanniana satisfacen la ecuación geodésica. En las cartas de mezcla y exponenciales de \cite{PistoneShoaib2024Axioms}, dichas geodésicas son exactamente las curvas de aceleración nula. Luego las trayectorias críticas de \(\mathcal A_P\) son geodésicas de la geometría afín del símplex.
+\end{proof}
+
+\begin{teorema}[Discretización admisible del minimizador \fuente{make}]
+Sea \(q^*\in \mathcal C_{\eta_T}(X_0,P;T)\) un minimizador de \(\mathcal A_P\) de clase \(C^2\). Fijemos el núcleo markoviano de suavizado \(K_\varepsilon^{\mathrm{sm}}\) de la Definición anterior, con \(0<\varepsilon<1/n\) y \(\delta\ge 2(n-1)\varepsilon\).
+
+Entonces existe una partición \(0=t_0<t_1<\cdots<t_m=T\) suficientemente fina y existen constantes \(h_0>0\) y \(R_0>0\) tales que, si \(h:=\max_k(t_{k+1}-t_k)\le h_0\) y definimos
+\[
+z_k:=q^*(t_k)K_\varepsilon^{\mathrm{sm}},\qquad
+L_{k,i}:=\frac{q_i^*(t_{k+1})}{(z_k)_i},\qquad i=1,\dots,n,
+\]
+entonces \(L_k=(L_{k,1},\dots,L_{k,n})\in\mathbb R_{>0}^n\), \(\log L_k\in\mathcal U_{R_0}\) y
+\[
+q^*(t_{k+1})=B_{L_k}(z_k)=B_{L_k}\bigl(q^*(t_k)K_\varepsilon^{\mathrm{sm}}\bigr),\qquad k=0,\dots,m-1.
+\]
+En particular, para todo \(R\ge R_0\) la sucesión \(q^*(t_0),\dots,q^*(t_m)\) es una trayectoria discreta admisible bajo \(\mathcal A_{\varepsilon,R,\delta}^{\mathrm{nd}}\), realizada mediante el paso compuesto canónico
+\[
+X_{t+1}=B_{L_t}\bigl(X_tK_\varepsilon^{\mathrm{sm}}\bigr).
+\]
+\end{teorema}
+\begin{proof}
+Sea \(q^*\in\mathcal C_{\eta_T}(X_0,P;T)\). Fijemos una partición \(0=t_0<t_1<\cdots<t_m=T\) y pongamos
+\[
+z_k:=q^*(t_k)K_\varepsilon^{\mathrm{sm}},
+\qquad
+L_{k,i}:=\frac{q_i^*(t_{k+1})}{(z_k)_i}.
+\]
+Como \(q^*(t_k)\in\Delta_{n,\eta_T}\) y cada entrada de \(K_\varepsilon^{\mathrm{sm}}\) es al menos \(\varepsilon\),
+\[
+(z_k)_i=\sum_{j=1}^n q_j^*(t_k)(K_\varepsilon^{\mathrm{sm}})_{ji}\ge \varepsilon.
+\]
+Además, \(q_i^*(t_{k+1})\in[\eta_T,1]\), luego
+\[
+\eta_T\le L_{k,i}\le \frac1\varepsilon.
+\]
+Por consiguiente,
+\[
+\log L_k\in\mathcal U_{R_0},
+\qquad
+R_0:=\max\{-\log\eta_T,\log(1/\varepsilon)\}.
+\]
+Ahora,
+\[
+\sum_{j=1}^n (z_k)_jL_{k,j}
+=\sum_{j=1}^n q_j^*(t_{k+1})=1,
+\]
+y por tanto
+\[
+B_{L_k}(z_k)_i
+=\frac{(z_k)_iL_{k,i}}{\sum_{j=1}^n (z_k)_jL_{k,j}}
+=q_i^*(t_{k+1}).
+\]
+De aquí
+\[
+q^*(t_{k+1})=B_{L_k}\bigl(q^*(t_k)K_\varepsilon^{\mathrm{sm}}\bigr)
+\]
+para todo \(k\). Si \(R\ge R_0\), entonces cada paso pertenece a \(\mathcal A_{\varepsilon,R,\delta}^{\mathrm{nd}}\).
+\end{proof}
+
+\begin{proposicion}[Euler--Lagrange en coordenadas baricentricas \fuente{make}]
+Sea \(q\) una curva critica de \(\mathcal A_P\) con \(\sum_{i=1}^n q_i(t)=1\). Entonces existe una funcion escalar \(\mu(t)\) tal que, para cada \(i=1,\dots,n\),
+\[
+\frac{d}{dt}\left(\frac{\dot q_i(t)}{q_i(t)}\right)+\frac12\,\frac{\dot q_i(t)^2}{q_i(t)^2}+\lambda\,\frac{P_i}{q_i(t)}=\mu(t),
+\]
+equivalentemente,
+\[
+\ddot q_i(t)-\frac12\,\frac{\dot q_i(t)^2}{q_i(t)}+\lambda P_i-\mu(t)\,q_i(t)=0.
+\]
+La funcion \(\mu(t)\) es el multiplicador de Lagrange asociado a la restriccion \(\sum_i q_i=1\).
+\end{proposicion}
+\begin{proof}
+Consideremos el funcional aumentado
+\[
+\widetilde{\mathcal L}_P(q,\dot q,\mu)
+:=\frac12\sum_{i=1}^n\frac{\dot q_i^2}{q_i}
++\lambda\sum_{i=1}^n P_i\log\!\left(\frac{P_i}{q_i}\right)
+-\mu(t)\Bigl(\sum_{i=1}^n q_i-1\Bigr).
+\]
+Entonces
+\[
+\partial_{\dot q_i}\widetilde{\mathcal L}_P=\frac{\dot q_i}{q_i},
+\qquad
+\partial_{q_i}\widetilde{\mathcal L}_P
+=-\frac12\frac{\dot q_i^2}{q_i^2}-\lambda\frac{P_i}{q_i}-\mu(t).
+\]
+La ecuación de Euler--Lagrange da
+\[
+\frac{d}{dt}\left(\frac{\dot q_i}{q_i}\right)
++\frac12\frac{\dot q_i^2}{q_i^2}
++\lambda\frac{P_i}{q_i}
+=\mu(t),
+\qquad i=1,\dots,n.
+\]
+Multiplicando por \(q_i\) y usando
+\[
+q_i\frac{d}{dt}\left(\frac{\dot q_i}{q_i}\right)=\ddot q_i-\frac{\dot q_i^2}{q_i},
+\]
+se obtiene
+\[
+\ddot q_i-\frac12\frac{\dot q_i^2}{q_i}+\lambda P_i-\mu(t)q_i=0.
+\]
+\end{proof}
+
+\begin{corolario}[Límite estacionario formal \fuente{ProInv\_I + ref2}]
+Consideremos el funcional reescalado \(\mathcal L_{P,\eta}(q,w):=\frac{\eta}{2}\,g_q(w,w)+\lambda E_P(q)\). Al pasar formalmente al límite \(\eta\downarrow 0\), las trayectorias críticas quedan forzadas a satisfacer
+\[
+\operatorname{grad}_g E_P(q)=0,
+\]
+y por tanto
+\[
+q=P.
+\]
+Este paso no produce por sí mismo un flujo de primer orden; sólo produce la condición estacionaria del potencial.
+\end{corolario}
+\begin{proof}
+La ecuación variacional asociada a \(\mathcal L_{P,\eta}\) contiene el término inercial multiplicado por \(\eta\) y el término de potencial \(\lambda\,\operatorname{grad}_gE_P(q)\). Al pasar formalmente al límite \(\eta\downarrow 0\), desaparece la contribución inercial y queda
+\[
+\operatorname{grad}_gE_P(q)=0.
+\]
+Por la proposición sobre el potencial KL,
+\[
+\operatorname{grad}_gE_P(q)=q-P.
+\]
+Luego \(q=P\).
+\end{proof}
+
+\begin{observacion}[Aclaracion del flujo]
+La condicion estacionaria \(q=P\) no implica por si misma la ley \(\dot X=P-X\). Esta ultima se adopta como flujo de gradiente de Fisher asociado al potencial \(E_P\), y se obtiene directamente de \(\operatorname{grad}_g E_P(X)=X-P\).
+\end{observacion}
+\begin{corolario}[Flujo de primer orden asociado al potencial \fuentecite{ProInv\_I}{ControlInformacional2026}]
+La evolución de descenso más pronunciado de \(E_P\) respecto de la métrica de Fisher viene dada por
+\[
+\dot X(t)=-\operatorname{grad}_gE_P(X(t))=P-X(t).
+\]
+En particular, \(P\) es el único equilibrio del flujo y coincide con el único mínimo global de \(E_P\).
+\end{corolario}
+\begin{proof}
+Este resultado se toma de \cite{ControlInformacional2026}; no depende de la sección variacional precedente.
+Por la proposición sobre el potencial KL,
+\[
+\operatorname{grad}_gE_P(X)=X-P.
+\]
+Por definición, el flujo de descenso más pronunciado es
+\[
+\dot X=-\operatorname{grad}_gE_P(X)=P-X.
+\]
+Además, \(E_P(X)\ge 0\) y \(E_P(X)=0\iff X=P\); luego \(P\) es el único equilibrio del flujo y el único mínimo global de \(E_P\).
+\end{proof}
+
+\subsection{Observaciones geométricas finales}
+
+\begin{observacion}[Dualidad \(e/m\) del paso compuesto \fuentecite{ref3}{Amari2016}]
+El paso libre \(X_tK_\varepsilon^{\mathrm{sm}}\) y la corrección bayesiana \(B_{L_t}\) se interpretan, respectivamente, como una componente \(m\)-afín y una componente \(e\)-afín del proceso compuesto. Bajo esta lectura, la función de costo separa el transporte libre y la corrección informacional, y el caso \(\lambda=0\) del Corolario anterior corresponde al régimen puramente geodésico del símplex dually flat.
+\end{observacion}
+
+\begin{observacion}[Fisher como métrica natural \fuentecite{ref3}{Amari2016,Chentsov1982}]
+La selección de la métrica de Fisher en el funcional continuo no es arbitraria: por el teorema de Chentsov, esta es la métrica intrínseca compatible con las transformaciones markovianas finitas. En consecuencia, el puente discreto-continuo debe formularse en términos de Fisher/KL y no mediante una métrica composicional auxiliar.
+\end{observacion}
+
+\begin{problema}[Criterio variacional de alcanzabilidad \fuente{make}]
+Determinar condiciones necesarias y suficientes para que, dados \(X_0,P\in \Delta_n^\circ\) y \(T\in\mathbb N\), exista una trayectoria discreta admisible de longitud \(T\) que conecte \(X_0\) con \(P\) bajo las acciones refinadas \((\mathcal K_{\varepsilon,\delta}^{\mathrm{nd}},\mathcal U_R)\), y comparar dicho criterio con la existencia de minimizadores de la acción relajada \(\mathcal A_P\).
+\end{problema}
+
+\bibliography{ProInt_II}
+
+\end{document}
+
+
+
+
+
+

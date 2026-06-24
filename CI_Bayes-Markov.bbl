@@ -1,0 +1,26 @@
+\begin{thebibliography}{3}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Aitchison(1986)]{Aitchison1986}
+John Aitchison.
+\newblock \emph{The Statistical Analysis of Compositional Data}.
+\newblock Chapman and Hall, London, 1986.
+\newblock Reprinted in 2003.
+
+\bibitem[Kolmogorov(1933)]{Kolmogorov1933}
+Andrei~Nikolaevich Kolmogorov.
+\newblock \emph{Grundbegriffe der Wahrscheinlichkeitsrechnung}.
+\newblock Springer, Berlin, 1933.
+\newblock English translation: \textit{Foundations of the Theory of
+  Probability}, Chelsea Publishing, New York, 1956.
+
+\bibitem[Seneta(2006)]{Seneta2006}
+Eugene Seneta.
+\newblock \emph{Non-negative Matrices and Markov Chains}.
+\newblock Springer, New York, 3 edition, 2006.
+
+\end{thebibliography}

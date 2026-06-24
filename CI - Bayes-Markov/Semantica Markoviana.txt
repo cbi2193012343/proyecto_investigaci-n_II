@@ -1,0 +1,927 @@
+%====================================================================
+\section{Sección F --- Semántica markoviana}
+%====================================================================
+
+Las Secciones B--E establecieron el marco de CI y su semántica bayesiana. Esta sección identifica, dentro del mismo marco, el caso particular que corresponde al operador de Markov clásico. El resultado estructural central es que las cadenas de Markov entran en CI a través de la Sección~B (correcciones locales dependientes del estado), mientras que la actualización bayesiana entra por la Sección~C (correcciones globales independientes del estado). Esta asimetría algebraica es la que hace no trivial el problema de ordenamiento del Proyecto~II.
+
+\begin{definicion}[Base discreta]\label{def:base_discreta_markov}
+Sea $(\Omega,\mathcal F,P)$ un espacio de probabilidad y sea
+\[
+\Pi=\{A_1,\dots,A_n\}
+\]
+una partición medible finita de $\Omega$ tal que
+\[
+P(A_i)>0,\qquad i=1,\dots,n.
+\]
+Identificamos cada celda $A_i$ con el índice $i$, y escribimos
+\[
+I:=\{1,\dots,n\}.
+\]
+Un estado discreto sobre $\Pi$ es un vector fila
+\[
+X=(X_1,\dots,X_n)\in\Delta_n,
+\]
+donde $X_i$ representa la masa asignada a la celda $A_i$.
+\end{definicion}
+
+\begin{lema}[Distribución inducida por una partición finita]\label{lem:distribucion_inducida_particion}
+Sea $(\Omega,\mathcal F,P)$ un espacio de probabilidad y sea
+\[
+\Pi=\{A_1,\dots,A_n\}
+\]
+una partición medible finita de $\Omega$ tal que
+\[
+P(A_i)>0,\qquad i=1,\dots,n.
+\]
+Defínase
+\[
+X^P=(X^P_1,\dots,X^P_n),
+\qquad
+X^P_i:=P(A_i).
+\]
+Entonces
+\[
+X^P\in\Delta_n^\circ.
+\]
+\end{lema}
+
+\begin{proof}
+Para cada $i=1,\dots,n$, por hipótesis,
+\[
+X^P_i=P(A_i)>0.
+\]
+Además, como $\Pi$ es una partición de $\Omega$, los conjuntos $A_1,\dots,A_n$ son disjuntos y satisfacen
+\[
+\bigcup_{i=1}^n A_i=\Omega.
+\]
+Por aditividad finita de $P$,
+\[
+\sum_{i=1}^n X^P_i
+=
+\sum_{i=1}^n P(A_i)
+=
+P\!\left(\bigcup_{i=1}^n A_i\right)
+=
+P(\Omega)
+=
+1.
+\]
+Por tanto,
+\[
+X^P_i>0\quad (i=1,\dots,n),
+\qquad
+\sum_{i=1}^n X^P_i=1,
+\]
+y en consecuencia
+\[
+X^P\in\Delta_n^\circ.
+\]
+\end{proof}
+
+\begin{definicion}[Matrices estocásticas por filas]\label{def:Sn_markov}
+Sea $n\in\mathbb N$ y sea
+\[
+I:=\{1,\dots,n\}.
+\]
+Se denota por $\mathcal S_n$ el conjunto de matrices estocásticas por filas de orden $n$:
+\[
+\mathcal S_n
+:=
+\left\{
+K=(K_{ab})_{a,b=1}^n\in\mathbb R^{n\times n}
+:
+K_{ab}\ge 0\ \forall a,b\in I,
+\quad
+\sum_{b=1}^n K_{ab}=1\ \forall a\in I
+\right\}.
+\]
+Para $K\in\mathcal S_n$, el operador markoviano asociado es
+\[
+M_K:\Delta_n\longrightarrow\mathbb R^n,
+\qquad
+M_K(X):=XK,
+\]
+donde $X$ se considera vector fila y el producto es el producto matricial usual.
+\end{definicion}
+
+\begin{observacion}[Lectura markoviana]
+Si $K\in\mathcal S_n$, entonces para cada $a\in I$ la fila
+\[
+(K_{a1},\dots,K_{an})
+\]
+es una distribución de probabilidad discreta sobre $I$. El número $K_{ab}$ se interpreta como la fracción de masa que, en un paso markoviano, se transporta desde el estado $a$ hacia el estado $b$.
+
+Esta lectura sólo usa la base discreta $I=\{1,\dots,n\}$. En particular, si más adelante una partición de hipótesis se identifica con una base discreta, el mismo operador $M_K$ podrá actuar sobre el símplex asociado a dicha partición.
+\end{observacion}
+
+\begin{proposicion}[El símplex es invariante bajo matrices estocásticas por filas]\label{prop:simplex_invariante_markov}
+Sea $K\in\mathcal S_n$ y sea $X\in\Delta_n$. Entonces
+\[
+M_K(X)=XK\in\Delta_n.
+\]
+En particular,
+\[
+M_K:\Delta_n\longrightarrow\Delta_n
+\]
+está bien definido.
+\end{proposicion}
+
+\begin{proof}
+Para cada $b=1,\dots,n$,
+\[
+(M_K(X))_b
+=
+(XK)_b
+=
+\sum_{a=1}^n X_aK_{ab}.
+\]
+Como
+\[
+X_a\ge 0
+\qquad\text{y}\qquad
+K_{ab}\ge 0,
+\]
+se tiene
+\[
+(M_K(X))_b\ge 0.
+\]
+Además,
+\[
+\sum_{b=1}^n(M_K(X))_b
+=
+\sum_{b=1}^n\sum_{a=1}^n X_aK_{ab}
+=
+\sum_{a=1}^n X_a\sum_{b=1}^n K_{ab}.
+\]
+Como $K\in\mathcal S_n$,
+\[
+\sum_{b=1}^n K_{ab}=1
+\qquad\text{para todo }a.
+\]
+Luego
+\[
+\sum_{b=1}^n(M_K(X))_b
+=
+\sum_{a=1}^n X_a
+=
+1.
+\]
+Por tanto,
+\[
+M_K(X)\in\Delta_n.
+\]
+\end{proof}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{observacion}[Interior del símplex y dominio de las correcciones locales]\label{obs:interior_markov}
+La Proposición~\ref{prop:simplex_invariante_markov} garantiza
+\[
+M_K(\Delta_n)\subseteq\Delta_n,
+\]
+pero no garantiza, en general,
+\[
+M_K(\Delta_n^\circ)\subseteq\Delta_n^\circ.
+\]
+Para preservar el interior basta imponer que ninguna columna de \(K\) sea nula, es decir, que para cada \(b\in I\) exista al menos un \(a\in I\) tal que
+\[
+K_{ab}>0.
+\]
+Esta es precisamente la condición de compatibilidad con el interior del símplex. La condición más fuerte
+\[
+K_{ab}>0\qquad\forall a,b\in I
+\]
+también preserva el interior, pero no es necesaria.
+
+La corrección local asociada a un paso markoviano se escribirá mediante cocientes de la forma
+\[
+\frac{(XK)_i}{X_i}.
+\]
+Por ello, para definir dicha corrección local se requiere
+\[
+X\in\Delta_n^\circ.
+\]
+Si además se desea que el estado transformado permanezca en \(\Delta_n^\circ\), se impondrá explícitamente la compatibilidad de \(K\) con el interior del símplex.
+\end{observacion}
+
+\begin{proposicion}[Representación local de un paso markoviano]\label{prop:markov_como_correccion_local}
+Sea \(K\in\mathcal S_n\) y sea \(X\in\Delta_n^\circ\). Defínase
+\[
+Y^K_i(X):=\frac{(M_K(X))_i}{X_i}-1,
+\qquad i=1,\dots,n.
+\]
+Entonces
+\[
+Y^K(X)\in C(X)
+\]
+y
+\[
+T^{\mathrm{loc}}_{Y^K(X)}(X)=M_K(X)=XK.
+\]
+\end{proposicion}
+
+\begin{proof}
+Como \(X\in\Delta_n^\circ\), se tiene
+\[
+X_i>0,\qquad i=1,\dots,n.
+\]
+Por tanto, los cocientes
+\[
+\frac{(M_K(X))_i}{X_i}
+\]
+están bien definidos.
+
+Para cada \(i=1,\dots,n\),
+\[
+1+Y^K_i(X)
+=
+\frac{(M_K(X))_i}{X_i}.
+\]
+Multiplicando por \(X_i\), se obtiene
+\[
+X_i(1+Y^K_i(X))
+=
+(M_K(X))_i.
+\]
+Por la Proposición~\ref{prop:simplex_invariante_markov},
+\[
+M_K(X)\in\Delta_n.
+\]
+En consecuencia,
+\[
+X_i(1+Y^K_i(X))\ge 0
+\qquad
+\text{para todo }i,
+\]
+y
+\[
+\sum_{i=1}^n X_i(1+Y^K_i(X))
+=
+\sum_{i=1}^n (M_K(X))_i
+=
+1.
+\]
+Por definición de \(C(X)\),
+\[
+Y^K(X)\in C(X).
+\]
+Además, por definición del operador local,
+\[
+T^{\mathrm{loc}}_{Y^K(X)}(X)_i
+=
+X_i(1+Y^K_i(X))
+=
+(M_K(X))_i.
+\]
+Como esto vale para todo \(i=1,\dots,n\), se concluye que
+\[
+T^{\mathrm{loc}}_{Y^K(X)}(X)=M_K(X)=XK.
+\]
+\end{proof}
+
+
+\begin{proposicion}[No globalidad de un operador markoviano no trivial]\label{prop:markov_no_global}
+Sea \(K\in\mathcal S_n\). Supóngase que existe un vector
+\[
+a=(a_1,\dots,a_n)\in\mathbb R_{>0}^n
+\]
+tal que
+\[
+T_a(X)=M_K(X)
+\qquad
+\text{para todo }X\in\Delta_n^\circ,
+\]
+donde
+\[
+T_a(X)_i
+=
+\frac{X_i a_i}{\sum_{k=1}^n X_k a_k}.
+\]
+Entonces
+\[
+K=I.
+\]
+En consecuencia, si \(K\neq I\), el operador markoviano \(M_K\) no puede representarse como un operador global con factor multiplicativo independiente de \(X\).
+\end{proposicion}
+
+\begin{proof}
+Sea \(r\in I\). Tomemos una sucesión
+\[
+(X^{(m)})_{m\ge1}\subset\Delta_n^\circ
+\]
+tal que
+\[
+X^{(m)}\to e_r,
+\]
+donde \(e_r\) denota el \(r\)-ésimo vector canónico.
+
+Por hipótesis,
+\[
+T_a(X^{(m)})=M_K(X^{(m)})=X^{(m)}K
+\qquad
+\text{para todo }m.
+\]
+Para cada \(i=1,\dots,n\),
+\[
+T_a(X^{(m)})_i
+=
+\frac{X_i^{(m)}a_i}{\sum_{k=1}^nX_k^{(m)}a_k}.
+\]
+Como \(X^{(m)}\to e_r\), se tiene
+\[
+\sum_{k=1}^nX_k^{(m)}a_k\to a_r>0.
+\]
+Además,
+\[
+X_r^{(m)}a_r\to a_r,
+\qquad
+X_i^{(m)}a_i\to 0
+\quad (i\neq r).
+\]
+Por tanto,
+\[
+T_a(X^{(m)})\to e_r.
+\]
+
+Por otro lado, como \(X\mapsto XK\) es lineal,
+\[
+X^{(m)}K\to e_rK.
+\]
+Al pasar al límite en
+\[
+T_a(X^{(m)})=X^{(m)}K,
+\]
+se obtiene
+\[
+e_r=e_rK.
+\]
+Esto significa que la fila \(r\)-ésima de \(K\) coincide con \(e_r\).
+
+Como \(r\in I\) fue arbitrario, todas las filas de \(K\) coinciden con las filas correspondientes de la matriz identidad. En consecuencia,
+\[
+K=I.
+\]
+Por tanto, si \(K\neq I\), no existe un vector \(a\in\mathbb R_{>0}^n\) tal que
+\[
+T_a(X)=M_K(X)
+\qquad
+\text{para todo }X\in\Delta_n^\circ.
+\]
+\end{proof}
+
+\begin{observacion}[Local frente a global]\label{obs:local_vs_global}
+La corrección \(Y^K(X)\) depende del estado base \(X\). Por tanto, el paso markoviano entra en el formalismo como una corrección local. En cambio, la verosimilitud bayesiana actúa mediante un factor multiplicativo positivo que no depende del estado base; por ello entra como corrección global.
+
+En términos estructurales, el operador markoviano mezcla coordenadas mediante una matriz estocástica por filas:
+\[
+X\longmapsto XK.
+\]
+El operador bayesiano reescala coordenadas por factores positivos y normaliza:
+\[
+X_i\longmapsto
+\frac{X_i\ell_i}{\sum_{k=1}^n X_k\ell_k}.
+\]
+Esta diferencia algebraica es la que permite formular posteriormente el problema de conmutación entre el paso markoviano y la actualización bayesiana.
+\end{observacion}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%% TERMINO 2
+
+
+\begin{definicion}[Distribución estacionaria]\label{def:estacionaria_markov}
+Sea \(K\in\mathcal S_n\). Una distribución \(\pi\in\Delta_n^\circ\) se llama estacionaria para \(K\) si
+\[
+\pi K=\pi.
+\]
+Equivalente, en términos del operador markoviano \(M_K\), esto significa que
+\[
+M_K(\pi)=\pi.
+\]
+\end{definicion}
+
+
+\begin{observacion}[Estacionariedad y corrección local nula]\label{obs:estacionaria_correccion_nula}
+Sea \(K\in\mathcal S_n\) y sea \(\pi\in\Delta_n^\circ\). Entonces \(\pi\) es estacionaria para \(K\) si y sólo si
+\[
+Y^K(\pi)=0.
+\]
+En efecto, para cada \(i=1,\dots,n\),
+\[
+Y_i^K(\pi)
+=
+\frac{(M_K(\pi))_i}{\pi_i}-1
+=
+\frac{(\pi K)_i}{\pi_i}-1.
+\]
+Como \(\pi_i>0\), se tiene
+\[
+Y_i^K(\pi)=0
+\quad\Longleftrightarrow\quad
+(\pi K)_i=\pi_i.
+\]
+Por tanto,
+\[
+Y^K(\pi)=0
+\quad\Longleftrightarrow\quad
+\pi K=\pi.
+\]
+Así, en el lenguaje local de CI, una distribución estacionaria es un estado cuya corrección markoviana local es nula.
+\end{observacion}
+
+
+
+\begin{lema}[Estacionariedad positiva y compatibilidad con el interior]\label{lem:estacionaria_implica_interior}
+Sea \(K\in\mathcal S_n\). Supóngase que existe una distribución estacionaria
+\[
+\pi\in\Delta_n^\circ
+\]
+para \(K\), es decir,
+\[
+\pi K=\pi.
+\]
+Entonces \(K\) es compatible con el interior del símplex. En consecuencia,
+\[
+M_K(\Delta_n^\circ)\subseteq \Delta_n^\circ.
+\]
+\end{lema}
+
+\begin{proof}
+Sea \(b\in I\). Como \(\pi\) es estacionaria para \(K\), se tiene
+\[
+\pi K=\pi.
+\]
+Por tanto,
+\[
+\pi_b=(\pi K)_b=\sum_{a=1}^n \pi_aK_{ab}.
+\]
+Como \(\pi\in\Delta_n^\circ\), se tiene
+\[
+\pi_b>0
+\qquad\text{y}\qquad
+\pi_a>0
+\quad\text{para todo }a\in I.
+\]
+Además, como \(K\in\mathcal S_n\),
+\[
+K_{ab}\ge 0
+\qquad\text{para todo }a,b\in I.
+\]
+Si se tuviera
+\[
+K_{ab}=0
+\qquad\text{para todo }a\in I,
+\]
+entonces
+\[
+\sum_{a=1}^n \pi_aK_{ab}=0,
+\]
+lo cual contradice que
+\[
+\pi_b=\sum_{a=1}^n \pi_aK_{ab}>0.
+\]
+Por tanto, existe al menos un \(a\in I\) tal que
+\[
+K_{ab}>0.
+\]
+Como \(b\in I\) fue arbitrario, para cada \(b\in I\) existe al menos un \(a\in I\) tal que
+\[
+K_{ab}>0.
+\]
+Así, \(K\) es compatible con el interior del símplex.
+
+La inclusión
+\[
+M_K(\Delta_n^\circ)\subseteq \Delta_n^\circ
+\]
+se sigue de la Proposición~\ref{prop:preservacion_interior_markov}.
+\end{proof}
+
+
+\begin{proposicion}[Disipación de la divergencia KL hacia la estacionaria]\label{prop:disipacion_KL_markov}
+Sea \(K\in\mathcal S_n\) y sea \(\pi\in\Delta_n^\circ\) una distribución estacionaria para \(K\), es decir,
+\[
+\pi K=\pi.
+\]
+Defínase
+\[
+E_\pi(X):=D_{\mathrm{KL}}(\pi\|X),
+\qquad X\in\Delta_n^\circ.
+\]
+Entonces, para todo \(X\in\Delta_n^\circ\),
+\[
+E_\pi(M_K(X))
+=
+D_{\mathrm{KL}}(\pi\|XK)
+\le
+D_{\mathrm{KL}}(\pi\|X)
+=
+E_\pi(X).
+\]
+En particular, un paso markoviano no incrementa la divergencia KL hacia la distribución estacionaria.
+\end{proposicion}
+
+\begin{proof}
+Sea \(X\in\Delta_n^\circ\). Como \(\pi\in\Delta_n^\circ\) es estacionaria para \(K\), por el Lema~\ref{lem:estacionaria_implica_interior} se tiene
+\[
+M_K(X)=XK\in\Delta_n^\circ.
+\]
+Por tanto,
+\[
+D_{\mathrm{KL}}(\pi\|XK)
+\]
+está bien definida.
+
+Como \(\pi K=\pi\), para cada \(j=1,\dots,n\),
+\[
+\pi_j=(\pi K)_j=\sum_{i=1}^n\pi_iK_{ij}.
+\]
+Además,
+\[
+(XK)_j=\sum_{i=1}^n X_iK_{ij}.
+\]
+Entonces
+\[
+D_{\mathrm{KL}}(\pi\|XK)
+=
+\sum_{j=1}^n
+\pi_j
+\log\frac{\pi_j}{(XK)_j}.
+\]
+
+Fijemos \(j\in I\). Como \(\pi_j>0\), definimos
+\[
+w_{ij}:=\frac{\pi_iK_{ij}}{\pi_j},
+\qquad i=1,\dots,n.
+\]
+Entonces
+\[
+w_{ij}\ge 0,
+\]
+y, usando \(\pi_j=\sum_i\pi_iK_{ij}\),
+\[
+\sum_{i=1}^n w_{ij}
+=
+\frac{1}{\pi_j}
+\sum_{i=1}^n\pi_iK_{ij}
+=
+1.
+\]
+Además,
+\[
+(XK)_j
+=
+\sum_{i=1}^n X_iK_{ij}
+=
+\sum_{i=1}^n
+\pi_iK_{ij}\frac{X_i}{\pi_i}
+=
+\pi_j\sum_{i=1}^n w_{ij}\frac{X_i}{\pi_i}.
+\]
+Por tanto,
+\[
+\frac{\pi_j}{(XK)_j}
+=
+\left(
+\sum_{i=1}^n w_{ij}\frac{X_i}{\pi_i}
+\right)^{-1}.
+\]
+Luego
+\[
+\log\frac{\pi_j}{(XK)_j}
+=
+-\log\left(
+\sum_{i=1}^n w_{ij}\frac{X_i}{\pi_i}
+\right).
+\]
+Como la función \(u\mapsto-\log u\) es convexa en \((0,\infty)\), por la desigualdad de Jensen se obtiene
+\[
+-\log\left(
+\sum_{i=1}^n w_{ij}\frac{X_i}{\pi_i}
+\right)
+\le
+\sum_{i=1}^n
+w_{ij}
+\left(
+-\log\frac{X_i}{\pi_i}
+\right).
+\]
+Es decir,
+\[
+\log\frac{\pi_j}{(XK)_j}
+\le
+\sum_{i=1}^n
+w_{ij}
+\log\frac{\pi_i}{X_i}.
+\]
+Multiplicando por \(\pi_j\),
+\[
+\pi_j
+\log\frac{\pi_j}{(XK)_j}
+\le
+\sum_{i=1}^n
+\pi_iK_{ij}
+\log\frac{\pi_i}{X_i}.
+\]
+Sumando en \(j\), se obtiene
+\[
+D_{\mathrm{KL}}(\pi\|XK)
+=
+\sum_{j=1}^n
+\pi_j
+\log\frac{\pi_j}{(XK)_j}
+\le
+\sum_{j=1}^n
+\sum_{i=1}^n
+\pi_iK_{ij}
+\log\frac{\pi_i}{X_i}.
+\]
+Como las sumas son finitas,
+\[
+\sum_{j=1}^n
+\sum_{i=1}^n
+\pi_iK_{ij}
+\log\frac{\pi_i}{X_i}
+=
+\sum_{i=1}^n
+\pi_i
+\log\frac{\pi_i}{X_i}
+\sum_{j=1}^nK_{ij}.
+\]
+Como \(K\in\mathcal S_n\),
+\[
+\sum_{j=1}^nK_{ij}=1
+\qquad
+\text{para todo }i.
+\]
+Por tanto,
+\[
+D_{\mathrm{KL}}(\pi\|XK)
+\le
+\sum_{i=1}^n
+\pi_i
+\log\frac{\pi_i}{X_i}
+=
+D_{\mathrm{KL}}(\pi\|X).
+\]
+En consecuencia,
+\[
+E_\pi(M_K(X))\le E_\pi(X).
+\]
+\end{proof}
+
+
+\begin{proposicion}[Trayectoria markoviana como trayectoria local de CI]\label{prop:trayectoria_markov_CI}
+Sea \(K\in\mathcal S_n\) y sea \(X_0\in\Delta_n\). Defínase la trayectoria discreta
+\[
+X_{t+1}:=M_K(X_t)=X_tK,
+\qquad t\ge 0.
+\]
+Entonces
+\[
+X_t\in\Delta_n
+\qquad
+\text{para todo }t\ge 0,
+\]
+y
+\[
+X_t=X_0K^t
+\qquad
+\text{para todo }t\ge 0.
+\]
+
+Además, si \(X_t\in\Delta_n^\circ\), entonces el paso \(X_t\mapsto X_{t+1}\) admite la representación local
+\[
+X_{t+1}
+=
+T^{\mathrm{loc}}_{Y^K(X_t)}(X_t).
+\]
+
+En particular, si \(X_0\in\Delta_n^\circ\) y \(K\) es compatible con el interior del símplex, entonces
+\[
+X_t\in\Delta_n^\circ
+\qquad
+\text{para todo }t\ge 0,
+\]
+y cada paso de la trayectoria es una corrección local de CI.
+\end{proposicion}
+
+\begin{proof}
+Primero probamos que \(X_t\in\Delta_n\) para todo \(t\ge 0\). Para \(t=0\), esto se cumple por hipótesis, pues
+\[
+X_0\in\Delta_n.
+\]
+Supóngase ahora que
+\[
+X_t\in\Delta_n.
+\]
+Como \(K\in\mathcal S_n\), por la Proposición~\ref{prop:simplex_invariante_markov} se tiene
+\[
+M_K(X_t)=X_tK\in\Delta_n.
+\]
+Por definición de la trayectoria,
+\[
+X_{t+1}=X_tK,
+\]
+luego
+\[
+X_{t+1}\in\Delta_n.
+\]
+Por inducción,
+\[
+X_t\in\Delta_n
+\qquad
+\text{para todo }t\ge 0.
+\]
+
+Probamos ahora la forma cerrada. Para \(t=0\),
+\[
+X_0=X_0K^0.
+\]
+Supóngase que
+\[
+X_t=X_0K^t.
+\]
+Entonces
+\[
+X_{t+1}
+=
+X_tK
+=
+(X_0K^t)K
+=
+X_0K^{t+1}.
+\]
+Por inducción,
+\[
+X_t=X_0K^t
+\qquad
+\text{para todo }t\ge 0.
+\]
+
+Si \(X_t\in\Delta_n^\circ\), entonces, por la Proposición~\ref{prop:markov_como_correccion_local},
+\[
+M_K(X_t)
+=
+T^{\mathrm{loc}}_{Y^K(X_t)}(X_t).
+\]
+Como
+\[
+X_{t+1}=M_K(X_t),
+\]
+se obtiene
+\[
+X_{t+1}
+=
+T^{\mathrm{loc}}_{Y^K(X_t)}(X_t).
+\]
+
+Finalmente, supóngase que \(X_0\in\Delta_n^\circ\) y que \(K\) es compatible con el interior del símplex. Por la Proposición~\ref{prop:preservacion_interior_markov},
+\[
+M_K(\Delta_n^\circ)\subseteq\Delta_n^\circ.
+\]
+Como \(X_0\in\Delta_n^\circ\), se sigue por inducción que
+\[
+X_t\in\Delta_n^\circ
+\qquad
+\text{para todo }t\ge 0.
+\]
+Por lo demostrado en el párrafo anterior, cada paso de la trayectoria admite la representación local
+\[
+X_{t+1}
+=
+T^{\mathrm{loc}}_{Y^K(X_t)}(X_t).
+\]
+\end{proof}
+
+
+\begin{observacion}[Primitividad y convergencia a equilibrio]\label{obs:primitividad_convergencia_markov}
+La disipación de la divergencia KL hacia una distribución estacionaria no implica, por sí sola, la convergencia de la trayectoria markoviana hacia dicha distribución. Para obtener convergencia se requiere una hipótesis dinámica adicional sobre la matriz de transición.
+
+Una condición suficiente estándar es la primitividad: se dirá que \(K\in\mathcal S_n\) es primitiva si existe \(m\ge 1\) tal que
+\[
+(K^m)_{ij}>0
+\qquad
+\text{para todo }i,j\in I.
+\]
+Bajo esta hipótesis, el teorema de Perron--Frobenius para matrices estocásticas finitas garantiza la existencia de una única distribución estacionaria
+\[
+\pi\in\Delta_n^\circ
+\]
+y la convergencia
+\[
+K^t\longrightarrow \mathbf 1\pi,
+\qquad t\to\infty,
+\]
+donde \(\mathbf 1\pi\) denota la matriz cuyas filas son todas iguales a \(\pi\).
+
+En consecuencia, si \(X_0\in\Delta_n\), entonces
+\[
+X_0K^t\longrightarrow X_0(\mathbf 1\pi)=\pi.
+\]
+La proposición siguiente incorpora esta convergencia al lenguaje de trayectorias informacionales.
+\end{observacion}
+
+
+\begin{proposicion}[Convergencia hacia la estacionaria bajo primitividad]\label{prop:convergencia_primitiva_markov}
+Sea \(K\in\mathcal S_n\) una matriz primitiva, es decir, supóngase que existe \(m\ge 1\) tal que
+\[
+(K^m)_{ij}>0
+\qquad
+\text{para todo }i,j\in I.
+\]
+Entonces existe una única distribución estacionaria
+\[
+\pi\in\Delta_n^\circ
+\]
+para \(K\).
+
+Sea \(X_0\in\Delta_n^\circ\) y defínase la trayectoria markoviana
+\[
+X_{t+1}:=M_K(X_t)=X_tK,
+\qquad t\ge 0.
+\]
+Entonces
+\[
+X_t\longrightarrow \pi
+\qquad
+\text{cuando }t\to\infty.
+\]
+Además, si
+\[
+E_\pi(X):=D_{\mathrm{KL}}(\pi\|X),
+\]
+entonces
+\[
+E_\pi(X_{t+1})\le E_\pi(X_t)
+\qquad
+\text{para todo }t\ge 0,
+\]
+y
+\[
+\lim_{t\to\infty}E_\pi(X_t)=0.
+\]
+\end{proposicion}
+
+\begin{proof}
+Como \(K\) es primitiva, por la Observación~\ref{obs:primitividad_convergencia_markov} existe una única distribución estacionaria
+\[
+\pi\in\Delta_n^\circ
+\]
+y se tiene
+\[
+K^t\longrightarrow \mathbf 1\pi.
+\]
+Por la Proposición~\ref{prop:trayectoria_markov_CI}, la trayectoria satisface
+\[
+X_t=X_0K^t
+\qquad
+\text{para todo }t\ge 0.
+\]
+Por tanto,
+\[
+X_t=X_0K^t\longrightarrow X_0(\mathbf 1\pi).
+\]
+Como \(X_0\in\Delta_n\), se tiene
+\[
+\sum_{i=1}^n X_{0,i}=1.
+\]
+Luego
+\[
+X_0(\mathbf 1\pi)
+=
+\left(\sum_{i=1}^n X_{0,i}\right)\pi
+=
+\pi.
+\]
+Así,
+\[
+X_t\longrightarrow \pi.
+\]
+
+Ahora, como \(\pi\in\Delta_n^\circ\) es estacionaria para \(K\), por la Proposición~\ref{prop:disipacion_KL_markov} se tiene, para todo \(t\ge 0\),
+\[
+D_{\mathrm{KL}}(\pi\|X_{t+1})
+=
+D_{\mathrm{KL}}(\pi\|X_tK)
+\le
+D_{\mathrm{KL}}(\pi\|X_t).
+\]
+Es decir,
+\[
+E_\pi(X_{t+1})\le E_\pi(X_t).
+\]
+
+Finalmente, como \(X_t\to\pi\) y \(X_t\in\Delta_n^\circ\) para todo \(t\ge 0\), por continuidad de la divergencia KL en el interior del símplex se obtiene
+\[
+\lim_{t\to\infty}E_\pi(X_t)
+=
+\lim_{t\to\infty}D_{\mathrm{KL}}(\pi\|X_t)
+=
+D_{\mathrm{KL}}(\pi\|\pi)
+=
+0.
+\]
+\end{proof}
