@@ -1,10 +1,10 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 24.1) (preloaded format=pdflatex 2024.10.3)  24 JUN 2026 16:55
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 24.1) (preloaded format=pdflatex 2024.10.3)  24 JUN 2026 23:38
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
  %&-line parsing enabled.
-**"c:/Users/shint/Videos/Control Informacional II/Proyecto de Investigaci贸n II/CI - Bayes-Markov/CI_Bayes-Markov_copia.tex"
-(c:/Users/shint/Videos/Control Informacional II/Proyecto de Investigaci贸n II/CI - Bayes-Markov/CI_Bayes-Markov_copia.tex
+**"c:/Users/shint/Videos/Control Informacional II/Proyecto de Investigaci贸n II/Documento Oficial/Control Informacional.tex"
+(c:/Users/shint/Videos/Control Informacional II/Proyecto de Investigaci贸n II/Documento Oficial/Control Informacional.tex
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-01-04>
 (C:\Users\shint\AppData\Local\Programs\MiKTeX\tex/latex/base\article.cls
@@ -426,39 +426,39 @@ Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 28
 \c@ejemplo=\count311
 \c@conjetura=\count312
 \c@problema=\count313
-LaTeX Font Info:    Trying to load font information for T1+lmss on input line 55.
+LaTeX Font Info:    Trying to load font information for T1+lmss on input line 56.
  (C:\Users\shint\AppData\Local\Programs\MiKTeX\tex/latex/lm\t1lmss.fd
 File: t1lmss.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 ) (C:\Users\shint\AppData\Local\Programs\MiKTeX\tex/latex/l3backend\l3backend-pdftex.def
 File: l3backend-pdftex.def 2024-01-04 L3 backend support: PDF output (pdfTeX)
 \l__color_backend_stack_int=\count314
 \l__pdf_internal_box=\box59
-) (CI_Bayes-Markov_copia.aux
+) (Control Informacional.aux
 LaTeX Info: Redefining \. on input line 12.
 LaTeX Info: Redefining \% on input line 12.
 )
-\openout1 = `CI_Bayes-Markov_copia.aux'.
+\openout1 = `"Control Informacional.aux"'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 55.
-LaTeX Font Info:    ... okay on input line 55.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 55.
-LaTeX Font Info:    ... okay on input line 55.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 55.
-LaTeX Font Info:    ... okay on input line 55.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 55.
-LaTeX Font Info:    ... okay on input line 55.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 55.
-LaTeX Font Info:    ... okay on input line 55.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 55.
-LaTeX Font Info:    ... okay on input line 55.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 55.
-LaTeX Font Info:    ... okay on input line 55.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 55.
-LaTeX Font Info:    ... okay on input line 55.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 55.
-LaTeX Font Info:    ... okay on input line 55.
-LaTeX Info: Redefining \. on input line 55.
-LaTeX Info: Redefining \% on input line 55.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 56.
+LaTeX Font Info:    ... okay on input line 56.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 56.
+LaTeX Font Info:    ... okay on input line 56.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 56.
+LaTeX Font Info:    ... okay on input line 56.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 56.
+LaTeX Font Info:    ... okay on input line 56.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 56.
+LaTeX Font Info:    ... okay on input line 56.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 56.
+LaTeX Font Info:    ... okay on input line 56.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 56.
+LaTeX Font Info:    ... okay on input line 56.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 56.
+LaTeX Font Info:    ... okay on input line 56.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 56.
+LaTeX Font Info:    ... okay on input line 56.
+LaTeX Info: Redefining \. on input line 56.
+LaTeX Info: Redefining \% on input line 56.
 
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
@@ -516,116 +516,118 @@ File: epstopdf-sys.cfg 2021/03/18 v2.0 Configuration of epstopdf for MiKTeX
 Package caption Info: Begin \AtBeginDocument code.
 Package caption Info: hyperref package is loaded.
 Package caption Info: End \AtBeginDocument code.
-Package hyperref Info: Link coloring OFF on input line 55.
- (CI_Bayes-Markov_copia.out) (CI_Bayes-Markov_copia.out)
+Package hyperref Info: Link coloring OFF on input line 56.
+ (Control Informacional.out) (Control Informacional.out)
 \@outlinefile=\write4
-\openout4 = `CI_Bayes-Markov_copia.out'.
+\openout4 = `"Control Informacional.out"'.
 
-LaTeX Font Info:    Trying to load font information for OT1+lmr on input line 57.
+LaTeX Font Info:    Trying to load font information for OT1+lmr on input line 58.
  (C:\Users\shint\AppData\Local\Programs\MiKTeX\tex/latex/lm\ot1lmr.fd
 File: ot1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
-LaTeX Font Info:    Trying to load font information for OML+lmm on input line 57.
+LaTeX Font Info:    Trying to load font information for OML+lmm on input line 58.
  (C:\Users\shint\AppData\Local\Programs\MiKTeX\tex/latex/lm\omllmm.fd
 File: omllmm.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
-LaTeX Font Info:    Trying to load font information for OMS+lmsy on input line 57.
+LaTeX Font Info:    Trying to load font information for OMS+lmsy on input line 58.
  (C:\Users\shint\AppData\Local\Programs\MiKTeX\tex/latex/lm\omslmsy.fd
 File: omslmsy.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
-LaTeX Font Info:    Trying to load font information for OMX+lmex on input line 57.
+LaTeX Font Info:    Trying to load font information for OMX+lmex on input line 58.
  (C:\Users\shint\AppData\Local\Programs\MiKTeX\tex/latex/lm\omxlmex.fd
 File: omxlmex.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <14.4> on input line 57.
+(Font)              <14.4> on input line 58.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <10> on input line 57.
+(Font)              <10> on input line 58.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <7> on input line 57.
-LaTeX Font Info:    Trying to load font information for U+msa on input line 57.
+(Font)              <7> on input line 58.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 58.
  (C:\Users\shint\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 57.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 58.
  (C:\Users\shint\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
-LaTeX Font Info:    Trying to load font information for U+rsfs on input line 57.
+LaTeX Font Info:    Trying to load font information for U+rsfs on input line 58.
  (C:\Program Files\MiKTeX\tex/latex/jknappen\ursfs.fd
 File: ursfs.fd 1998/03/24 rsfs font definition file (jk)
-) (CI_Bayes-Markov_copia.toc
+) (Control Informacional.toc
 LaTeX Info: Redefining \. on input line 1.
 LaTeX Info: Redefining \% on input line 1.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <12> on input line 8.
+(Font)              <12> on input line 3.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <8> on input line 8.
+(Font)              <8> on input line 3.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <6> on input line 8.
+(Font)              <6> on input line 3.
 )
 \tf@toc=\write5
-\openout5 = `CI_Bayes-Markov_copia.toc'.
+\openout5 = `"Control Informacional.toc"'.
 
  [1
 
-{C:/Users/shint/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}{C:/Users/shint/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-ec.enc}]
-LaTeX Font Info:    Font shape `T1/lmss/m/it' in size <12> not available
-(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 91.
-LaTeX Font Info:    Font shape `T1/lmss/m/it' in size <8> not available
-(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 124.
-LaTeX Font Info:    Font shape `T1/lmss/m/it' in size <6> not available
-(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 124.
- [2
+{C:/Users/shint/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}{C:/Users/shint/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-ec.enc}] [2
 
-{C:/Users/shint/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-mathit.enc}{C:/Users/shint/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-rm.enc}{C:/Users/shint/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-mathsy.enc}{C:/Users/shint/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-mathex.enc}] [3] [4] [5] [6] [7] [8] [9] [10] [11] [12] [13] [14] [15] [16] [17] [18] [19] [20]
-Overfull \hbox (17.8183pt too wide) in paragraph at lines 1356--1357
-[]\T1/lmss/bx/n/12 Definici髇 6.6 \T1/lmss/m/n/12 (No-ta-ci髇: ope-ra-dor ba-ye-siano in-du-ci-do por una ve-ro-si-mi-li-tud)\T1/lmss/bx/n/12 . \T1/lmss/m/sl/12 Sea $\OML/lmm/m/it/12 ` \OT1/lmr/m/n/12 = (\OML/lmm/m/it/12 `[]; [] ; `[]\OT1/lmr/m/n/12 ) \OMS/lmsy/m/n/12 2
+] [3{C:/Users/shint/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-rm.enc}{C:/Users/shint/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-mathit.enc}]
+LaTeX Font Info:    Font shape `T1/lmss/m/it' in size <12> not available
+(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 109.
+LaTeX Font Info:    Font shape `T1/lmss/m/it' in size <8> not available
+(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 150.
+LaTeX Font Info:    Font shape `T1/lmss/m/it' in size <6> not available
+(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 150.
+ [4{C:/Users/shint/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-mathsy.enc}{C:/Users/shint/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-mathex.enc}] [5] [6] [7] [8] [9] [10] [11] [12] [13] [14] [15]
+LaTeX Font Info:    Font shape `T1/lmss/bx/it' in size <12> not available
+(Font)              Font shape `T1/lmss/bx/sl' tried instead on input line 1021.
+ [16] [17] [18] [19
+
+] [20] [21] [22] [23] [24] [25] [26] [27] [28] [29] [30] [31] [32]
+Overfull \hbox (17.8183pt too wide) in paragraph at lines 2068--2069
+[]\T1/lmss/bx/n/12 Definici髇 2.6 \T1/lmss/m/n/12 (No-ta-ci髇: ope-ra-dor ba-ye-siano in-du-ci-do por una ve-ro-si-mi-li-tud)\T1/lmss/bx/n/12 . \T1/lmss/m/sl/12 Sea $\OML/lmm/m/it/12 ` \OT1/lmr/m/n/12 = (\OML/lmm/m/it/12 `[]; [] ; `[]\OT1/lmr/m/n/12 ) \OMS/lmsy/m/n/12 2
  []
 
-[21] [22] [23] [24] [25] [26] [27] [28] [29] [30] [31]
-Overfull \hbox (1.46161pt too wide) detected at line 2193
+[33] [34] [35] [36] [37] [38] [39] [40] [41] [42] [43]
+Overfull \hbox (1.46161pt too wide) detected at line 2905
 \OML/lmm/m/it/12 D[]\OT1/lmr/m/n/12 (\OMS/lmsy/m/n/12 Pk\OML/lmm/m/it/12 X[]\OT1/lmr/m/n/12 ) = 0[]96 [](1[]92) + 0[]02 [](0[]0667) + 0[]02 [](0[]1) = 0[]6262 \OMS/lmsy/m/n/12 ^^@ \OT1/lmr/m/n/12 0[]0542 \OMS/lmsy/m/n/12 ^^@ \OT1/lmr/m/n/12 0[]0461 = 0[]5260\OML/lmm/m/it/12 :
  []
 
-[32]
-Overfull \hbox (10.38812pt too wide) detected at line 2223
+
+Overfull \hbox (10.38812pt too wide) detected at line 2935
 \OML/lmm/m/it/12 D[]\OT1/lmr/m/n/12 (\OMS/lmsy/m/n/12 Pk\OML/lmm/m/it/12 X[]\OT1/lmr/m/n/12 ) = 0[]96 [](1[]02) + 0[]02 [](0[]5667) + 0[]02 [](0[]85) = 0[]0190 \OMS/lmsy/m/n/12 ^^@ \OT1/lmr/m/n/12 0[]0114 \OMS/lmsy/m/n/12 ^^@ \OT1/lmr/m/n/12 0[]0033 = 0[]0044\OML/lmm/m/it/12 :
  []
 
 
-Overfull \hbox (25.24086pt too wide) detected at line 2226
+Overfull \hbox (25.24086pt too wide) detected at line 2938
 \OML/lmm/m/it/12 D[]\OT1/lmr/m/n/12 (\OMS/lmsy/m/n/12 Pk\OML/lmm/m/it/12 X[]\OT1/lmr/m/n/12 ) = 0[]96 [](1[]0416) + 0[]02 [](0[]2893) + 0[]02 [](2[]17) = 0[]0391 \OMS/lmsy/m/n/12 ^^@ \OT1/lmr/m/n/12 0[]0248 + 0[]0155 = 0[]0298\OML/lmm/m/it/12 :
  []
 
 
-Overfull \hbox (3.80223pt too wide) in paragraph at lines 2230--2232
+Overfull \hbox (3.80223pt too wide) in paragraph at lines 2942--2944
 $\OML/lmm/m/it/12 E[] \OT1/lmr/m/n/12 = []$ \T1/lmss/m/n/12 ($\OML/lmm/m/it/12 `[] \OT1/lmr/m/n/12 = \OML/lmm/m/it/12 `[]$ \T1/lmss/m/n/12 no se-pa-ra $\OML/lmm/m/it/12 H[]$ \T1/lmss/m/n/12 de $\OML/lmm/m/it/12 H[]$\T1/lmss/m/n/12 ). $\OML/lmm/m/it/12 X[] \OT1/lmr/m/n/12 := \OML/lmm/m/it/12 X[] \OMS/lmsy/m/n/12 ^^Y \OT1/lmr/m/n/12 (0[]9412\OML/lmm/m/it/12 ; \OT1/lmr/m/n/12 0[]0353\OML/lmm/m/it/12 ; \OT1/lmr/m/n/12 0[]0235)$\T1/lmss/m/n/12 , $\OML/lmm/m/it/12 D[]\OT1/lmr/m/n/12 (\OMS/lmsy/m/n/12 Pk\OML/lmm/m/it/12 X[]\OT1/lmr/m/n/12 ) \OMS/lmsy/m/n/12 ^^Y
  []
 
-[33] [34] [35] [36] [37] [38] [39] [40] [41] [42] [43] [44] [45] [46
+[44] [45] [46] [47] [48] [49] [50] [51] [52] [53] [54] [55] [56] [57
 
-]
-
-LaTeX Warning: Reference `def:correccion_bayesiana_G' on page 47 undefined on input line 3243.
-
-
-LaTeX Warning: Reference `def:correccion_markoviana_G' on page 47 undefined on input line 3243.
-
-[47] [48] [49] [50] [51] [52] [53] [54] [55] [56] [57] [58] [59] [60] [61] [62] [63] [64] [65] [66] [67] [68] [69] [70] [71] [72]
-Overfull \hbox (54.53516pt too wide) detected at line 5468
+] [58] [59] [60] [61] [62] [63] [64] [65] [66] [67] [68] [69] [70] [71] [72] [73] [74] [75] [76] [77] [78] [79] [80] [81] [82] [83]
+Overfull \hbox (54.53516pt too wide) detected at line 6180
 \OML/lmm/m/it/12 Q[]\OT1/lmr/m/n/12 (\OML/lmm/m/it/12 X\OT1/lmr/m/n/12 ; \OML/lmm/m/it/12 K; L\OT1/lmr/m/n/12 ) \OMS/lmsy/m/n/12 ^^@ \OML/lmm/m/it/12 Q[]\OT1/lmr/m/n/12 (\OML/lmm/m/it/12 X\OT1/lmr/m/n/12 ; \OML/lmm/m/it/12 K; L\OT1/lmr/m/n/12 ) = []\OML/lmm/m/it/12 c[]\OT1/lmr/m/n/12 (\OML/lmm/m/it/12 X\OT1/lmr/m/n/12 ; \OML/lmm/m/it/12 K; L\OT1/lmr/m/n/12 ) \OMS/lmsy/m/n/12 ^^@ \OML/lmm/m/it/12 c[]\OT1/lmr/m/n/12 (\OML/lmm/m/it/12 X\OT1/lmr/m/n/12 ; \OML/lmm/m/it/12 K; L\OT1/lmr/m/n/12 )[] + []\OML/lmm/m/it/12 V[]  [] \OMS/lmsy/m/n/12 ^^@ \OML/lmm/m/it/12 V[]  [][]:
  []
 
-LaTeX Font Info:    Trying to load font information for U+euf on input line 5486.
+LaTeX Font Info:    Trying to load font information for U+euf on input line 6198.
 (C:\Users\shint\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\ueuf.fd
 File: ueuf.fd 2013/01/14 v3.01 Euler Fraktur
-) [73] [74] [75] [76]
-Overfull \hbox (47.21066pt too wide) detected at line 5952
+) [84] [85] [86] [87]
+Overfull \hbox (47.21066pt too wide) detected at line 6664
 \OML/lmm/m/it/12 Q[]\OT1/lmr/m/n/12 (\OML/lmm/m/it/12 X\OT1/lmr/m/n/12 ; \OML/lmm/m/it/12 K; L\OT1/lmr/m/n/12 ) \OMS/lmsy/m/n/12 ^^@ \OML/lmm/m/it/12 Q[]\OT1/lmr/m/n/12 (\OML/lmm/m/it/12 X\OT1/lmr/m/n/12 ; \OML/lmm/m/it/12 K; L\OT1/lmr/m/n/12 ) = []\OML/lmm/m/it/12 c[]\OT1/lmr/m/n/12 (\OML/lmm/m/it/12 X\OT1/lmr/m/n/12 ; \OML/lmm/m/it/12 K; L\OT1/lmr/m/n/12 ) \OMS/lmsy/m/n/12 ^^@ \OML/lmm/m/it/12 c[]\OT1/lmr/m/n/12 (\OML/lmm/m/it/12 X\OT1/lmr/m/n/12 ; \OML/lmm/m/it/12 K; L\OT1/lmr/m/n/12 )[] + []\OML/lmm/m/it/12 V[]\OT1/lmr/m/n/12 (\OML/lmm/m/it/12 B[]\OT1/lmr/m/n/12 (\OML/lmm/m/it/12 XK\OT1/lmr/m/n/12 )) \OMS/lmsy/m/n/12 ^^@ \OML/lmm/m/it/12 V[]\OT1/lmr/m/n/12 (\OML/lmm/m/it/12 B[]\OT1/lmr/m/n/12 (\OML/lmm/m/it/12 X\OT1/lmr/m/n/12 )\OML/lmm/m/it/12 K\OT1/lmr/m/n/12 )[]\OML/lmm/m/it/12 :
  []
 
-[77] Excluding 'comment' comment. (CI_Bayes-Markov_copia.bbl) [78] (CI_Bayes-Markov_copia.aux
+[88] (Control Informacional.bbl
+LaTeX Font Info:    Trying to load font information for T1+lmr on input line 75.
+ (C:\Users\shint\AppData\Local\Programs\MiKTeX\tex/latex/lm\t1lmr.fd
+File: t1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
+) [89]) [90] (Control Informacional.aux
 LaTeX Info: Redefining \. on input line 12.
 LaTeX Info: Redefining \% on input line 12.
 )
@@ -633,25 +635,21 @@ LaTeX Info: Redefining \% on input line 12.
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-01-04>
  ***********
-
-
-LaTeX Warning: There were undefined references.
-
-Package rerunfilecheck Info: File `CI_Bayes-Markov_copia.out' has not changed.
-(rerunfilecheck)             Checksum: 0C2812930C0FF7AF588C2248AAF86DDF;2857.
+Package rerunfilecheck Info: File `"Control Informacional".out' has not changed.
+(rerunfilecheck)             Checksum: CE4D57EE1C6608A98D20527C9BFD3717;3210.
  ) 
 Here is how much of TeX's memory you used:
- 15171 strings out of 474486
- 241818 string characters out of 5743755
- 1940542 words of memory out of 5000000
- 37001 multiletter control sequences out of 15000+600000
- 627380 words of font info for 93 fonts, out of 8000000 for 9000
+ 15275 strings out of 474486
+ 244029 string characters out of 5743755
+ 1944542 words of memory out of 5000000
+ 37066 multiletter control sequences out of 15000+600000
+ 633181 words of font info for 95 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 75i,12n,79p,1165b,608s stack positions out of 10000i,1000n,20000p,200000b,200000s
-<C:/Users/shint/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/euler/eufm10.pfb><C:/Users/shint/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmbx12.pfb><C:/Users/shint/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmex10.pfb><C:/Users/shint/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi12.pfb><C:/Users/shint/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi6.pfb><C:/Users/shint/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi8.pfb><C:/Users/shint/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr12.pfb><C:/Users/shint/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr6.pfb><C:/Users/shint/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr8.pfb><C:/Users/shint/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmss12.pfb><C:/Users/shint/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmss17.pfb><C:/Users/shint/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmss8.pfb><C:/Users/shint/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmssbx10.pfb><C:/Users/shint/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsso12.pfb><C:/Users/shint/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsy10.pfb><C:/Users/shint/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsy6.pfb><C:/Users/shint/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsy8.pfb><C:/Users/shint/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/symbols/msbm10.pfb><C:/Users/shint/AppData/Local/Programs/MiKTeX/fonts/type1/public/rsfs/rsfs10.pfb>
-Output written on CI_Bayes-Markov_copia.pdf (78 pages, 590830 bytes).
+ 75i,12n,79p,1146b,609s stack positions out of 10000i,1000n,20000p,200000b,200000s
+<C:/Users/shint/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/euler/eufm10.pfb><C:/Users/shint/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmbx12.pfb><C:/Users/shint/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmex10.pfb><C:/Users/shint/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi12.pfb><C:/Users/shint/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi6.pfb><C:/Users/shint/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi8.pfb><C:/Users/shint/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr12.pfb><C:/Users/shint/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr6.pfb><C:/Users/shint/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr8.pfb><C:/Users/shint/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmss12.pfb><C:/Users/shint/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmss17.pfb><C:/Users/shint/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmss8.pfb><C:/Users/shint/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmssbo10.pfb><C:/Users/shint/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmssbx10.pfb><C:/Users/shint/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsso12.pfb><C:/Users/shint/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsy10.pfb><C:/Users/shint/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsy6.pfb><C:/Users/shint/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsy8.pfb><C:/Users/shint/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
+Output written on "Control Informacional.pdf" (90 pages, 674951 bytes).
 PDF statistics:
- 781 PDF objects out of 1000 (max. 8388607)
- 215 named destinations out of 1000 (max. 500000)
- 81 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 898 PDF objects out of 1000 (max. 8388607)
+ 249 named destinations out of 1000 (max. 500000)
+ 89 words of extra memory for PDF output out of 10000 (max. 10000000)
 

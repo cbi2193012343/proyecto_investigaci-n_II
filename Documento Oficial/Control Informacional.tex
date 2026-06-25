@@ -1,0 +1,6685 @@
+\documentclass[12pt]{article}
+\usepackage[spanish]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{amsmath,amssymb}
+\usepackage{amsthm}
+\usepackage{geometry}
+\geometry{margin=2.5cm}
+\usepackage{comment}
+\renewcommand{\familydefault}{\sfdefault}
+\usepackage{mathrsfs}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{subcaption}
+\usepackage{booktabs,tabularx,array}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage[authoryear]{natbib}
+\setcitestyle{authoryear,round,semicolon,aysep={,},yysep={,}}
+\bibliographystyle{plainnat}
+\usepackage[hidelinks]{hyperref}
+\usepackage{comment}
+\newcommand{\fuente}[1]{\textnormal{(#1)}}
+\newcommand{\fuentecite}[2]{\textnormal{(#1; \citealp{#2})}}
+
+\newtheorem{definicion}{Definición}[section]
+\newtheorem{lema}{Lema}[section]
+\newtheorem{proposicion}{Proposición}[section]
+\newtheorem{teorema}{Teorema}[section]
+\newtheorem{corolario}{Corolario}[section]
+\newtheorem{observacion}{Observación}[section]
+\newtheorem{ejercicio}{Ejercicio}[section]
+\newtheorem{ejemplo}{Ejemplo}[section]
+\newtheorem{conjetura}{Conjetura}[section]
+\newtheorem{problema}{Problema abierto}[section]
+
+\title{Control Informacional\\
+\large Proyecto de Investigación II }
+
+\author{
+\textbf{Alejandro Cruz López} \\
+Universidad Autónoma Metropolitana \\
+Unidad Iztapalapa
+}
+
+\date{
+\vspace{1em}
+\textbf{Asesores} \\[0.3em]
+Dr.\ Asael Fabián Martínez Martínez \\
+Dr.\ Joaquín Delgado Fernández
+\vspace{2em}
+26 de mayo de 2026
+}
+
+\begin{document}
+\maketitle
+\tableofcontents
+\clearpage
+
+% ============================================================
+% Inicio fusionado desde: Poda (6)(2).tex
+% ============================================================
+
+\section*{Introducción}
+
+El estudio de distribuciones de probabilidad finitas suele abordarse desde dos perspectivas principales: como objetos estáticos sujetos a estimación, o como estados que se actualizan mediante reglas inferenciales o dinámicas específicas. En distintos contextos, sin embargo, aparecen secuencias de distribuciones cuya evolución constituye por sí misma el fenómeno de interés. Esto conduce a una pregunta distinta: ¿Cómo describir transformaciones entre estados probabilísticos preservando su estructura intrínseca, sin reducir necesariamente el análisis a un modelo estocástico externo?.
+
+En el caso finito, toda distribución de probabilidad puede representarse como un punto del símplex. Esta representación aparece de manera natural en la teoría axiomática de la probabilidad \citep{Kolmogorov1933}. A partir de esta observación, el problema del cambio informacional puede reformularse como el estudio de transformaciones internas del símplex compatibles con la interpretación probabilística. En este trabajo se fija un dominio preciso ---estados informacionales discretos inducidos por particiones medibles finitas--- y se introducen transformaciones elementales definidas mediante correcciones relativas. Estas transformaciones dan lugar a operadores bien definidos sobre el símplex y permiten incorporar funcionales informacionales para comparar estados \citep{Csiszar1975}.
+
+El punto de vista adoptado no pretende reemplazar marcos ya establecidos para dinámicas estocásticas o reglas particulares de actualización. Un ejemplo clásico de tales marcos lo proporcionan las cadenas de Markov. También existen formulaciones variacionales para la evolución de medidas en espacios métricos \citep{JordanKinderlehrerOtto1998}. Más modestamente, el objetivo aquí es aislar un formalismo matemático en el que las transformaciones entre distribuciones finitas puedan estudiarse directamente como objeto de análisis. En esta formulación, los cambios entre estados se modelan mediante correcciones relativas que preservan la masa total. En el desarrollo posterior, estas correcciones admitirán interpretación composicional \citep{Aitchison1986}. También admitirán una interpretación por cambio de medida en el caso discreto. Cuando sea pertinente, se indicará además su interpretación geométrica local en términos de la métrica de Fisher \citep{Amari2016}.
+
+El interés de este problema no es únicamente formal. En diversas situaciones aparecen familias finitas de probabilidades o vectores normalizados cuya evolución contiene información relevante sobre estabilidad, convergencia o respuesta al entorno. En particular, las actualizaciones multiplicativas sobre el símplex aparecen en optimización y aprendizaje \citep{KivinenWarmuth1997}. Por otra parte, la estructura geométrica del símplex ha sido estudiada sistemáticamente en análisis composicional \citep{Aitchison1986}. También ha sido analizada desde la geometría de la información \citep{AmariNagaoka2000}.
+
+El objetivo central de este documento es construir y organizar un marco básico para el estudio de transformaciones deterministas de estados probabilísticos finitos. En particular, se busca:
+\begin{enumerate}
+    \item fijar con precisión el dominio probabilístico discreto en el que se trabajará;
+    \item introducir correcciones relativas y operadores asociados que preserven la estructura del símplex;
+    \item relacionar dichas transformaciones con cambios discretos de medida;
+    \item incorporar funcionales informacionales y estudiar la dinámica que inducen en el caso discreto.
+\end{enumerate}
+
+El alcance del trabajo es deliberadamente acotado. Se considera exclusivamente el caso de distribuciones finitas, formuladas como puntos del símplex de probabilidad, y se estudian las estructuras mínimas necesarias para pasar de estados aislados a transformaciones y dinámicas entre ellos. En este sentido, el documento tiene un carácter fundacional: no pretende agotar el problema general, sino establecer con rigor el núcleo matemático que servirá de base para desarrollos posteriores.
+
+La organización del texto queda estructurada de la siguiente manera. La sección de fundamentos fija el dominio probabilístico, las correcciones locales, los operadores globales multiplicativos y la lectura KL--Fisher. Sobre esa base, la Sección 5 desarrolla la semántica bayesiana, la Sección 6 desarrolla la semántica markoviana y la Sección 7 estudia el control óptimo informacional y el defecto de ordenamiento Bayes--Markov.
+\subsection*{Relación con marcos de referencia}
+
+El desarrollo del trabajo utiliza herramientas provenientes de varios marcos que actúan sobre el mismo dominio, el símplex de probabilidades $\Delta_n$, pero que cumplen funciones distintas dentro de la exposición.
+
+\begin{itemize}
+    \item \textbf{Análisis composicional (Aitchison).} Proporciona la estructura algebraico--geométrica interna del símplex cuando las transformaciones relevantes son multiplicativas y seguidas de cierre o normalización. En particular, las operaciones de perturbación y potenciación permiten trabajar con cantidades relativas dentro del símplex \citep{Aitchison1986}.
+
+    \item \textbf{Geometría de divergencias (Csiszár).} Aporta funcionales de comparación entre distribuciones. En particular, las $f$-divergencias proporcionan un marco general para medir discrepancias entre estados probabilísticos \citep{Csiszar1975}. Dentro de esta familia, la divergencia de Kullback--Leibler ocupa un lugar central en este trabajo \citep{KullbackLeibler1951}.
+
+    \item \textbf{Geometría de la información (Amari).} Proporciona la métrica de Fisher y el lenguaje diferencial que permite interpretar gradientes y direcciones de cambio en el interior del símplex \citep{AmariNagaoka2000}. Este punto de vista se utilizará sólo cuando sea necesario para interpretar localmente la dinámica \citep{Amari2016}.
+
+    \item \textbf{Formulaciones variacionales en espacios de medidas (Wasserstein/JKO).} Este marco no se desarrolla en el documento como teoría principal. Sin embargo, se toma como referencia cuando se discuten analogías entre funcionales, esquemas discretos y dinámicas de descenso \citep{JordanKinderlehrerOtto1998}. La formulación abstracta de estos flujos en espacios métricos puede consultarse en \citep{AmbrosioGigliSavare2005}.
+\end{itemize}
+
+La convención adoptada será la siguiente. Las transformaciones elementales se formulan principalmente en la geometría composicional del símplex \citep{Aitchison1986}. Los funcionales de comparación se expresan mediante divergencias informacionales \citep{Csiszar1975}. Cuando resulte necesario, las interpretaciones diferenciales se harán explícitas en términos de la métrica de Fisher \citep{Amari2016}. De manera análoga, las referencias a esquemas variacionales se entenderán sólo como punto de comparación conceptual \citep{JordanKinderlehrerOtto1998}.
+\section{Fundamentos probabilísticos y geométricos del control informacional}
+
+En esta sección se fija el lenguaje básico del manuscrito. Primero se representa la información discreta como un punto del símplex; después se introducen transformaciones que preservan la interpretación probabilística, y finalmente se registran los funcionales geométricos que permitirán medir dirección, descenso y desplazamiento informacional.
+
+\subsection{Probabilidad, particiones y símplex}
+
+Esta subsección fija el dominio probabilístico discreto en el que se desarrollará el trabajo. El punto de partida es un espacio de probabilidad en el sentido de Kolmogórov \citep{Kolmogorov1933}. A partir de una partición medible finita se asocia a la medida un vector de probabilidades, que se interpretará como estado informacional discreto. Dicho vector pertenece al símplex de probabilidad.
+
+\begin{observacion}
+Conviene distinguir desde el inicio entre la medida $P$ sobre $(\Omega,\mathcal F)$ y el estado discreto $X$ inducido por una partición $\Pi$. Un mismo espacio de probabilidad puede dar lugar a distintos estados al variar la partición considerada.
+\end{observacion}
+
+\begin{definicion}[Espacio de probabilidad]\label{def:espacio_prob}
+Un \emph{espacio de probabilidad} es una terna $(\Omega,\mathcal F,P)$ tal que:
+\begin{enumerate}
+    \item $\Omega$ es un conjunto no vacío;
+    \item $\mathcal F$ es una $\sigma$-álgebra de subconjuntos de $\Omega$;
+    \item $P:\mathcal F\to[0,1]$ es una medida con $P(\Omega)=1$.
+\end{enumerate}
+\end{definicion}
+
+\begin{definicion}[Partición medible finita]\label{def:particion}
+Sea $(\Omega,\mathcal F,P)$ un espacio de probabilidad. Una \emph{partición medible finita} de $\Omega$ es una familia finita
+\[
+\Pi=\{E_1,\dots,E_n\}\subset \mathcal F,\qquad n\ge 1,
+\]
+tal que:
+\begin{enumerate}
+    \item $E_i\cap E_j=\varnothing$ si $i\neq j$;
+    \item $\bigcup_{i=1}^n E_i=\Omega$.
+\end{enumerate}
+
+Diremos que $\Pi$ es \emph{no degenerada} si además
+\[
+P(E_i)>0,\qquad i=1,\dots,n.
+\]
+\end{definicion}
+
+\begin{observacion}
+La hipótesis de no degeneración no forma parte de la definición general de partición, pero será útil cuando intervengan cocientes o logaritmos.
+\end{observacion}
+
+\begin{definicion}[Símplex de probabilidad e interior]\label{def:simplex}
+Para $n\ge 1$ se define el \emph{símplex de probabilidad} por
+\[
+\Delta_n:=\Bigl\{x\in\mathbb R^n:\ x_i\ge 0,\ \sum_{i=1}^n x_i=1\Bigr\}.
+\]
+Su interior relativo en el hiperplano $\sum_{i=1}^n x_i=1$ está dado por
+\[
+\Delta_n^\circ:=\{x\in\Delta_n:\ x_i>0\ \text{para todo } i\}.
+\]
+\end{definicion}
+
+\begin{observacion}
+El conjunto $\Delta_n$ será el espacio general de estados. Cuando se requiera positividad estricta, por ejemplo en expresiones con cocientes o logaritmos, se trabajará en $\Delta_n^\circ$.
+\end{observacion}
+
+\begin{definicion}[Estado informacional discreto]\label{def:estado}
+Sea $(\Omega,\mathcal F,P)$ un espacio de probabilidad y sea $\Pi=\{E_1,\dots,E_n\}$ una partición medible finita. El \emph{estado informacional discreto} asociado a $\Pi$ es el vector
+\[
+X=(X_1,\dots,X_n)\in\mathbb R^n,
+\qquad
+X_i:=P(E_i),\quad i=1,\dots,n.
+\]
+\end{definicion}
+
+\begin{proposicion}[Estado inducido por una partición finita]\label{prop:estado_simplex}
+Sea $X$ el estado informacional discreto asociado a una partición medible finita $\Pi=\{E_1,\dots,E_n\}$.
+Entonces:
+\begin{enumerate}
+    \item $X\in\Delta_n$;
+    \item si $\Pi$ es no degenerada, entonces $X\in\Delta_n^\circ$.
+\end{enumerate}
+\end{proposicion}
+
+\begin{proof}
+Como $E_i\in\mathcal F$, se tiene $X_i=P(E_i)\ge 0$ para todo $i$. Además, por disjunción de la partición y aditividad numerable de $P$,
+\[
+\sum_{i=1}^n X_i
+=
+\sum_{i=1}^n P(E_i)
+=
+P\Bigl(\bigcup_{i=1}^n E_i\Bigr)
+=
+P(\Omega)
+=
+1.
+\]
+Por tanto, $X\in\Delta_n$. Si además $P(E_i)>0$ para todo $i$, entonces $X_i>0$ para todo $i$, y en consecuencia $X\in\Delta_n^\circ$.
+\end{proof}
+
+\begin{observacion}
+El paso de $(\Omega,\mathcal F,P)$ a $X$ depende de la partición elegida. En consecuencia, $X$ no representa a la medida $P$ en toda su estructura, sino sólo su distribución sobre las clases de observación determinadas por $\Pi$.
+\end{observacion}
+
+Con esta identificación, el estado informacional queda representado como un punto del símplex; las siguientes secciones estudian transformaciones que modifican dicho estado preservando su interpretación probabilística.
+
+\subsection{Correcciones locales y cambio de medida}
+
+En este sección  se introduce el mecanismo elemental de transformación sobre el símplex. Dado un estado $X\in\Delta_n$, se definen correcciones relativas admisibles que preservan la no negatividad y la normalización, se asocia a cada una de ellas un operador local sobre el espacio de estados y se muestra que dicha actualización coincide con un cambio de medida discreto sobre la partición subyacente.
+
+\begin{definicion}[Conjunto de correcciones admisibles en $X$]\label{def:CX}
+Sea $X=(X_1,\dots,X_n)\in\Delta_n$. Se define el \emph{conjunto de correcciones admisibles en $X$} por
+\[
+C(X)
+:=
+\Bigl\{
+Y=(Y_1,\dots,Y_n)\in\mathbb{R}^n
+\;\Big|\;
+X_i(1+Y_i)\ge 0\ \text{para todo } i,
+\ \sum_{i=1}^n X_i(1+Y_i)=1
+\Bigr\}.
+\]
+\end{definicion}
+
+\begin{observacion}\label{obs:neutralidad}
+Si $Y\in C(X)$, entonces
+\[
+\sum_{i=1}^n X_iY_i=0.
+\]
+En efecto, como $\sum_{i=1}^n X_i=1$ y $\sum_{i=1}^n X_i(1+Y_i)=1$, se obtiene
+\[
+\sum_{i=1}^n X_iY_i
+=
+\sum_{i=1}^n X_i(1+Y_i)-\sum_{i=1}^n X_i
+=
+1-1
+=
+0.
+\]
+Esta identidad expresa la neutralidad de masa de la corrección, es decir, $\sum_{i=1}^n X_iY_i=0$.
+\end{observacion}
+
+\begin{definicion}[Operador informacional local]\label{def:Tloc}
+Sea $X\in\Delta_n$ y sea $Y\in C(X)$. El \emph{operador informacional local} asociado a $Y$ en $X$ es el vector
+\[
+T_Y^{\mathrm{loc}}(X)
+=
+\bigl(T_Y^{\mathrm{loc}}(X)_1,\dots,T_Y^{\mathrm{loc}}(X)_n\bigr)\in\mathbb{R}^n,
+\]
+definido por
+\[
+T_Y^{\mathrm{loc}}(X)_i:=X_i(1+Y_i),\qquad i=1,\dots,n.
+\]
+\end{definicion}
+
+\begin{observacion}\label{obs:frontera}
+No es necesario exigir $X\in\Delta_n^\circ$ para definir $T_Y^{\mathrm{loc}}$. Si $X_i=0$, entonces
+\[
+T_Y^{\mathrm{loc}}(X)_i=0
+\]
+independientemente del valor de $Y_i$. Por tanto, el operador local está bien definido en todo $\Delta_n$. La restricción al interior $\Delta_n^\circ$ sólo será necesaria más adelante, cuando intervengan expresiones que requieran positividad estricta.
+\end{observacion}
+
+\begin{proposicion}[Preservación local del símplex]\label{prop:preservacionLocal}
+Sea $X\in\Delta_n$ y sea $Y\in C(X)$. Entonces
+\[
+T_Y^{\mathrm{loc}}(X)\in\Delta_n.
+\]
+\end{proposicion}
+
+\begin{proof}
+Por definición de $C(X)$,
+\[
+X_i(1+Y_i)\ge 0,\qquad i=1,\dots,n,
+\]
+y
+\[
+\sum_{i=1}^n X_i(1+Y_i)=1.
+\]
+Como
+\[
+T_Y^{\mathrm{loc}}(X)_i=X_i(1+Y_i),
+\]
+se sigue que todas las coordenadas de $T_Y^{\mathrm{loc}}(X)$ son no negativas y que su suma es $1$. Por tanto,
+\[
+T_Y^{\mathrm{loc}}(X)\in\Delta_n.
+\]
+\end{proof}
+
+\begin{proposicion}[Cambio de medida discreto inducido por una corrección local]\label{prop:QYprobabilidad}
+Sea $(\Omega,\mathcal F,P)$ un espacio de probabilidad y sea
+\[
+\Pi=\{E_1,\dots,E_n\}\subset\mathcal F
+\]
+una partición medible finita no degenerada. Defínase
+\[
+X_i:=P(E_i),\qquad i=1,\dots,n,
+\]
+de modo que $X=(X_1,\dots,X_n)\in\Delta_n^\circ$.
+
+Sea $Y\in C(X)$ y defínase
+\[
+h:\Omega\to[0,\infty),
+\qquad
+h(\omega):=1+Y_i
+\quad\text{si }\omega\in E_i.
+\]
+Sea además
+\[
+Q_Y:\mathcal F\to[0,\infty],
+\qquad
+Q_Y(A):=\int_A h(\omega)\,dP(\omega),
+\qquad A\in\mathcal F.
+\]
+Entonces $Q_Y$ es una medida de probabilidad sobre $(\Omega,\mathcal F)$.
+\end{proposicion}
+
+\begin{proof}
+Como $Y\in C(X)$, se tiene
+\[
+X_i(1+Y_i)\ge 0,\qquad i=1,\dots,n.
+\]
+Puesto que $X_i=P(E_i)>0$, se sigue que
+\[
+1+Y_i\ge 0,\qquad i=1,\dots,n.
+\]
+Por tanto,
+\[
+h(\omega)\ge 0,\qquad \omega\in\Omega.
+\]
+En consecuencia, la aplicación
+\[
+A\mapsto \int_A h\,dP
+\]
+define una medida no negativa sobre $(\Omega,\mathcal F)$.
+
+Además, usando que $\Pi=\{E_1,\dots,E_n\}$ es una partición de $\Omega$ y que $h$ es constante en cada sección ,
+\[
+Q_Y(\Omega)
+=
+\int_\Omega h\,dP
+=
+\sum_{i=1}^n \int_{E_i} h\,dP
+=
+\sum_{i=1}^n (1+Y_i)P(E_i)
+=
+\sum_{i=1}^n X_i(1+Y_i)
+=
+1.
+\]
+Por tanto, $Q_Y$ es una medida de probabilidad.
+\end{proof}
+
+\begin{proposicion}[Compatibilidad entre $T_Y^{\mathrm{loc}}$ y el cambio de medida]\label{prop:compatibilidadCambioMedida}
+Sea $(\Omega,\mathcal F,P)$ un espacio de probabilidad y sea
+\[
+\Pi=\{E_1,\dots,E_n\}\subset\mathcal F
+\]
+una partición medible finita no degenerada. Defínase
+\[
+X_i:=P(E_i),\qquad i=1,\dots,n,
+\]
+de modo que $X=(X_1,\dots,X_n)\in\Delta_n^\circ$.
+
+Sea $\omega \in \Omega$. Sea $Y \in C(X)$ y defínase $h:\Omega \to (0,\infty)$ por
+\[
+h(\omega):=1+Y_i \quad \text{si } \omega \in E_i.
+\]
+Sea además
+\[
+Q_Y(A):=\int_A h(\omega)\,dP(\omega),
+\qquad A\in\mathcal F.
+\]
+Entonces, para cada $i=1,\dots,n$, se cumple
+\[
+Q_Y(E_i)=T_Y^{\mathrm{loc}}(X)_i.
+\]
+\end{proposicion}
+
+\begin{proof}
+Como $h$ es constante sobre cada sección  $E_i$ y vale $1+Y_i$ en dicho sección ,
+\[
+Q_Y(E_i)
+=
+\int_{E_i} h(\omega)\,dP(\omega)
+=
+(1+Y_i)P(E_i)
+=
+(1+Y_i)X_i.
+\]
+Por la definición del operador local,
+\[
+(1+Y_i)X_i=T_Y^{\mathrm{loc}}(X)_i.
+\]
+Por tanto,
+\[
+Q_Y(E_i)=T_Y^{\mathrm{loc}}(X)_i.
+\]
+\end{proof}
+
+\begin{observacion}
+La proposición anterior identifica la actualización local con la redistribución de probabilidad inducida por la medida $Q_Y$ sobre la partición original. En este sentido, el operador $T_Y^{\mathrm{loc}}$ no actúa sólo como transformación algebraica sobre el símplex, sino como representación discreta de un cambio de medida por sección s.
+\end{observacion}
+\subsection{Operadores globales multiplicativos y composición}
+
+Esta subsección pasa del mecanismo local de la subsección anterior a una familia de operadores definida de manera uniforme sobre el interior del símplex. Se consideran correcciones multiplicativas positivas y se normaliza el resultado para conservar la suma unitaria. Esto da lugar a operadores globales sobre $\Delta_n^\circ$ y permite describir su composición de forma explícita.
+
+\begin{definicion}[Correcciones globales]\label{def:Cglob}
+Se define el conjunto de \emph{correcciones globales} por
+\[
+C_{\mathrm{glob}}
+:=
+\Bigl\{
+Y=(Y_1,\dots,Y_n)\in\mathbb{R}^n
+\;\Big|\;
+1+Y_i>0 \ \text{para todo } i
+\Bigr\}.
+\]
+Para cada $Y\in C_{\mathrm{glob}}$, el vector de factores multiplicativos asociado viene dado por
+\[
+a(Y):=(1+Y_1,\dots,1+Y_n)\in\mathbb{R}_{>0}^n.
+\]
+\end{definicion}
+
+\begin{definicion}[Operador informacional global]\label{def:Tglobal}
+Sea $Y\in C_{\mathrm{glob}}$. El \emph{operador informacional global} asociado a $Y$ es la aplicación
+\[
+T_Y:\Delta_n^\circ\to\Delta_n^\circ,
+\qquad
+T_Y(X)
+:=
+\frac{X\circ a(Y)}{\sum_{j=1}^n X_j a_j(Y)},
+\]
+donde $\circ$ denota el producto coordenada a coordenada. En forma explícita,
+\[
+T_Y(X)_i
+=
+\frac{X_i(1+Y_i)}{\sum_{j=1}^n X_j(1+Y_j)},
+\qquad i=1,\dots,n.
+\]
+\end{definicion}
+
+\begin{observacion}\label{obs:Tglobal-frontera}
+La fórmula de $T_Y$ tiene sentido también para $X\in\Delta_n$, no sólo para $X\in\Delta_n^\circ$. En efecto, si $Y\in C_{\mathrm{glob}}$, entonces $1+Y_i>0$ para todo $i$, y por tanto
+\[
+\sum_{j=1}^n X_j(1+Y_j)>0
+\]
+para todo $X\in\Delta_n$. Así, $T_Y(X)$ está bien definido en todo $\Delta_n$. No obstante, la restricción a $\Delta_n^\circ$ será el dominio estructural cuando se estudie la composición e inversión de estos operadores.
+\end{observacion}
+\begin{proposicion}[Preservación del interior del símplex]\label{prop:interiorGlobal}
+Sea $Y\in C_{\mathrm{glob}}$. Entonces, para todo $X\in\Delta_n^\circ$,
+\[
+T_Y(X)\in\Delta_n^\circ.
+\]
+\end{proposicion}
+
+\begin{proof}
+Si $X_i>0$ y $a_i(Y)=1+Y_i>0$ para todo $i$, entonces
+\[
+X_i a_i(Y)>0,\qquad i=1,\dots,n.
+\]
+Además,
+\[
+\sum_{i=1}^n T_Y(X)_i
+=
+\frac{\sum_{i=1}^n X_i a_i(Y)}{\sum_{j=1}^n X_j a_j(Y)}
+=
+1.
+\]
+Por tanto, todas las coordenadas de $T_Y(X)$ son estrictamente positivas y su suma es $1$, es decir,
+\[
+T_Y(X)\in\Delta_n^\circ.
+\]
+\end{proof}
+
+\begin{observacion}[Relación con el operador local de la subsección anterior]\label{obs:localVsGlobal}
+Sea $X\in\Delta_n^\circ$ y sea $Y\in C_{\mathrm{glob}}$. Si además
+\[
+\sum_{i=1}^n X_i(1+Y_i)=1,
+\]
+entonces
+\[
+T_Y(X)_i=X_i(1+Y_i),\qquad i=1,\dots,n,
+\]
+y por tanto
+\[
+T_Y(X)=T_Y^{\mathrm{loc}}(X).
+\]
+En este sentido, el operador global extiende el mecanismo local de la subsección anterior al incorporar una renormalización dependiente del estado base.
+\end{observacion}
+
+\begin{definicion}[Familia global de operadores]\label{def:G}
+Se define
+\[
+\mathcal G
+:=
+\bigl\{
+T_Y:\Delta_n^\circ\to\Delta_n^\circ
+\;\big|\;
+Y\in C_{\mathrm{glob}}
+\bigr\},
+\]
+dotada de la composición usual de aplicaciones.
+\end{definicion}
+
+\begin{proposicion}[Ley de composición]\label{prop:composicionGlobal}
+Sean $Y_1,Y_2\in C_{\mathrm{glob}}$. Entonces existe un único $Y_{\mathrm{tot}}\in C_{\mathrm{glob}}$ tal que
+\[
+T_{Y_2}\circ T_{Y_1}=T_{Y_{\mathrm{tot}}},
+\]
+y está determinado por la condición
+\[
+1+Y_{\mathrm{tot}}
+=
+(1+Y_1)\circ(1+Y_2).
+\]
+En coordenadas,
+\[
+1+(Y_{\mathrm{tot}})_i=(1+(Y_1)_i)(1+(Y_2)_i),
+\qquad i=1,\dots,n.
+\]
+\end{proposicion}
+\begin{proof}
+Sean $Y^{(1)},Y^{(2)}\in C_{\mathrm{glob}}$. Para $r=1,2$, recordemos que el vector de factores multiplicativos esta dado por:
+\[
+a^{(r)}:=(a_1^{(r)},\dots,a_n^{(r)}),\qquad a_i^{(r)}:=1+Y_i^{(r)}.
+\]
+Como $Y^{(r)}\in C_{\mathrm{glob}}$, se tiene
+\[
+a_i^{(r)}>0\qquad \text{para todo } i=1,\dots,n.
+\]
+
+Sea ahora $X\in\Delta_n^\circ$. Entonces, por definición,
+\[
+T_{Y^{(1)}}(X)_i=\frac{X_i a_i^{(1)}}{\sum_{j=1}^n X_j a_j^{(1)}},\qquad i=1,\dots,n.
+\]
+Aplicando después $T_{Y^{(2)}}$, para cada $i=1,\dots,n$ se obtiene
+\[
+T_{Y^{(2)}}(T_{Y^{(1)}}(X))_i
+=
+\frac{T_{Y^{(1)}}(X)_i\,a_i^{(2)}}{\sum_{j=1}^n T_{Y^{(1)}}(X)_j\,a_j^{(2)}}.
+\]
+Sustituyendo la expresión de $T_{Y^{(1)}}(X)$,
+\[
+T_{Y^{(2)}}(T_{Y^{(1)}}(X))_i
+=
+\frac{
+\displaystyle
+\frac{X_i a_i^{(1)}}{\sum_{k=1}^n X_k a_k^{(1)}}\,a_i^{(2)}
+}{
+\displaystyle
+\sum_{j=1}^n
+\frac{X_j a_j^{(1)}}{\sum_{k=1}^n X_k a_k^{(1)}}\,a_j^{(2)}
+}.
+\]
+El factor común $\sum_{k=1}^n X_k a_k^{(1)}$ aparece en numerador y denominador, por lo que se cancela. Así,
+\[
+T_{Y^{(2)}}(T_{Y^{(1)}}(X))_i
+=
+\frac{X_i a_i^{(1)} a_i^{(2)}}{\sum_{j=1}^n X_j a_j^{(1)} a_j^{(2)}}.
+\]
+
+Definimos ahora
+\[
+a^{(\mathrm{tot})}:=(a_1^{(1)}a_1^{(2)},\dots,a_n^{(1)}a_n^{(2)})\in \mathbb R_{>0}^n.
+\]
+Como $a_i^{(1)}>0$ y $a_i^{(2)}>0$ para todo $i$, se tiene
+\[
+a_i^{(\mathrm{tot})}>0\qquad \text{para todo } i.
+\]
+Definimos $Y^{(\mathrm{tot})}\in\mathbb R^n$ por
+\[
+1+Y_i^{(\mathrm{tot})}:=a_i^{(\mathrm{tot})},\qquad i=1,\dots,n.
+\]
+Entonces $Y^{(\mathrm{tot})}\in C_{\mathrm{glob}}$ y, para cada $i=1,\dots,n$,
+\[
+T_{Y^{(\mathrm{tot})}}(X)_i
+=
+\frac{X_i a_i^{(\mathrm{tot})}}{\sum_{j=1}^n X_j a_j^{(\mathrm{tot})}}
+=
+\frac{X_i a_i^{(1)} a_i^{(2)}}{\sum_{j=1}^n X_j a_j^{(1)} a_j^{(2)}}.
+\]
+Por consiguiente,
+\[
+T_{Y^{(2)}}(T_{Y^{(1)}}(X))_i=T_{Y^{(\mathrm{tot})}}(X)_i
+\qquad \text{para todo } i=1,\dots,n,
+\]
+y por tanto
+\[
+T_{Y^{(2)}}\circ T_{Y^{(1)}}=T_{Y^{(\mathrm{tot})}}.
+\]
+\end{proof}
+
+\begin{corolario}[Estructura de grupo abeliano]
+El conjunto $\mathcal G$, dotado de la composición de aplicaciones, es un grupo abeliano.
+\end{corolario}
+
+\begin{proof}
+Por la Proposición 3.2, si $Y^{(1)},Y^{(2)}\in C_{\mathrm{glob}}$, entonces la composición
+\[
+T_{Y^{(2)}}\circ T_{Y^{(1)}}
+\]
+vuelve a ser de la forma $T_{Y^{(\mathrm{tot})}}$, donde
+\[
+1+Y_i^{(\mathrm{tot})}=(1+Y_i^{(1)})(1+Y_i^{(2)}),
+\qquad i=1,\dots,n.
+\]
+Por tanto, la composición en $\mathcal G$ corresponde al producto coordenado de los factores multiplicativos positivos.
+
+Como el producto coordenado en $(0,\infty)^n$ es asociativo y conmutativo, la composición en $\mathcal G$ hereda estas propiedades.
+
+El elemento neutro corresponde al vector
+\[
+a=(1,\dots,1),
+\]
+es decir, a $Y=0$, y en ese caso
+\[
+T_0(X)=X
+\qquad \text{para todo } X\in\Delta_n^\circ.
+\]
+
+Ahora sea $Y\in C_{\mathrm{glob}}$ y sea
+\[
+a(Y)=(1+Y_1,\dots,1+Y_n)\in(0,\infty)^n.
+\]
+Definimos
+\[
+a(Y)^{-1}
+:=
+\left(
+\frac{1}{1+Y_1},\dots,\frac{1}{1+Y_n}
+\right)\in(0,\infty)^n.
+\]
+Sea $Z\in\mathbb R^n$ dado por
+\[
+1+Z_i:=\frac{1}{1+Y_i},
+\qquad i=1,\dots,n.
+\]
+Entonces $1+Z_i>0$ para todo $i$, de modo que $Z\in C_{\mathrm{glob}}$. Además,
+\[
+(1+Y_i)(1+Z_i)=1,
+\qquad i=1,\dots,n.
+\]
+Por la ley de composición,
+\[
+T_Z\circ T_Y=T_0.
+\]
+Análogamente,
+\[
+T_Y\circ T_Z=T_0.
+\]
+Así, todo elemento de $\mathcal G$ es invertible.
+
+En consecuencia, $\mathcal G$ es un grupo abeliano.
+\end{proof}
+
+\begin{observacion}[Coordenadas log-multiplicativas]\label{obs:coordenadasLog}
+Para $Y\in C_{\mathrm{glob}}$ se definen las coordenadas
+\[
+\theta(Y) := (\theta_1,\dots,\theta_n), \qquad \theta_i := \log(1+Y_i), \quad i=1,\dots,n.
+\]
+Entonces
+\[
+1+Y_i=e^{\theta_i},
+\]
+y el operador global puede escribirse como
+\[
+T_\theta(X)
+=
+\frac{X\circ e^\theta}{\sum_{j=1}^n X_j e^{\theta_j}},
+\qquad
+e^\theta:=(e^{\theta_1},\dots,e^{\theta_n}).
+\]
+Bajo esta parametrización, la ley de composición del corolario anterior se traduce en
+\[
+\theta_{\mathrm{tot}}=\theta^{(1)}+\theta^{(2)}.
+\]
+En este sentido, la estructura multiplicativa de los factores positivos se convierte en una estructura aditiva en coordenadas logarítmicas la cual es compatible con el uso de coordenadas relativas en análisis composicional \citep{Aitchison1986}.
+\end{observacion}
+
+\subsection{Divergencia KL, métrica de Fisher y dinámica inducida}
+
+En esta subsección se introduce el funcional informacional
+\[
+E_P(X):=D_{\mathrm{KL}}(P\|X),
+\]
+se calcula su gradiente respecto de la métrica de Fisher en el interior del símplex y se obtiene la dinámica continua asociada. Finalmente, se muestra que esta dinámica es compatible con la familia de operadores globales introducida en la subsección anterior.
+
+El resultado principal de la subsección es el Teorema~\ref{teo:equivalenciaCD}, donde se establece la compatibilidad estructural entre la dinámica Fisher--KL y la familia de operadores globales de la subsección anterior.
+
+\begin{definicion}[Divergencia de Kullback--Leibler discreta]\label{def:KL}
+Sea $P\in\Delta_n^\circ$ fija. Para $X\in\Delta_n$ se define
+\[
+D_{\mathrm{KL}}(P\|X)
+=
+\begin{cases}
+\displaystyle \sum_{i=1}^n P_i\log\!\left(\frac{P_i}{X_i}\right),
+& \text{si } X_i>0 \text{ para todo } i,\\[1em]
++\infty,
+& \text{si existe } i \text{ tal que } P_i>0 \text{ y } X_i=0.
+\end{cases}
+\]
+
+Se define además el funcional
+\[
+E_P:\Delta_n^\circ\to\mathbb R,
+\qquad
+E_P(X):=D_{\mathrm{KL}}(P\|X).
+\]
+\end{definicion}
+
+\begin{observacion}[Dominio de $E_P$]\label{obs:KLsoporte}
+Como $P\in\Delta_n^\circ$, se tiene $P_i>0$ para todo $i$. Por tanto,
+\[
+D_{\mathrm{KL}}(P\|X)<\infty
+\quad\Longleftrightarrow\quad
+X\in\Delta_n^\circ.
+\]
+En consecuencia, el dominio de $E_P$ es el interior del símplex.
+\end{observacion}
+
+\begin{definicion}[Espacio tangente del símplex]\label{def:tangente}
+Sea $X\in\Delta_n^\circ$. El \emph{espacio tangente en $X$} se define como el conjunto de velocidades de curvas suaves del símplex que pasan por $X$, es decir,
+\[
+T_X\Delta_n^\circ
+:=
+\left\{
+u\in\mathbb R^n
+\;\middle|\;
+\exists\,\varepsilon>0,\ \exists\,\gamma:(-\varepsilon,\varepsilon)\to\Delta_n^\circ
+\ \text{de clase } C^1,\ 
+\gamma(0)=X,\ 
+\gamma'(0)=u
+\right\}.
+\]
+\end{definicion}
+
+\begin{observacion}
+Para todo $X\in\Delta_n^\circ$,
+\[
+T_X\Delta_n^\circ
+=
+\left\{
+u=(u_1,\dots,u_n)\in\mathbb R^n
+\;\middle|\;
+\sum_{i=1}^n u_i=0
+\right\}.
+\]
+\end{observacion}
+
+\begin{definicion}[Métrica de Fisher discreta]\label{def:Fisher}
+Para $X\in\Delta_n^\circ$, la \emph{métrica de Fisher} en $T_X\Delta_n$ es la forma bilineal
+\[
+g_X(u,v)
+:=
+\sum_{i=1}^n \frac{u_i v_i}{X_i},
+\qquad
+u,v\in T_X\Delta_n.
+\]
+La forma anterior corresponde a la métrica de Fisher--Rao en el caso finito. La caracterización por invariancia de esta métrica se apoya en \citep{Chentsov1982}. El tratamiento geométrico sistemático se desarrolla en \citep{AmariNagaoka2000}. La formulación moderna usada aquí sigue la exposición de \citep{Amari2016}.
+\end{definicion}
+
+\begin{definicion}[Gradiente riemanniano respecto de la métrica de Fisher]\label{def:gradienteFisher}
+Sea $E:\Delta_n^\circ\to\mathbb R$ una función suave. El \emph{gradiente riemanniano} de $E$ respecto de $g$ es el campo
+\[
+\mathrm{grad}_gE:\Delta_n^\circ\to T\Delta_n,
+\qquad
+X\mapsto \mathrm{grad}_gE(X)\in T_X\Delta_n,
+\]
+caracterizado por
+\[
+g_X(\mathrm{grad}_gE(X),u)=\mathrm dE(X)[u],
+\qquad
+\forall\,u\in T_X\Delta_n.
+\]
+\end{definicion}
+\begin{proposicion}[Gradiente Fisher de la divergencia KL]\label{prop:gradKL}
+Sea $P\in\Delta_n^\circ$ fija y sea
+\[
+E_P(X)=D_{\mathrm{KL}}(P\|X)=\sum_{i=1}^n P_i \log\!\left(\frac{P_i}{X_i}\right),
+\qquad X\in\Delta_n^\circ.
+\]
+Entonces
+\[
+\operatorname{grad}_g E_P(X)=X-P,
+\qquad X\in\Delta_n^\circ.
+\]
+\end{proposicion}
+
+\begin{proof}
+Fijemos $X\in\Delta_n^\circ$ y sea $u\in T_X\Delta_n^\circ$. Entonces
+\[
+dE_P(X)[u]
+=
+\left.\frac{d}{dt}E_P(X+tu)\right|_{t=0}.
+\]
+Como
+\[
+E_P(X+tu)
+=
+\sum_{i=1}^n P_i \log\!\left(\frac{P_i}{X_i+tu_i}\right),
+\]
+se obtiene
+\[
+\frac{d}{dt}E_P(X+tu)
+=
+-\sum_{i=1}^n P_i \frac{u_i}{X_i+tu_i}.
+\]
+Evaluando en $t=0$,
+\[
+dE_P(X)[u]
+=
+-\sum_{i=1}^n \frac{P_i}{X_i}u_i.
+\]
+
+Por otra parte, por definición de la métrica de Fisher,
+\[
+g_X(v,u)=\sum_{i=1}^n \frac{v_i u_i}{X_i}.
+\]
+Tomando $v=X-P$, se tiene
+\[
+g_X(X-P,u)
+=
+\sum_{i=1}^n \frac{(X_i-P_i)u_i}{X_i}
+=
+\sum_{i=1}^n u_i - \sum_{i=1}^n \frac{P_i}{X_i}u_i.
+\]
+Como $u\in T_X\Delta_n^\circ$, se cumple $\sum_{i=1}^n u_i=0$, y por tanto
+\[
+g_X(X-P,u)
+=
+-\sum_{i=1}^n \frac{P_i}{X_i}u_i
+=
+dE_P(X)[u].
+\]
+Por la definición del gradiente riemanniano, se concluye que
+\[
+\operatorname{grad}_g E_P(X)=X-P.
+\]
+\end{proof}
+
+\begin{definicion}[Flujo de gradiente Fisher--KL]\label{def:flujoFisherKL}
+El \emph{flujo de gradiente} asociado a $E_P$ es la ecuación diferencial
+\[
+\dot X(t)=-\mathrm{grad}_gE_P(X(t)),
+\qquad
+X(t)\in\Delta_n^\circ.
+\]
+Por la Proposición~\ref{prop:gradKL}, esta ecuación toma la forma
+\[
+\dot X(t)=P-X(t).
+\]
+\end{definicion}
+
+\begin{proposicion}[Solución explícita del flujo]\label{prop:solucionExplicita}
+Sea $X_0\in\Delta_n^\circ$. La solución del problema
+\[
+\dot X(t)=P-X(t),
+\qquad
+X(0)=X_0,
+\]
+está dada por
+\[
+X(t)=e^{-t}X_0+(1-e^{-t})P,
+\qquad t\ge 0.
+\]
+En particular, $X(t)\in\Delta_n^\circ$ para todo $t\ge 0$ y
+\[
+X(t)\longrightarrow P
+\qquad (t\to\infty).
+\]
+\end{proposicion}
+
+\begin{proof}
+La ecuación
+\[
+\dot X(t)=P-X(t),\qquad X(0)=X_0,
+\]
+se desacopla coordenada a coordenada. En efecto, para cada $i=1,\dots,n$,
+\[
+\dot X_i(t)=P_i-X_i(t),\qquad X_i(0)=(X_0)_i.
+\]
+La solución de esta ecuación lineal escalar es
+\[
+X_i(t)=e^{-t}(X_0)_i+(1-e^{-t})P_i,
+\qquad i=1,\dots,n.
+\]
+Por tanto,
+\[
+X(t)=e^{-t}X_0+(1-e^{-t})P.
+\]
+
+Como $X_0\in\Delta_n^\circ$ y $P\in\Delta_n^\circ$, se tiene
+\[
+(X_0)_i>0,\qquad P_i>0,\qquad i=1,\dots,n.
+\]
+Además, para todo $t\ge 0$,
+\[
+e^{-t}>0,
+\qquad
+1-e^{-t}\ge 0.
+\]
+De aquí se sigue que, para cada $i=1,\dots,n$,
+\[
+X_i(t)=e^{-t}(X_0)_i+(1-e^{-t})P_i>0.
+\]
+Por otra parte,
+\[
+\sum_{i=1}^n X_i(t)
+=
+e^{-t}\sum_{i=1}^n (X_0)_i
++
+(1-e^{-t})\sum_{i=1}^n P_i
+=
+e^{-t}+(1-e^{-t})
+=
+1.
+\]
+Por tanto,
+\[
+X(t)\in\Delta_n^\circ
+\qquad \text{para todo } t\ge 0.
+\]
+
+Finalmente,
+\[
+X(t)-P
+=
+e^{-t}X_0+(1-e^{-t})P-P
+=
+e^{-t}(X_0-P).
+\]
+Como $e^{-t}\to 0$ cuando $t\to\infty$, se concluye que
+\[
+X(t)\to P
+\qquad (t\to\infty).
+\]
+\end{proof}
+
+\begin{proposicion}[Monotonicidad de $E_P$ a lo largo del flujo]\label{prop:Hteorema}
+Sea $X(\cdot)$ una solución del flujo Fisher--KL. Entonces la función
+\[
+t\longmapsto E_P(X(t))
+\]
+es decreciente y satisface
+\[
+\frac{d}{dt}E_P(X(t))
+=
+-\,g_{X(t)}\!\bigl(\mathrm{grad}_gE_P(X(t)),\mathrm{grad}_gE_P(X(t))\bigr)
+\le 0.
+\]
+La igualdad sólo ocurre si $X(t)=P$.
+\end{proposicion}
+
+\begin{proof}
+Por la regla de la cadena,
+\[
+\frac{d}{dt}E_P(X(t))
+=
+\mathrm dE_P(X(t))[\dot X(t)].
+\]
+Como
+\[
+\dot X(t)=-\mathrm{grad}_gE_P(X(t)),
+\]
+y por definición del gradiente riemanniano,
+\[
+\mathrm dE_P(X(t))[\dot X(t)]
+=
+-\,g_{X(t)}\!\bigl(\mathrm{grad}_gE_P(X(t)),\mathrm{grad}_gE_P(X(t))\bigr).
+\]
+La no positividad es inmediata porque $g$ es definida positiva en cada espacio tangente. Además,
+\[
+g_{X(t)}\!\bigl(\mathrm{grad}_gE_P(X(t)),\mathrm{grad}_gE_P(X(t))\bigr)=0
+\]
+si y sólo si
+\[
+\mathrm{grad}_gE_P(X(t))=0
+\quad\Longleftrightarrow\quad
+X(t)-P=0,
+\]
+por la Proposición~\ref{prop:gradKL}. Por tanto, la igualdad sólo ocurre en el equilibrio $X(t)=P$.
+\end{proof}
+
+\begin{proposicion}[Mínimo global de $E_P$]\label{prop:minimoGlobalKL}
+Para todo $X\in\Delta_n^\circ$ se cumple
+\[
+E_P(X)\ge 0,
+\]
+y además
+\[
+E_P(X)=0
+\quad\Longleftrightarrow\quad
+X=P.
+\]
+En particular, $P$ es el único minimizador global de $E_P$ en $\Delta_n^\circ$.
+\end{proposicion}
+
+\begin{proof}
+La no negatividad corresponde a la formulación de divergencias de \citep{Csiszar1975}. El criterio de igualdad para la divergencia de Kullback--Leibler se usa en la forma estándar expuesta en \citep{CoverThomas1991}. Aplicando ese resultado a
+\[
+E_P(X)=D_{\mathrm{KL}}(P\|X),
+\]
+se obtiene inmediatamente
+\[
+E_P(X)\ge 0
+\quad\text{y}\quad
+E_P(X)=0 \Longleftrightarrow X=P.
+\]
+De aquí se sigue que $P$ es el único minimizador global.
+\end{proof}
+
+\begin{teorema}[Equivalencia estructural entre operadores globales y dinámica Fisher--KL]
+\label{teo:equivalenciaCD}
+Sea $P\in\Delta_n^\circ$ fijo. Considérese el operador informacional global $T_Y$
+de la subsección de operadores globales (Def.~\ref{def:Tglobal}), definido para $Y\in C_{\mathrm{glob}}$
+(Def.~\ref{def:Cglob}) por
+\[
+T_Y(X)=\frac{X\circ(1+Y)}{\langle X,1+Y\rangle}.
+\]
+Defínase, para cada $X\in\Delta_n^\circ$, el campo de corrección óptima
+\[
+Y^*(X,P)\in\mathbb{R}^n,
+\qquad
+Y^*_i(X,P):=\frac{P_i}{X_i}-1,\quad i=1,\dots,n.
+\]
+Entonces se verifican las siguientes afirmaciones.
+
+\smallskip
+\noindent\textbf{(i) Nivel algebraico (corrección multiplicativa).}
+Para todo $X\in\Delta_n^\circ$ se tiene $Y^*(X,P)\in C(X)$ (Def.~\ref{def:CX}) y
+\[
+T_{Y^*(X,P)}(X)=P.
+\]
+
+\smallskip
+\noindent\textbf{(ii) Nivel discreto (dinámica inducida).}
+Fijado $\alpha\in(0,1]$, la iteración
+\[
+X_{k+1}:=T_{\alpha\,Y^*(X_k,P)}(X_k),\qquad X_0\in\Delta_n^\circ,
+\]
+se reduce a la interpolación convexa
+\[
+X_{k+1}=(1-\alpha)X_k+\alpha P,
+\]
+y por tanto permanece en $\Delta_n^\circ$ (Prop.~\ref{prop:interiorGlobal}).
+
+\smallskip
+\noindent\textbf{(iii) Nivel continuo (límite infinitesimal y geometría Fisher).}
+El límite de primer orden $\alpha\to 0$ de la regla
+$T_{\alpha Y}(X)$ conduce a la ecuación diferencial
+\[
+\dot X = X\circ Y - X\,\langle X,Y\rangle.
+\]
+Aplicada al campo óptimo $Y=Y^*(X,P)$, esta ecuación se reduce a
+\[
+\dot X = P-X,
+\]
+que coincide con el flujo de gradiente Fisher--KL del funcional $E_P$
+(Def.~\ref{def:flujoFisherKL}), es decir,
+\[
+\dot X=-\mathrm{grad}_g E_P(X)
+\qquad
+(\text{Prop.~\ref{prop:gradKL}}).
+\]
+
+\end{teorema}
+
+\begin{proof}
+\noindent\textbf{(i)} Sea $X\in\Delta_n^\circ$. Como $X_i>0$ y $P_i>0$ para todo $i$,
+se tiene $1+Y^*_i(X,P)=P_i/X_i>0$, luego $Y^*(X,P)\in C_{\mathrm{glob}}$
+(Def.~\ref{def:Cglob}). Además,
+\[
+X_i\bigl(1+Y^*_i(X,P)\bigr)=P_i\ge 0,
+\qquad
+\sum_{i=1}^n X_i\bigl(1+Y^*_i(X,P)\bigr)=\sum_{i=1}^n P_i=1,
+\]
+luego $Y^*(X,P)\in C(X)$ (Def.~\ref{def:CX}). Sustituyendo en el operador global,
+\[
+T_{Y^*(X,P)}(X)_i
+=
+\frac{X_i(P_i/X_i)}{\sum_{j=1}^n X_j(P_j/X_j)}
+=
+\frac{P_i}{\sum_{j=1}^n P_j}
+=
+P_i,
+\]
+y por tanto $T_{Y^*(X,P)}(X)=P$.
+
+\smallskip
+\noindent\textbf{(ii)} Sea $\alpha\in(0,1]$ y $X\in\Delta_n^\circ$. Entonces
+\[
+1+\alpha Y^*_i(X,P)
+=
+(1-\alpha)+\alpha\,\frac{P_i}{X_i},
+\]
+y al sustituir en $T_{\alpha Y^*}(X)$ se obtiene, coordenada a coordenada,
+\[
+T_{\alpha Y^*(X,P)}(X)_i
+=
+\frac{(1-\alpha)X_i+\alpha P_i}{(1-\alpha)\sum_{j}X_j+\alpha\sum_{j}P_j}
+=
+(1-\alpha)X_i+\alpha P_i,
+\]
+pues $\sum_j X_j=\sum_j P_j=1$. Iterando, $X_{k+1}=(1-\alpha)X_k+\alpha P$, y por
+ser combinación convexa de puntos de $\Delta_n^\circ$ se mantiene
+$X_k\in\Delta_n^\circ$ (Prop.~\ref{prop:interiorGlobal}).
+
+\smallskip
+\noindent\textbf{(iii)} Partimos de
+\[
+T_{\alpha Y}(X)
+=
+\frac{X+\alpha(X\circ Y)}{1+\alpha\langle X,Y\rangle}.
+\]
+Usando la expansión $\frac{1}{1+\alpha a}=1-\alpha a+o(\alpha)$,
+\[
+T_{\alpha Y}(X)
+=
+X+\alpha\bigl(X\circ Y-X\langle X,Y\rangle\bigr)+o(\alpha),
+\]
+lo que conduce a la ecuación diferencial anunciada.
+
+Tomando $Y=Y^*(X,P)$,
+\[
+X\circ Y^*(X,P)=P-X,
+\qquad
+\langle X,Y^*(X,P)\rangle=\sum_i P_i-\sum_i X_i=0,
+\]
+y sustituyendo se obtiene $\dot X=P-X$. Por la
+Proposición~\ref{prop:gradKL}, $\mathrm{grad}_g E_P(X)=X-P$, de modo que
+\[
+\dot X=P-X=-\mathrm{grad}_g E_P(X).
+\]
+Esto establece la equivalencia estructural entre los tres niveles.
+\end{proof}
+
+\clearpage
+
+% ============================================================
+% Bloques fusionados desde: CI_Bayes-Markov_copia(24).tex
+% Desde Semántica Bayesiana hasta Control Óptimo
+% ============================================================
+
+\section{Sección 5 -- Semántica bayesiana}
+
+Esta sección fija un espacio bayesiano, identifica la verosimilitud como corrección global y demuestra que la actualización de Bayes es un caso particular del operador $T_Y$. Esta formulación es compatible con los Bayes spaces de Egozcue, Pawlowsky-Glahn, Tolosana-Delgado, Ortego y van den Boogaart (2013), donde la regla de Bayes se entiende como una perturbación entre densidades proporcionales, y con la geometría afín del símplex de Pistone y Shoaib (2024), que permite representar actualizaciones como operadores internos sobre el espacio de estados.
+
+La parte diferencial del marco se apoya en la geometría de la información de Amari (2016), mientras que la interpretación variacional y del statistical bundle remite a Pistone (2018). El objetivo es formular la actualización bayesiana dentro del mismo lenguaje geométrico y probabilístico usado en los fundamentos anteriores.
+
+
+
+\begin{definicion}[Espacio Bayesiano]\label{def:espacio_conjunto}
+Sea $(\Omega,\mathcal F,P)$ un espacio de probabilidad. Sean $n,m\in\mathbb N$ y sean
+\[
+\Pi_H=\{H_1,\dots,H_n\},\qquad \Pi_E=\{E_1,\dots,E_m\},
+\]
+dos particiones medibles finitas de $\Omega$. Supongamos que
+\[
+P(H_i)>0\quad \text{para todo } i=1,\dots,n,
+\qquad
+P(E_j)>0\quad \text{para todo } j=1,\dots,m.
+\]
+Interpretamos los elementos de $\Pi_H$ como hipótesis alternativas y los elementos de $\Pi_E$ como observaciones posibles.
+
+El estado informacional previo asociado a $\Pi_H$ es el vector
+\[
+X=(X_1,\dots,X_n)\in\Delta_n^\circ,
+\qquad
+X_i:=P(H_i),\quad i=1,\dots,n,
+\]
+de modo que $\sum_{i=1}^n X_i=1$ y $X_i>0$ para todo $i$.
+\end{definicion}
+
+\begin{definicion}[Probabilidad condicional en el espacio conjunto]\label{def:prob_condicional}
+Sea $(\Omega,\mathcal F,P)$ el espacio de probabilidad de la Definición~\ref{def:espacio_conjunto}, y sean $\Pi_H=\{H_1,\dots,H_n\}$ y $\Pi_E=\{E_1,\dots,E_m\}$ las particiones medibles finitas allí fijadas. Sean $i\in\{1,\dots,n\}$ y $j\in\{1,\dots,m\}$. Si $P(H_i)>0$, se define la probabilidad condicional de la observación $E_j$ dada la hipótesis $H_i$ por
+\[
+P(E_j\mid H_i):=\frac{P(H_i\cap E_j)}{P(H_i)}.
+\]
+Se dirá que la observación $E_j$ es compatible con la hipótesis $H_i$ si $P(H_i\cap E_j)>0$. Equivalentemente, puesto que $P(H_i)>0$, esta compatibilidad se cumple si y sólo si $P(E_j\mid H_i)>0$.
+\end{definicion}
+
+\begin{definicion}[Verosimilitud como corrección global]\label{def:verosimilitud}
+Sea $j\in\{1,\dots,m\}$ con $P(E_j)>0$. Denótese por
+\[
+\ell^{(j)}=(\ell_1^{(j)},\dots,\ell_n^{(j)})\in\mathbb R_{>0}^n
+\]
+el vector de verosimilitud asociado a la observación $E_j$, donde
+\[
+\ell_i^{(j)}:=P(E_j\mid H_i),\qquad i=1,\dots,n.
+\]
+Cuando $\ell_i^{(j)}>0$ para todo $i$, el vector $\ell^{(j)}$ determina una corrección global $Y^{\ell^{(j)}}\in C_{\mathrm{glob}}$ mediante
+\[
+1+Y_i^{\ell^{(j)}}:=\ell_i^{(j)},\qquad i=1,\dots,n.
+\]
+En particular, la verosimilitud queda incorporada al formalismo global como un representante multiplicativo positivo.
+\end{definicion}
+
+Con esta identificación, la actualización posterior puede formularse ya como una transformación del propio estado en el símplex.
+\begin{proposicion}[El operador bayesiano como caso particular de $T_Y$]\label{prop:bayes_como_TY}
+Sean $(\Omega,\mathcal F,P)$ el espacio de probabilidad y $\Pi_H=\{H_1,\dots,H_n\}$, $\Pi_E=\{E_1,\dots,E_m\}$ las particiones de la Definición~\ref{def:espacio_conjunto}. Sea $j\in\{1,\dots,m\}$ tal que $P(E_j)>0$, y supóngase que la verosimilitud asociada a $E_j$ satisface
+\[
+\ell^{(j)}=(\ell_1^{(j)},\dots,\ell_n^{(j)})\in\mathbb R_{>0}^n,
+\qquad
+\ell_i^{(j)}:=P(E_j\mid H_i),\quad i=1,\dots,n.
+\]
+Sea además $X\in\Delta_n^\circ$ el estado previo asociado a $\Pi_H$, dado por $X_i=P(H_i)$ para todo $i=1,\dots,n$. Entonces, para cada $i=1,\dots,n$, se tiene
+\[
+T_{Y^{\ell^{(j)}}}(X)_i
+=
+\frac{X_i\,\ell_i^{(j)}}{\displaystyle\sum_{k=1}^n X_k\,\ell_k^{(j)}}
+=
+P(H_i\mid E_j).
+\]
+En particular, $T_{Y^{\ell^{(j)}}}(X)$ coincide con el estado posterior condicionado a la observación $E_j$.
+\end{proposicion}
+
+\begin{proof}
+Como $\ell_i^{(j)}>0$ para todo $i=1,\dots,n$, el vector $Y^{\ell^{(j)}}$ pertenece a $C_{\mathrm{glob}}$, y por tanto el operador global $T_{Y^{\ell^{(j)}}}$ está bien definido. Por la Definición~\ref{def:Tglobal}, para cada $i=1,\dots,n$,
+\[
+T_{Y^{\ell^{(j)}}}(X)_i
+=
+\frac{X_i(1+Y_i^{\ell^{(j)}})}{\sum_{k=1}^n X_k(1+Y_k^{\ell^{(j)}})}.
+\]
+Puesto que $1+Y_i^{\ell^{(j)}}=\ell_i^{(j)}$, esta expresión se reduce a
+\[
+T_{Y^{\ell^{(j)}}}(X)_i
+=
+\frac{X_i\,\ell_i^{(j)}}{\sum_{k=1}^n X_k\,\ell_k^{(j)}}.
+\]
+Ahora bien, por definición del estado previo y de la verosimilitud, $X_i=P(H_i)$ y $\ell_i^{(j)}=P(E_j\mid H_i)$, de modo que
+\[
+X_i\,\ell_i^{(j)}=P(H_i)\,P(E_j\mid H_i)=P(H_i\cap E_j).
+\]
+Además, como $\Pi_H=\{H_1,\dots,H_n\}$ es una partición de $\Omega$, los conjuntos $H_1\cap E_j,\dots,H_n\cap E_j$ son disjuntos y su unión es $E_j$. En consecuencia,
+\[
+\sum_{k=1}^n X_k\,\ell_k^{(j)}=\sum_{k=1}^n P(H_k\cap E_j)=P(E_j).
+\]
+Sustituyendo estas identidades en la expresión anterior, se obtiene
+\[
+T_{Y^{\ell^{(j)}}}(X)_i
+=
+\frac{P(H_i\cap E_j)}{P(E_j)}
+=
+P(H_i\mid E_j),
+\qquad i=1,\dots,n.
+\]
+\end{proof}
+
+La unicidad de esta representación fija la regla de actualización dentro de $\mathcal G$ y evita ambigüedades al pasar del prior al posterior.
+
+%%%%%%%%%%%%%%%%
+
+\begin{proposicion}[Unicidad: $T_{Y^{\ell^{(j)}}}$ es el único operador coherente con $P$]\label{prop:unicidad_bayes}
+Sean $(\Omega,\mathcal F,P)$ un espacio de probabilidad,
+\[
+\Pi_H=\{H_1,\dots,H_n\},
+\qquad
+\Pi_E=\{E_1,\dots,E_m\},
+\]
+particiones medibles finitas de $\Omega$, y
+\[
+X=(X_1,\dots,X_n)\in\Delta_n^\circ,
+\qquad
+X_i:=P(H_i),\quad i=1,\dots,n.
+\]
+Sea $j\in\{1,\dots,m\}$ tal que
+\[
+P(H_i\cap E_j)>0,\qquad i=1,\dots,n,
+\]
+y defínase
+\[
+\ell_i^{(j)}:=P(E_j\mid H_i),\qquad i=1,\dots,n.
+\]
+Entonces, para un operador $T\in\mathcal G$, se tiene
+\[
+T(X)_i=P(H_i\mid E_j),\qquad i=1,\dots,n,
+\]
+si y sólo si
+\[
+T=T_{Y^{\ell^{(j)}}}.
+\]
+\end{proposicion}
+
+\begin{proof}
+Sea $T\in\mathcal G$. Entonces existe $Y\in C_{\mathrm{glob}}$ tal que $T=T_Y$. Supóngase primero que
+\[
+T(X)_i=P(H_i\mid E_j),\qquad i=1,\dots,n.
+\]
+Por definición del operador global,
+\[
+T_Y(X)_i
+=
+\frac{X_i(1+Y_i)}{\sum_{k=1}^n X_k(1+Y_k)},
+\qquad i=1,\dots,n.
+\]
+Por otra parte, como $X_i=P(H_i)$ y $\ell_i^{(j)}=P(E_j\mid H_i)$, se tiene
+\[
+X_i\,\ell_i^{(j)}=P(H_i)\,P(E_j\mid H_i)=P(H_i\cap E_j),
+\]
+y, puesto que $\Pi_H$ es una partición de $\Omega$,
+\[
+\sum_{k=1}^n X_k\,\ell_k^{(j)}
+=
+\sum_{k=1}^n P(H_k\cap E_j)
+=
+P(E_j).
+\]
+De aquí se sigue que
+\[
+P(H_i\mid E_j)
+=
+\frac{P(H_i\cap E_j)}{P(E_j)}
+=
+\frac{X_i\,\ell_i^{(j)}}{\sum_{k=1}^n X_k\,\ell_k^{(j)}},
+\qquad i=1,\dots,n.
+\]
+Por consiguiente,
+\[
+\frac{X_i(1+Y_i)}{\sum_{k=1}^n X_k(1+Y_k)}
+=
+\frac{X_i\,\ell_i^{(j)}}{\sum_{k=1}^n X_k\,\ell_k^{(j)}},
+\qquad i=1,\dots,n.
+\]
+Como $X_i>0$ para todo $i=1,\dots,n$, se deduce que
+\[
+\frac{1+Y_i}{\ell_i^{(j)}}
+=
+\frac{\sum_{k=1}^n X_k(1+Y_k)}{\sum_{k=1}^n X_k\,\ell_k^{(j)}}
+=:c,
+\qquad i=1,\dots,n.
+\]
+La constante $c$ es positiva e independiente de $i$, y por tanto
+\[
+1+Y_i=c\,\ell_i^{(j)},\qquad i=1,\dots,n.
+\]
+Sea ahora $Z\in\Delta_n^\circ$. Entonces, para cada $i=1,\dots,n$,
+\[
+T_Y(Z)_i
+=
+\frac{Z_i(1+Y_i)}{\sum_{k=1}^n Z_k(1+Y_k)}
+=
+\frac{Z_i\,c\,\ell_i^{(j)}}{\sum_{k=1}^n Z_k\,c\,\ell_k^{(j)}}
+=
+\frac{Z_i\,\ell_i^{(j)}}{\sum_{k=1}^n Z_k\,\ell_k^{(j)}}
+=
+T_{Y^{\ell^{(j)}}}(Z)_i.
+\]
+Se sigue que $T=T_{Y^{\ell^{(j)}}}$.
+
+Recíprocamente, si $T=T_{Y^{\ell^{(j)}}}$, entonces para cada $i=1,\dots,n$,
+\[
+T(X)_i
+=
+\frac{X_i\,\ell_i^{(j)}}{\sum_{k=1}^n X_k\,\ell_k^{(j)}}
+=
+\frac{P(H_i\cap E_j)}{P(E_j)}
+=
+P(H_i\mid E_j).
+\]
+Esto concluye la demostración.
+\end{proof}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{corolario}[Actualización bayesiana secuencial como composición en $\mathcal G$]\label{cor:bayes_secuencial}
+Sean $(\Omega,\mathcal F,P)$ un espacio de probabilidad,
+\[
+\Pi_H=\{H_1,\dots,H_n\},
+\qquad
+\Pi_E=\{E_1,\dots,E_m\},
+\]
+particiones medibles finitas de $\Omega$, y
+\[
+X_0=(X_{0,1},\dots,X_{0,n})\in\Delta_n^\circ,
+\qquad
+X_{0,i}:=P(H_i),\quad i=1,\dots,n.
+\]
+Sean $j_1,\dots,j_r\in\{1,\dots,m\}$ y, para cada $s=1,\dots,r$, supóngase que
+\[
+P(H_i\cap E_{j_s})>0,\qquad i=1,\dots,n.
+\]
+Para cada $s=1,\dots,r$, defínase la verosimilitud asociada a la observación $E_{j_s}$ por
+\[
+\ell_i^{(j_s)}:=P(E_{j_s}\mid H_i),\qquad i=1,\dots,n.
+\]
+Entonces el estado posterior obtenido tras aplicar sucesivamente las $r$ actualizaciones bayesianas viene dado por
+\[
+X_r=
+T_{Y^{\ell^{(j_r)}}}\circ\cdots\circ T_{Y^{\ell^{(j_1)}}}(X_0).
+\]
+Si, además, las observaciones son condicionalmente independientes dadas las hipótesis, entonces la actualización secuencial coincide con la actualización en un solo paso asociada a la verosimilitud acumulada
+\[
+\widetilde{\ell}_i:=\prod_{s=1}^r \ell_i^{(j_s)},
+\qquad i=1,\dots,n,
+\]
+es decir,
+\[
+X_r=T_{Y^{\widetilde{\ell}}}(X_0).
+\]
+\end{corolario}
+
+\begin{proof}
+Para cada $s=1,\dots,r$, la hipótesis $P(H_i\cap E_{j_s})>0$ para todo $i=1,\dots,n$ implica que
+\[
+\ell_i^{(j_s)}=P(E_{j_s}\mid H_i)>0,\qquad i=1,\dots,n.
+\]
+Por consiguiente, cada vector $\ell^{(j_s)}$ determina una corrección global $Y^{\ell^{(j_s)}}\in C_{\mathrm{glob}}$, y el operador
+\[
+T_{Y^{\ell^{(j_s)}}}:\Delta_n^\circ\to\Delta_n^\circ
+\]
+está bien definido.
+
+Aplicando en cada paso la actualización bayesiana asociada a la observación correspondiente, se obtiene sucesivamente
+\[
+X_1=T_{Y^{\ell^{(j_1)}}}(X_0),\qquad
+X_2=T_{Y^{\ell^{(j_2)}}}(X_1),\qquad \dots,\qquad
+X_r=T_{Y^{\ell^{(j_r)}}}(X_{r-1}).
+\]
+Por sustitución iterada, resulta
+\[
+X_r=
+T_{Y^{\ell^{(j_r)}}}\circ\cdots\circ T_{Y^{\ell^{(j_1)}}}(X_0).
+\]
+
+Supóngase ahora, además, que las observaciones son condicionalmente independientes dadas las hipótesis. Entonces, para cada $i=1,\dots,n$, la verosimilitud conjunta es el producto de las verosimilitudes individuales:
+\[
+\widetilde{\ell}_i=\prod_{s=1}^r \ell_i^{(j_s)}.
+\]
+Por la ley de composición de los operadores globales, la composición
+\[
+T_{Y^{\ell^{(j_r)}}}\circ\cdots\circ T_{Y^{\ell^{(j_1)}}}
+\]
+es nuevamente un operador global, cuyo factor multiplicativo es proporcional al producto coordenado de los factores individuales. Como dichos factores son precisamente
+\[
+\ell^{(j_1)},\dots,\ell^{(j_r)},
+\]
+el operador compuesto coincide con $T_{Y^{\widetilde{\ell}}}$. Por tanto,
+\[
+X_r=T_{Y^{\widetilde{\ell}}}(X_0).
+\]
+Esto concluye la demostración.
+\end{proof}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Modelos continuos como estados informacionales discretos}
+
+\begin{observacion}[Criterio medible para la discretización paramétrica]
+La discretización paramétrica que se usa en este bloque descansa en dos planos ya fijados. En el plano interno, las Secciones~1--4 proporcionan el espacio de probabilidad, la partición medible finita, el símplex, el conjunto de correcciones globales y el operador multiplicativo normalizado; en particular, se usan los objetos introducidos en las Definiciones~\ref{def:espacio_prob}, \ref{def:particion}, \ref{def:simplex}, \ref{def:Cglob} y \ref{def:Tglobal}. En el plano de teoría de la medida, la referencia de Tao, \emph{An Introduction to Measure Theory}, justifica trabajar con conjuntos borelianos, funciones indicadoras, funciones medibles no negativas e integrales de Lebesgue sobre espacios de medida. Así, las masas de las celdas pueden escribirse como integrales de funciones indicadoras contra una densidad.
+\end{observacion}
+
+\begin{definicion}[Partición paramétrica uniforme]\label{def:particion_parametrica}
+Sea $\Omega=(a,b)\subset\mathbb R$, con $a<b$, y sea $\mathcal F=\mathcal B(\Omega)$ la $\sigma$-álgebra de Borel relativa en $\Omega$. Sea $P_0$ una medida de probabilidad sobre $(\Omega,\mathcal F)$ absolutamente continua respecto de la medida de Lebesgue restringida a $\Omega$. Sea
+\[
+f:=\frac{dP_0}{d\lambda}
+\]
+una densidad de $P_0$ respecto de $\lambda$, donde $\lambda$ denota la medida de Lebesgue restringida a $\Omega$. Se supone que
+\[
+f:\Omega\to(0,\infty)
+\]
+es $\mathcal F$-medible y satisface
+\[
+\int_\Omega f(\theta)\,d\theta=1.
+\]
+
+Dado $n\ge 1$, sea
+\[
+h:=\frac{b-a}{n}.
+\]
+La \emph{partición paramétrica uniforme} de orden $n$ asociada a $\Omega$ es la familia
+\[
+\Pi_n:=\{E_1,\dots,E_n\},
+\]
+donde
+\[
+E_i:=
+\begin{cases}
+[a+(i-1)h,\,a+ih)\cap\Omega, & i=1,\dots,n-1,\\[4pt]
+[a+(n-1)h,\,b)\cap\Omega, & i=n.
+\end{cases}
+\]
+
+El \emph{estado informacional previo} asociado a $(\Omega,\mathcal F,P_0,\Pi_n)$ es el vector
+\[
+X_0=(X_{0,1},\dots,X_{0,n}),
+\qquad
+X_{0,i}:=P_0(E_i)=\int_{E_i} f(\theta)\,d\theta,
+\quad i=1,\dots,n.
+\]
+\end{definicion}
+
+\begin{proposicion}[Estado previo inducido por una partición paramétrica uniforme]\label{prop:estado_parametrico_simplex}
+Sea $\Omega=(a,b)\subset\mathbb R$, con $a<b$, y sea $\mathcal F=\mathcal B(\Omega)$. Sea $P_0$ una medida de probabilidad sobre $(\Omega,\mathcal F)$ absolutamente continua respecto de la medida de Lebesgue restringida a $\Omega$, con densidad $f:\Omega\to(0,\infty)$ medible y tal que
+\[
+\int_\Omega f(\theta)\,d\theta=1.
+\]
+Sea $n\ge 1$, sea $h=(b-a)/n$ y sean
+\[
+E_i:=
+\begin{cases}
+[a+(i-1)h,\,a+ih)\cap\Omega, & i=1,\dots,n-1,\\[4pt]
+[a+(n-1)h,\,b)\cap\Omega, & i=n.
+\end{cases}
+\]
+Defínase
+\[
+X_{0,i}:=P_0(E_i)=\int_{E_i}f(\theta)\,d\theta,
+\qquad i=1,\dots,n.
+\]
+Entonces $\Pi_n=\{E_1,\dots,E_n\}$ es una partición medible finita no degenerada de $\Omega$ y
+\[
+X_0=(X_{0,1},\dots,X_{0,n})\in\Delta_n^\circ.
+\]
+\end{proposicion}
+
+\begin{proof}
+Para $i=1,\dots,n$, cada $E_i$ es intersección de un intervalo boreliano de $\mathbb R$ con $\Omega$; por tanto,
+\[
+E_i\in\mathcal F.
+\]
+Además,
+\[
+E_i\cap E_j=\varnothing\quad (i\ne j),
+\qquad
+\bigcup_{i=1}^n E_i=\Omega.
+\]
+Luego $\Pi_n$ es una partición medible finita de $\Omega$.
+
+Como cada $E_i$ contiene un intervalo relativo no vacío de $\Omega$ y $f(\theta)>0$ para todo $\theta\in\Omega$, se tiene
+\[
+X_{0,i}
+=P_0(E_i)
+=\int_{E_i}f(\theta)\,d\theta
+>0,
+\qquad i=1,\dots,n.
+\]
+Por otra parte,
+\[
+\sum_{i=1}^n X_{0,i}
+=
+\sum_{i=1}^n P_0(E_i)
+=
+P_0\!\left(\bigcup_{i=1}^n E_i\right)
+=
+P_0(\Omega)
+=1.
+\]
+Así,
+\[
+X_{0,i}>0\quad (i=1,\dots,n),
+\qquad
+\sum_{i=1}^nX_{0,i}=1,
+\]
+y por consiguiente
+\[
+X_0\in\Delta_n^\circ.
+\]
+\end{proof}
+
+\begin{observacion}[Promedio condicional de la verosimilitud]
+La integral que aparece en la verosimilitud discreta es una integral de Lebesgue respecto de $P_0$. La referencia de Tao permite tratar $\int_{E_i}\ell\,dP_0$ como integral de una función medible no negativa sobre un espacio de medida. La condición $0<\int_\Omega \ell\,dP_0<\infty$ evita cantidades extendidas en el normalizador; esta precaución es necesaria porque las operaciones algebraicas con $+\infty$ no admiten cancelación ordinaria. En la semántica bayesiana ya desarrollada en esta sección, la verosimilitud actúa como factor multiplicativo; esta lectura concuerda con los espacios de Bayes de Egozcue, Pawlowsky-Glahn, Tolosana-Delgado, Ortego y van den Boogaart, donde la perturbación corresponde a multiplicación de densidades seguida de normalización.
+\end{observacion}
+
+\begin{definicion}[Verosimilitud discreta inducida por una partición]\label{def:verosimilitud_global}
+Sea $\Omega=(a,b)\subset\mathbb R$, sea $\mathcal F=\mathcal B(\Omega)$ y sea $P_0$ una medida de probabilidad sobre $(\Omega,\mathcal F)$. Sea $\Pi_n=\{E_1,\dots,E_n\}$ una partición medible finita no degenerada de $\Omega$. Sea $e$ un dato observado y sea
+\[
+\ell:\Omega\to(0,\infty)
+\]
+una función de verosimilitud medible, asociada al dato $e$, tal que
+\[
+0<\int_\Omega \ell(\theta)\,dP_0(\theta)<\infty.
+\]
+
+La \emph{verosimilitud discreta del dato $e$ bajo la celda $E_i$} se define por
+\[
+\ell_i
+:=E_{P_0}[\ell\mid E_i]
+:=
+\frac{\displaystyle\int_{E_i}\ell(\theta)\,dP_0(\theta)}{P_0(E_i)},
+\qquad i=1,\dots,n.
+\]
+Si, además, $P_0$ tiene densidad $f$ respecto de la medida de Lebesgue restringida a $\Omega$, entonces
+\[
+\ell_i
+=
+\frac{\displaystyle\int_{E_i}\ell(\theta)f(\theta)\,d\theta}{\displaystyle\int_{E_i}f(\theta)\,d\theta},
+\qquad i=1,\dots,n.
+\]
+
+El vector asociado a la verosimilitud discreta se define por
+\[
+1+Y_i^\ell:=\ell_i,
+\qquad i=1,\dots,n.
+\]
+\end{definicion}
+
+\begin{proposicion}[Admisibilidad de la corrección de verosimilitud]\label{prop:admisibilidad_verosimilitud_global}
+Sea $(\Omega,\mathcal F,P_0)$ un espacio de probabilidad. Sea $\Pi_n=\{E_1,\dots,E_n\}$ una partición medible finita de $\Omega$ tal que
+\[
+P_0(E_i)>0,
+\qquad i=1,\dots,n.
+\]
+Sea $\ell:\Omega\to(0,\infty)$ una función medible tal que
+\[
+0<\int_\Omega \ell\,dP_0<\infty.
+\]
+Para cada $i=1,\dots,n$, defínase
+\[
+\ell_i:=\frac{\displaystyle\int_{E_i}\ell\,dP_0}{P_0(E_i)}
+\]
+y defínase $Y^\ell\in\mathbb R^n$ por
+\[
+1+Y_i^\ell:=\ell_i,
+\qquad i=1,\dots,n.
+\]
+Entonces
+\[
+Y^\ell\in C_{\mathrm{glob}}.
+\]
+\end{proposicion}
+
+\begin{proof}
+Como $\ell(\omega)>0$ para todo $\omega\in\Omega$ y $P_0(E_i)>0$, se tiene
+\[
+\int_{E_i}\ell\,dP_0>0.
+\]
+Además,
+\[
+0<\int_{E_i}\ell\,dP_0
+\le
+\int_\Omega \ell\,dP_0
+<\infty.
+\]
+Por tanto,
+\[
+0<
+\frac{\displaystyle\int_{E_i}\ell\,dP_0}{P_0(E_i)}
+<\infty,
+\qquad i=1,\dots,n.
+\]
+Es decir,
+\[
+0<\ell_i<\infty,
+\qquad i=1,\dots,n.
+\]
+Como
+\[
+1+Y_i^\ell=\ell_i,
+\]
+se obtiene
+\[
+1+Y_i^\ell>0,
+\qquad i=1,\dots,n.
+\]
+Así,
+\[
+Y^\ell=(Y_1^\ell,\dots,Y_n^\ell)\in\mathbb R^n,
+\qquad
+1+Y_i^\ell>0\quad (i=1,\dots,n),
+\]
+y por consiguiente
+\[
+Y^\ell\in C_{\mathrm{glob}}.
+\]
+\end{proof}
+
+\begin{observacion}[Radon--Nikodym y construcción de la posterior]
+En la teoría de la medida, una medida absolutamente continua puede representarse mediante una derivada de Radon--Nikodym respecto de una medida dominante. En este bloque no se invoca el teorema para obtener existencia abstracta: la posterior se construye directamente mediante la densidad $\ell/Z$ respecto de $P_0$, donde $Z=\int_\Omega\ell\,dP_0$. La referencia de Tao proporciona el marco de espacios de medida e integración; la formulación de los espacios de Bayes proporciona la interpretación multiplicativa de la actualización.
+\end{observacion}
+
+\begin{lema}[Cambio de medida exacto por celdas]\label{lem:verosimilitud_cambio_medida}
+Sea $(\Omega,\mathcal F,P_0)$ un espacio de probabilidad. Sea $\Pi_n=\{E_1,\dots,E_n\}$ una partición medible finita de $\Omega$ tal que
+\[
+P_0(E_i)>0,
+\qquad i=1,\dots,n.
+\]
+Sea $\ell:\Omega\to(0,\infty)$ una función medible tal que
+\[
+Z:=\int_\Omega\ell\,dP_0
+\]
+satisface
+\[
+0<Z<\infty.
+\]
+Defínase, para $A\in\mathcal F$,
+\[
+Q(A):=\int_A\frac{\ell}{Z}\,dP_0.
+\]
+Defínase también
+\[
+\ell_i:=\frac{\displaystyle\int_{E_i}\ell\,dP_0}{P_0(E_i)},
+\qquad i=1,\dots,n.
+\]
+Entonces $Q$ es una medida de probabilidad sobre $(\Omega,\mathcal F)$, se cumple
+\[
+\frac{dQ}{dP_0}=\frac{\ell}{Z},
+\]
+y, para cada $i=1,\dots,n$,
+\[
+Q(E_i)
+=
+\frac{P_0(E_i)\ell_i}{\displaystyle\sum_{k=1}^nP_0(E_k)\ell_k}.
+\]
+\end{lema}
+
+\begin{proof}
+Para $A\in\mathcal F$,
+\[
+Q(A)=\int_A\frac{\ell}{Z}\,dP_0\ge 0.
+\]
+Además,
+\[
+Q(\Omega)
+=
+\int_\Omega\frac{\ell}{Z}\,dP_0
+=
+\frac{1}{Z}\int_\Omega\ell\,dP_0
+=
+\frac{Z}{Z}
+=1.
+\]
+La aditividad numerable se hereda de la integral respecto de $P_0$, pues la densidad $\ell/Z$ es medible y no negativa. Luego $Q$ es una medida de probabilidad.
+
+Por definición de $Q$,
+\[
+Q(A)=\int_A\frac{\ell}{Z}\,dP_0,
+\qquad A\in\mathcal F,
+\]
+de modo que
+\[
+\frac{dQ}{dP_0}=\frac{\ell}{Z}.
+\]
+
+Para cada $i=1,\dots,n$,
+\[
+P_0(E_i)\ell_i
+=
+P_0(E_i)
+\frac{\displaystyle\int_{E_i}\ell\,dP_0}{P_0(E_i)}
+=
+\int_{E_i}\ell\,dP_0.
+\]
+Por tanto,
+\[
+\sum_{k=1}^nP_0(E_k)\ell_k
+=
+\sum_{k=1}^n\int_{E_k}\ell\,dP_0
+=
+\int_{\bigcup_{k=1}^nE_k}\ell\,dP_0
+=
+\int_\Omega\ell\,dP_0
+=Z.
+\]
+Así,
+\[
+Q(E_i)
+=
+\int_{E_i}\frac{\ell}{Z}\,dP_0
+=
+\frac{\displaystyle\int_{E_i}\ell\,dP_0}{Z}
+=
+\frac{P_0(E_i)\ell_i}{\displaystyle\sum_{k=1}^nP_0(E_k)\ell_k}.
+\]
+\end{proof}
+
+\begin{observacion}[Identidad entre actualización bayesiana y operador global]
+La subsección de operadores globales introduce el operador informacional global como multiplicación coordenada a coordenada seguida de normalización. La semántica bayesiana identifica la verosimilitud con los factores multiplicativos de esa corrección. En la bibliografía de espacios de Bayes, la fórmula de Bayes se lee precisamente como perturbación: se multiplican densidades positivas proporcionales y se normaliza. En consecuencia, la proposición siguiente formaliza que el operador $T_Y$ no aproxima la posterior continua, sino que coincide con la masa que esa posterior asigna a cada celda de la partición.
+\end{observacion}
+
+\begin{proposicion}[Actualización bayesiana paramétrica en CI]\label{prop:bayes_parametrico}
+Sea $\Omega=(a,b)\subset\mathbb R$, con $a<b$, y sea $\mathcal F=\mathcal B(\Omega)$. Sea $P_0$ una medida de probabilidad sobre $(\Omega,\mathcal F)$ absolutamente continua respecto de la medida de Lebesgue restringida a $\Omega$, con densidad $f:\Omega\to(0,\infty)$ medible y tal que
+\[
+\int_\Omega f(\theta)\,d\theta=1.
+\]
+Sea $n\ge 1$, sea $h=(b-a)/n$ y sean
+\[
+E_i:=
+\begin{cases}
+[a+(i-1)h,\,a+ih)\cap\Omega, & i=1,\dots,n-1,\\[4pt]
+[a+(n-1)h,\,b)\cap\Omega, & i=n.
+\end{cases}
+\]
+Defínase
+\[
+X_{0,i}:=P_0(E_i)=\int_{E_i}f(\theta)\,d\theta,
+\qquad i=1,\dots,n.
+\]
+Sea $\ell:\Omega\to(0,\infty)$ una función medible tal que
+\[
+Z:=\int_\Omega\ell\,dP_0
+\]
+satisface
+\[
+0<Z<\infty.
+\]
+Defínase
+\[
+\ell_i:=\frac{\displaystyle\int_{E_i}\ell\,dP_0}{P_0(E_i)},
+\qquad
+1+Y_i^\ell:=\ell_i,
+\qquad i=1,\dots,n.
+\]
+Defínase, para $A\in\mathcal F$,
+\[
+Q(A):=\int_A\frac{\ell}{Z}\,dP_0.
+\]
+Finalmente, defínase
+\[
+T_{Y^\ell}(X_0)_i
+:=
+\frac{X_{0,i}(1+Y_i^\ell)}{\displaystyle\sum_{k=1}^nX_{0,k}(1+Y_k^\ell)},
+\qquad i=1,\dots,n.
+\]
+Entonces
+\[
+T_{Y^\ell}(X_0)_i=Q(E_i),
+\qquad i=1,\dots,n.
+\]
+En particular,
+\[
+T_{Y^\ell}(X_0)\in\Delta_n^\circ.
+\]
+\end{proposicion}
+
+\begin{proof}
+Para cada $i=1,\dots,n$,
+\[
+X_{0,i}=P_0(E_i),
+\qquad
+1+Y_i^\ell=\ell_i.
+\]
+Por tanto,
+\[
+T_{Y^\ell}(X_0)_i
+=
+\frac{X_{0,i}(1+Y_i^\ell)}{\displaystyle\sum_{k=1}^nX_{0,k}(1+Y_k^\ell)}
+=
+\frac{P_0(E_i)\ell_i}{\displaystyle\sum_{k=1}^nP_0(E_k)\ell_k}.
+\]
+Como
+\[
+\ell_i
+=
+\frac{\displaystyle\int_{E_i}\ell\,dP_0}{P_0(E_i)},
+\]
+se tiene
+\[
+P_0(E_i)\ell_i
+=
+\int_{E_i}\ell\,dP_0.
+\]
+Luego
+\[
+\sum_{k=1}^nP_0(E_k)\ell_k
+=
+\sum_{k=1}^n\int_{E_k}\ell\,dP_0
+=
+\int_\Omega\ell\,dP_0
+=Z.
+\]
+Sustituyendo,
+\[
+T_{Y^\ell}(X_0)_i
+=
+\frac{\displaystyle\int_{E_i}\ell\,dP_0}{Z}
+=
+\int_{E_i}\frac{\ell}{Z}\,dP_0
+=Q(E_i).
+\]
+Además, como $f>0$ en $\Omega$ y cada $E_i$ tiene longitud positiva,
+\[
+X_{0,i}>0.
+\]
+Como $\ell_i>0$,
+\[
+X_{0,i}(1+Y_i^\ell)=X_{0,i}\ell_i>0.
+\]
+Así,
+\[
+T_{Y^\ell}(X_0)_i>0,
+\qquad i=1,\dots,n.
+\]
+Finalmente,
+\[
+\sum_{i=1}^nT_{Y^\ell}(X_0)_i
+=
+\sum_{i=1}^nQ(E_i)
+=
+Q(\Omega)
+=1.
+\]
+Por consiguiente,
+\[
+T_{Y^\ell}(X_0)\in\Delta_n^\circ.
+\]
+\end{proof}
+
+\begin{observacion}[Familias exponenciales y separación de niveles]
+En los espacios de Bayes, las familias exponenciales aparecen como estructuras afines o cónicas de densidades positivas. Este hecho justifica separar dos niveles: el nivel continuo, donde la conjugación se expresa por suma de parámetros naturales, y el nivel discreto, donde el operador global recupera las masas de la posterior sobre una partición finita. La proposición siguiente no modifica el teorema bayesiano anterior; únicamente lo especializa al caso en que el producto entre densidad previa y verosimilitud conserva forma exponencial.
+\end{observacion}
+
+\begin{proposicion}[Modelo conjugado exponencial como caso particular]\label{prop:conjugado_exponencial_CI}
+Sea $\Omega=(a,b)\subset\mathbb R$, con $a<b$, y sea $\mathcal F=\mathcal B(\Omega)$. Sea $T:\Omega\to\mathbb R^m$ una función medible. Sean $\eta_0,\eta_\ell\in\mathbb R^m$ tales que
+\[
+0<
+I_0:=\int_\Omega \exp\bigl(\eta_0\cdot T(\theta)\bigr)\,d\theta
+<\infty
+\]
+y
+\[
+0<
+I_1:=\int_\Omega \exp\bigl((\eta_0+\eta_\ell)\cdot T(\theta)\bigr)\,d\theta
+<\infty.
+\]
+Defínase
+\[
+f(\theta):=\frac{\exp\bigl(\eta_0\cdot T(\theta)\bigr)}{I_0},
+\qquad \theta\in\Omega,
+\]
+y sea $P_0$ la medida de probabilidad sobre $(\Omega,\mathcal F)$ dada por
+\[
+dP_0(\theta)=f(\theta)\,d\theta.
+\]
+Sea $c_\ell>0$ y defínase la verosimilitud
+\[
+\ell(\theta):=c_\ell\exp\bigl(\eta_\ell\cdot T(\theta)\bigr),
+\qquad \theta\in\Omega.
+\]
+Sea $n\ge1$, sea $h=(b-a)/n$ y sean
+\[
+E_i:=
+\begin{cases}
+[a+(i-1)h,\,a+ih)\cap\Omega, & i=1,\dots,n-1,\\[4pt]
+[a+(n-1)h,\,b)\cap\Omega, & i=n.
+\end{cases}
+\]
+Defínase
+\[
+X_{0,i}:=P_0(E_i),
+\qquad
+\ell_i:=\frac{\displaystyle\int_{E_i}\ell\,dP_0}{P_0(E_i)},
+\qquad
+1+Y_i^\ell:=\ell_i.
+\]
+Defínase $Q$ por
+\[
+Q(A):=\frac{\displaystyle\int_A\ell\,dP_0}{\displaystyle\int_\Omega\ell\,dP_0},
+\qquad A\in\mathcal F.
+\]
+Entonces, para cada $i=1,\dots,n$,
+\[
+T_{Y^\ell}(X_0)_i
+=
+Q(E_i)
+=
+\frac{\displaystyle\int_{E_i}\exp\bigl((\eta_0+\eta_\ell)\cdot T(\theta)\bigr)\,d\theta}{\displaystyle\int_\Omega\exp\bigl((\eta_0+\eta_\ell)\cdot T(\theta)\bigr)\,d\theta}.
+\]
+Además, $Q$ es absolutamente continua respecto de la medida de Lebesgue restringida a $\Omega$ y su densidad es
+\[
+q(\theta)
+=
+\frac{\exp\bigl((\eta_0+\eta_\ell)\cdot T(\theta)\bigr)}{\displaystyle\int_\Omega\exp\bigl((\eta_0+\eta_\ell)\cdot T(u)\bigr)\,du}.
+\]
+En particular, la posterior pertenece a la misma familia exponencial, con parámetro natural
+\[
+\eta_{\mathrm{post}}:=\eta_0+\eta_\ell.
+\]
+\end{proposicion}
+
+\begin{proof}
+Primero,
+\[
+\int_\Omega f(\theta)\,d\theta
+=
+\frac{1}{I_0}\int_\Omega \exp\bigl(\eta_0\cdot T(\theta)\bigr)\,d\theta
+=
+1.
+\]
+Luego $P_0$ es probabilidad. Además,
+\[
+\int_\Omega\ell\,dP_0
+=
+\int_\Omega c_\ell\exp\bigl(\eta_\ell\cdot T(\theta)\bigr)
+\frac{\exp\bigl(\eta_0\cdot T(\theta)\bigr)}{I_0}\,d\theta.
+\]
+Por tanto,
+\[
+\int_\Omega\ell\,dP_0
+=
+\frac{c_\ell}{I_0}
+\int_\Omega\exp\bigl((\eta_0+\eta_\ell)\cdot T(\theta)\bigr)\,d\theta
+=
+\frac{c_\ell I_1}{I_0}.
+\]
+Como $c_\ell>0$, $0<I_0<\infty$ y $0<I_1<\infty$,
+\[
+0<\int_\Omega\ell\,dP_0<\infty.
+\]
+
+Para $A\in\mathcal F$,
+\[
+Q(A)
+=
+\frac{\displaystyle\int_A\ell\,dP_0}{\displaystyle\int_\Omega\ell\,dP_0}.
+\]
+El numerador satisface
+\[
+\int_A\ell\,dP_0
+=
+\frac{c_\ell}{I_0}
+\int_A\exp\bigl((\eta_0+\eta_\ell)\cdot T(\theta)\bigr)\,d\theta.
+\]
+El denominador satisface
+\[
+\int_\Omega\ell\,dP_0
+=
+\frac{c_\ell}{I_0}
+\int_\Omega\exp\bigl((\eta_0+\eta_\ell)\cdot T(\theta)\bigr)\,d\theta.
+\]
+Luego
+\[
+Q(A)
+=
+\frac{\displaystyle\int_A\exp\bigl((\eta_0+\eta_\ell)\cdot T(\theta)\bigr)\,d\theta}{\displaystyle\int_\Omega\exp\bigl((\eta_0+\eta_\ell)\cdot T(\theta)\bigr)\,d\theta}.
+\]
+Tomando $A=E_i$,
+\[
+Q(E_i)
+=
+\frac{\displaystyle\int_{E_i}\exp\bigl((\eta_0+\eta_\ell)\cdot T(\theta)\bigr)\,d\theta}{\displaystyle\int_\Omega\exp\bigl((\eta_0+\eta_\ell)\cdot T(\theta)\bigr)\,d\theta}.
+\]
+
+Por otra parte,
+\[
+T_{Y^\ell}(X_0)_i
+=
+\frac{X_{0,i}(1+Y_i^\ell)}{\displaystyle\sum_{k=1}^nX_{0,k}(1+Y_k^\ell)}
+=
+\frac{P_0(E_i)\ell_i}{\displaystyle\sum_{k=1}^nP_0(E_k)\ell_k}.
+\]
+Como
+\[
+P_0(E_i)\ell_i=\int_{E_i}\ell\,dP_0,
+\qquad
+\sum_{k=1}^nP_0(E_k)\ell_k=\int_\Omega\ell\,dP_0,
+\]
+se obtiene
+\[
+T_{Y^\ell}(X_0)_i
+=
+\frac{\displaystyle\int_{E_i}\ell\,dP_0}{\displaystyle\int_\Omega\ell\,dP_0}
+=Q(E_i).
+\]
+Finalmente, la densidad de $Q$ respecto de Lebesgue es
+\[
+q(\theta)
+=
+\frac{\exp\bigl((\eta_0+\eta_\ell)\cdot T(\theta)\bigr)}{\displaystyle\int_\Omega\exp\bigl((\eta_0+\eta_\ell)\cdot T(u)\bigr)\,du},
+\]
+de modo que el parámetro natural posterior es
+\[
+\eta_{\mathrm{post}}=\eta_0+\eta_\ell.
+\]
+\end{proof}
+
+
+\subsection{Trayectorias Bayesianas}
+
+Esta sección estudia cómo un estado de creencia sobre un conjunto de hipótesis puede dirigirse hacia un estado objetivo, y no solamente actualizarse a medida que llega evidencia. La pregunta es qué observación disponible debe seleccionarse para aproximar el estado posterior al objetivo fijado.
+
+El procedimiento compara, en cada tiempo, los estados posteriores inducidos por las observaciones disponibles y selecciona el que minimiza la divergencia respecto del estado objetivo. La iteración de esta regla define una trayectoria con avance cuantificable en cada etapa.
+
+La elección activa de observaciones aparece en Chernoff (1959), donde un decisor escoge entre experimentos disponibles para acumular evidencia sobre una hipótesis generadora. Naghshvar y Javidi (2013) formalizan esa elección con un criterio explícito de divergencia, aunque el objetivo sigue siendo la concentración en una hipótesis. Csiszár (1975), en cambio, permite considerar una distribución objetivo arbitraria, pero mediante una proyección geométrica determinista sin elección observacional. Aquí se combina la elección activa con un estado objetivo arbitrario y con actualizaciones deterministas inducidas por verosimilitudes disponibles.
+
+
+\begin{definicion}[Notación: operador bayesiano inducido por una verosimilitud]\label{def:Tell_trayectorias}
+Sea \(\ell=(\ell_1,\dots,\ell_n)\in\mathbb R_{>0}^n\) un vector de verosimilitudes positivas. Por la Definición~\ref{def:verosimilitud}, \(\ell\) determina una corrección global
+\[
+Y^\ell\in C_{\mathrm{glob}},
+\qquad
+1+Y_i^\ell:=\ell_i,
+\qquad i=1,\dots,n,
+\]
+y, por la Definición~\ref{def:Tglobal}, el operador informacional global asociado satisface
+\[
+T_{Y^\ell}(X)_i
+=
+\frac{X_i\ell_i}{\sum_{k=1}^n X_k\ell_k},
+\qquad X\in\Delta_n^\circ,\quad i=1,\dots,n.
+\]
+Por la Proposición~\ref{prop:bayes_como_TY}, cuando \(\ell\) proviene de una verosimilitud inducida por una observación, \(\ell_i=P(E\mid H_i)\), y \(X\) es el estado informacional previo asociado a \(\Pi_H\), el operador \(T_{Y^\ell}(X)\) coincide con el posterior bayesiano \(P(H_i\mid E)\). Por brevedad, en esta subsección se escribe \(T_\ell:=T_{Y^\ell}\).
+\end{definicion}
+
+\begin{definicion}[Objetivo bayesiano interior]
+Sea
+\[
+\Pi_H=\{H_1,\dots,H_n\}
+\]
+una partición finita de hipótesis, con \(n\geq 2\), y sea
+\[
+\Delta_n^\circ
+=
+\left\{
+X\in\mathbb R^n
+\mid
+X_i>0,\ \sum_{i=1}^n X_i=1
+\right\}.
+\]
+Un \emph{objetivo bayesiano interior} es un vector
+\[
+\mathcal P=(\mathcal P_1,\dots,\mathcal P_n)\in\Delta_n^\circ
+\]
+interpretado como una distribución objetivo sobre la partición de hipótesis \(\Pi_H\).
+
+Cada coordenada \(\mathcal P_i\) representa la masa informacional que se desea asignar a la hipótesis \(H_i\). En particular,
+\[
+\mathcal P_i>0
+\qquad\text{para todo }i=1,\dots,n,
+\]
+y
+\[
+\sum_{i=1}^n \mathcal P_i=1.
+\]
+
+El vector \(\mathcal P\) no representa una hipótesis individual. Si se quisiera seleccionar únicamente una hipótesis \(H_j\), el vector asociado sería el vértice
+\[
+e_j=(0,\dots,0,1,0,\dots,0),
+\]
+con la entrada \(1\) en la posición \(j\). Para \(n\geq 2\), dicho vector satisface
+\[
+e_j\notin\Delta_n^\circ,
+\]
+pues posee coordenadas nulas. Por tanto, dentro de la semántica bayesiana interior, el objetivo admisible no es una hipótesis aislada, sino una distribución estrictamente positiva sobre las hipótesis de \(\Pi_H\).
+\end{definicion}
+
+\begin{corolario}[Realización bayesiana del paso discreto determinista]
+Sea
+\[
+\Pi_H=\{H_1,\dots,H_n\}
+\]
+una partición finita de hipótesis, con \(n\geq 2\), y sea
+\[
+\Delta_n^\circ
+=
+\left\{
+X\in\mathbb R^n
+\mid
+X_i>0,\ \sum_{i=1}^n X_i=1
+\right\}.
+\]
+Sean
+\[
+X=(X_1,\dots,X_n)\in\Delta_n^\circ
+\]
+un estado informacional (Definición~\ref{def:espacio_conjunto}), y
+\[
+\mathcal P=(\mathcal P_1,\dots,\mathcal P_n)\in\Delta_n^\circ
+\]
+un objetivo bayesiano interior sobre la misma partición \(\Pi_H\).
+
+Para \(\alpha\in[0,1]\), defínase
+\[
+\ell^{(\alpha)}(X,\mathcal P)
+=
+\left(
+\ell^{(\alpha)}_1(X,\mathcal P),
+\dots,
+\ell^{(\alpha)}_n(X,\mathcal P)
+\right)
+\]
+por
+\[
+\ell^{(\alpha)}_i(X,\mathcal P)
+:=
+1-\alpha+\alpha\frac{\mathcal P_i}{X_i},
+\qquad i=1,\dots,n.
+\]
+Entonces
+\[
+\ell^{(\alpha)}(X,\mathcal P)\in\mathbb R_{>0}^n
+\]
+y la actualización bayesiana inducida por \(\ell^{(\alpha)}(X,\mathcal P)\) satisface
+\[
+T_{\ell^{(\alpha)}(X,\mathcal P)}(X)
+=
+(1-\alpha)X+\alpha \mathcal P.
+\]
+\end{corolario}
+
+\begin{proof}
+Como \(X,\mathcal P\in\Delta_n^\circ\), se tiene
+\[
+X_i>0,
+\qquad
+\mathcal P_i>0,
+\qquad
+i=1,\dots,n.
+\]
+Luego
+\[
+\frac{\mathcal P_i}{X_i}>0.
+\]
+Si \(\alpha\in[0,1]\), entonces
+\[
+1-\alpha\geq 0
+\qquad
+\text{y}
+\qquad
+\alpha\frac{\mathcal P_i}{X_i}\geq 0.
+\]
+Además,
+\[
+1-\alpha+\alpha\frac{\mathcal P_i}{X_i}>0
+\]
+para todo \(i=1,\dots,n\). Por tanto,
+\[
+\ell^{(\alpha)}(X,\mathcal P)\in\mathbb R_{>0}^n.
+\]
+
+Defínase
+\[
+Y^*(X,\mathcal P)_i
+:=
+\frac{\mathcal P_i}{X_i}-1.
+\]
+Entonces
+\[
+\ell^{(\alpha)}_i(X,\mathcal P)
+=
+1+\alpha Y^*(X,\mathcal P)_i.
+\]
+Por la equivalencia estructural entre el corrector informacional y el paso discreto inducido, se tiene
+\[
+T_{\ell^{(\alpha)}(X,\mathcal P)}(X)
+=
+T_{\alpha Y^*(X,\mathcal P)}(X)
+=
+(1-\alpha)X+\alpha \mathcal P.
+\]
+\end{proof}
+
+\begin{observacion}[Selección observacional guiada por el objetivo bayesiano]
+Sea
+\[
+\Pi_H=\{H_1,\dots,H_n\}
+\]
+una partición finita de hipótesis, y sea
+\[
+\mathcal P\in\Delta_n^\circ
+\]
+un objetivo bayesiano interior sobre dicha partición.
+
+En una dinámica bayesiana controlada, el paso siguiente no debe entenderse como la elección libre de un parámetro de relajación. La actualización bayesiana estricta exige que el estado posterior se obtenga a partir de una verosimilitud asociada a información disponible o admisible.
+
+Por ello, dado un estado
+\[
+X_t\in\Delta_n^\circ,
+\]
+el problema consiste en comparar observaciones admisibles. Cada observación admisible debe inducir, al menos en sentido algebraico-composicional, un vector de verosimilitudes positivas
+\[
+\ell^{(E)}\in\mathbb R_{>0}^n,
+\]
+y por tanto un posterior inducido
+\[
+T_{\ell^{(E)}}(X_t).
+\]
+
+Así, el criterio de Control Informacional no consiste primero en fijar un número \(\alpha_t\), sino en seleccionar la observación que aproxima el posterior al objetivo \(\mathcal P\). El parámetro de avance aparece después, como una medida del efecto que una observación admisible produce sobre la divergencia entre el posterior obtenido y el objetivo bayesiano.
+
+En consecuencia, la dinámica buscada no parte de una interpolación impuesta entre \(X_t\) y \(\mathcal P\), sino de una selección observacional paso a paso:
+\[
+E
+\longmapsto
+\ell^{(E)}
+\longmapsto
+T_{\ell^{(E)}}(X_t)
+\longmapsto
+\text{comparación con }\mathcal P.
+\]
+Sólo después de esta comparación tiene sentido hablar de un coeficiente de avance asociado a la observación seleccionada.
+\end{observacion}
+
+\begin{definicion}[Familia observacional admisible y posterior inducido]
+Sea
+\[
+\Pi_H=\{H_1,\dots,H_n\}
+\]
+una partición finita de hipótesis, y sea
+\[
+\Pi_E
+\]
+una familia de observaciones posibles. Sea
+\[
+X_t\in\Delta_n^\circ
+\]
+un estado informacional en el tiempo \(t\).
+
+Una \emph{familia observacional admisible} en el tiempo \(t\) es un conjunto finito no vacío
+\[
+\mathcal E_t\subseteq \Pi_E
+\]
+tal que a cada observación candidata
+\[
+E\in\mathcal E_t
+\]
+se le asocia un vector de verosimilitudes positivas
+\[
+\ell_t^{(E)}
+=
+\bigl(\ell_{t,1}^{(E)},\dots,\ell_{t,n}^{(E)}\bigr)
+\in\mathbb R_{>0}^n.
+\]
+
+En sentido algebraico-composicional, la condición de admisibilidad queda dada por
+\[
+\ell_t^{(E)}\in\mathbb R_{>0}^n.
+\]
+En sentido observacional estricto, se exige además que exista una constante
+\[
+c_E>0
+\]
+tal que
+\[
+\ell_{t,i}^{(E)}
+=
+c_E\,P(E\mid H_i),
+\qquad
+i=1,\dots,n.
+\]
+
+El \emph{posterior inducido} por \(E\) desde el estado \(X_t\) se define por
+\[
+X_t^E
+:=
+T_{\ell_t^{(E)}}(X_t).
+\]
+Es decir,
+\[
+X_{t,i}^E
+=
+\frac{
+X_{t,i}\ell_{t,i}^{(E)}
+}{
+\sum_{k=1}^n X_{t,k}\ell_{t,k}^{(E)}
+},
+\qquad
+i=1,\dots,n.
+\]
+
+En el sentido observacional estricto, esta construcción es congruente con la Proposición~\ref{prop:bayes_como_TY}: si \(X_t\) coincide con el estado informacional previo, \(X_{t,i}=P(H_i)\), entonces \(X_{t,i}^E=P(H_i\mid E)\). Así, el posterior inducido no es solamente un punto del símplex, sino la probabilidad condicional de \(H_i\) dada \(E\).
+\end{definicion}
+
+
+\begin{definicion}[Coeficiente de avance KL]
+Sea
+\[
+\Pi_H=\{H_1,\dots,H_n\}
+\]
+una partición finita de hipótesis. Para
+\[
+P,Q\in\Delta_n^\circ,
+\]
+se define
+\[
+D_{\mathrm{KL}}(P\Vert Q)
+:=
+\sum_{i=1}^n P_i\log\frac{P_i}{Q_i}.
+\]
+
+Sea
+\[
+X_t\in\Delta_n^\circ
+\]
+un estado informacional, sea
+\[
+\mathcal P\in\Delta_n^\circ
+\]
+un objetivo bayesiano interior, y supóngase que
+\[
+X_t\neq \mathcal P.
+\]
+Sea además
+\[
+\mathcal E_t
+\]
+una familia observacional admisible en el tiempo \(t\). Para cada
+\[
+E\in\mathcal E_t,
+\]
+sea
+\[
+X_t^E:=T_{\ell_t^{(E)}}(X_t)
+\]
+el posterior inducido por \(E\).
+
+Se define el \emph{coeficiente de avance KL} de la observación candidata \(E\), relativo al par \((X_t,\mathcal P)\), por
+\[
+\alpha_{\mathrm{KL}}(E;X_t,\mathcal P)
+:=
+1-
+\frac{
+D_{\mathrm{KL}}\bigl(\mathcal P\Vert X_t^E\bigr)
+}{
+D_{\mathrm{KL}}\bigl(\mathcal P\Vert X_t\bigr)
+}.
+\]
+
+La interpretación del signo es la siguiente:
+\[
+\alpha_{\mathrm{KL}}(E;X_t,\mathcal P)>0
+\]
+si y sólo si
+\[
+D_{\mathrm{KL}}\bigl(\mathcal P\Vert X_t^E\bigr)
+<
+D_{\mathrm{KL}}\bigl(\mathcal P\Vert X_t\bigr),
+\]
+es decir, la observación \(E\) produce avance hacia \(\mathcal P\) en divergencia KL.
+
+Asimismo,
+\[
+\alpha_{\mathrm{KL}}(E;X_t,\mathcal P)=0
+\]
+si y sólo si
+\[
+D_{\mathrm{KL}}\bigl(\mathcal P\Vert X_t^E\bigr)
+=
+D_{\mathrm{KL}}\bigl(\mathcal P\Vert X_t\bigr),
+\]
+es decir, la observación \(E\) no produce avance KL.
+
+Finalmente,
+\[
+\alpha_{\mathrm{KL}}(E;X_t,\mathcal P)<0
+\]
+si y sólo si
+\[
+D_{\mathrm{KL}}\bigl(\mathcal P\Vert X_t^E\bigr)
+>
+D_{\mathrm{KL}}\bigl(\mathcal P\Vert X_t\bigr),
+\]
+es decir, la observación \(E\) aleja el posterior inducido del objetivo \(\mathcal P\) en divergencia KL.
+\end{definicion}
+
+
+\begin{proposicion}[Elección observacional óptima]
+Sea
+\[
+\Pi_H=\{H_1,\dots,H_n\}
+\]
+una partición finita de hipótesis. Sean
+\[
+X_t\in\Delta_n^\circ,
+\qquad
+\mathcal P\in\Delta_n^\circ,
+\qquad
+X_t\neq \mathcal P.
+\]
+Sea
+\[
+\mathcal E_t
+\]
+una familia observacional admisible finita no vacía en el tiempo \(t\). Para cada
+\[
+E\in\mathcal E_t,
+\]
+sea
+\[
+X_t^E:=T_{\ell_t^{(E)}}(X_t)
+\]
+el posterior inducido por \(E\).
+
+Entonces una observación
+\[
+E_t^\star\in\mathcal E_t
+\]
+maximiza el coeficiente de avance KL,
+\[
+E_t^\star
+\in
+\operatorname*{arg\,max}_{E\in\mathcal E_t}
+\alpha_{\mathrm{KL}}(E;X_t,\mathcal P),
+\]
+si y sólo si minimiza la divergencia KL posterior hacia el objetivo:
+\[
+E_t^\star
+\in
+\operatorname*{arg\,min}_{E\in\mathcal E_t}
+D_{\mathrm{KL}}\bigl(\mathcal P\Vert X_t^E\bigr).
+\]
+\end{proposicion}
+
+\begin{proof}
+Como
+\[
+X_t\neq \mathcal P,
+\]
+y ambos vectores pertenecen a \(\Delta_n^\circ\), se tiene
+\[
+D_{\mathrm{KL}}(\mathcal P\Vert X_t)>0.
+\]
+Por definición del coeficiente de avance KL, para cada
+\[
+E\in\mathcal E_t
+\]
+se cumple
+\[
+\alpha_{\mathrm{KL}}(E;X_t,\mathcal P)
+=
+1-
+\frac{
+D_{\mathrm{KL}}(\mathcal P\Vert X_t^E)
+}{
+D_{\mathrm{KL}}(\mathcal P\Vert X_t)
+}.
+\]
+El término
+\[
+D_{\mathrm{KL}}(\mathcal P\Vert X_t)
+\]
+no depende de \(E\) y es estrictamente positivo. Por tanto, para \(E,F\in\mathcal E_t\),
+\[
+\alpha_{\mathrm{KL}}(E;X_t,\mathcal P)
+\geq
+\alpha_{\mathrm{KL}}(F;X_t,\mathcal P)
+\]
+si y sólo si
+\[
+1-
+\frac{
+D_{\mathrm{KL}}(\mathcal P\Vert X_t^E)
+}{
+D_{\mathrm{KL}}(\mathcal P\Vert X_t)
+}
+\geq
+1-
+\frac{
+D_{\mathrm{KL}}(\mathcal P\Vert X_t^F)
+}{
+D_{\mathrm{KL}}(\mathcal P\Vert X_t)
+}.
+\]
+Restando \(1\) en ambos lados,
+\[
+-
+\frac{
+D_{\mathrm{KL}}(\mathcal P\Vert X_t^E)
+}{
+D_{\mathrm{KL}}(\mathcal P\Vert X_t)
+}
+\geq
+-
+\frac{
+D_{\mathrm{KL}}(\mathcal P\Vert X_t^F)
+}{
+D_{\mathrm{KL}}(\mathcal P\Vert X_t)
+}.
+\]
+Multiplicando por el número positivo
+\[
+D_{\mathrm{KL}}(\mathcal P\Vert X_t)
+\]
+y cambiando el signo, se obtiene
+\[
+D_{\mathrm{KL}}(\mathcal P\Vert X_t^E)
+\leq
+D_{\mathrm{KL}}(\mathcal P\Vert X_t^F).
+\]
+Así, ordenar las observaciones por mayor coeficiente de avance KL es equivalente a ordenarlas por menor divergencia KL posterior.
+
+Como
+\[
+\mathcal E_t
+\]
+es finita y no vacía, existen maximizadores y minimizadores. Por la equivalencia anterior, ambos conjuntos coinciden. En consecuencia,
+\[
+E_t^\star
+\in
+\operatorname*{arg\,max}_{E\in\mathcal E_t}
+\alpha_{\mathrm{KL}}(E;X_t,\mathcal P)
+\]
+si y sólo si
+\[
+E_t^\star
+\in
+\operatorname*{arg\,min}_{E\in\mathcal E_t}
+D_{\mathrm{KL}}(\mathcal P\Vert X_t^E).
+\]
+\end{proof}
+
+
+\begin{definicion}[Trayectoria bayesiana guiada por selección observacional]
+Sea
+\[
+\Pi_H=\{H_1,\dots,H_n\}
+\]
+una partición finita de hipótesis, y sea
+\[
+\mathcal P\in\Delta_n^\circ
+\]
+un objetivo bayesiano interior sobre \(\Pi_H\). Sea
+\[
+X_0\in\Delta_n^\circ
+\]
+un estado inicial.
+
+Para cada tiempo
+\[
+t\geq 0,
+\]
+supóngase dada una familia observacional admisible finita no vacía
+\[
+\mathcal E_t\subseteq \Pi_E.
+\]
+
+La \emph{trayectoria bayesiana guiada por selección observacional} se define recursivamente del siguiente modo.
+
+Si
+\[
+X_t=\mathcal P,
+\]
+se fija
+\[
+X_{t+1}:=\mathcal P.
+\]
+
+Si
+\[
+X_t\neq \mathcal P,
+\]
+para cada
+\[
+E\in\mathcal E_t
+\]
+se considera el posterior inducido
+\[
+X_t^E
+=
+T_{\ell_t^{(E)}}(X_t),
+\]
+y se elige una observación
+\[
+E_t^\star\in\mathcal E_t
+\]
+tal que
+\[
+E_t^\star
+\in
+\operatorname*{arg\,min}_{E\in\mathcal E_t}
+D_{\mathrm{KL}}\bigl(\mathcal P\Vert X_t^E\bigr).
+\]
+Entonces se define
+\[
+X_{t+1}
+:=
+T_{\ell_t^{(E_t^\star)}}(X_t).
+\]
+
+Equivalente, mientras \(X_t\neq \mathcal P\), la regla de evolución queda dada por
+\[
+X_{t+1}
+=
+X_t^{E_t^\star},
+\]
+donde
+\[
+E_t^\star
+\in
+\operatorname*{arg\,min}_{E\in\mathcal E_t}
+D_{\mathrm{KL}}\bigl(\mathcal P\Vert X_t^E\bigr).
+\]
+
+Así, cada paso de la trayectoria se obtiene por una actualización bayesiana global, y la observación aplicada en el tiempo \(t\) es aquella que produce, entre los candidatos admisibles, el posterior más cercano al objetivo bayesiano \(\mathcal P\) en divergencia KL.
+\end{definicion}
+
+
+\begin{proposicion}[Disipación y convergencia bajo progreso acumulado]
+Sea
+\[
+\mathcal P\in\Delta_n^\circ
+\]
+un objetivo bayesiano interior, y sea
+\[
+(X_t)_{t\geq 0}\subset\Delta_n^\circ
+\]
+una trayectoria bayesiana guiada por selección observacional.
+
+Para cada \(t\geq 0\) tal que
+\[
+X_t\neq \mathcal P,
+\]
+denótese por
+\[
+E_t^\star\in\mathcal E_t
+\]
+una observación óptima seleccionada según la regla
+\[
+E_t^\star
+\in
+\operatorname*{arg\,min}_{E\in\mathcal E_t}
+D_{\mathrm{KL}}\bigl(\mathcal P\Vert X_t^E\bigr),
+\]
+y escríbase
+\[
+X_{t+1}
+=
+T_{\ell_t^{(E_t^\star)}}(X_t).
+\]
+
+Supóngase que existe una sucesión
+\[
+(\eta_t)_{t\geq 0}\subset[0,1]
+\]
+tal que, para todo \(t\geq 0\) con \(X_t\neq \mathcal P\),
+\[
+\alpha_{\mathrm{KL}}(E_t^\star;X_t,\mathcal P)\geq \eta_t,
+\]
+y además
+\[
+\prod_{t=0}^{\infty}(1-\eta_t)=0.
+\]
+Entonces
+\[
+D_{\mathrm{KL}}(\mathcal P\Vert X_t)\longrightarrow 0.
+\]
+En consecuencia,
+\[
+X_t\longrightarrow \mathcal P.
+\]
+\end{proposicion}
+
+\begin{proof}
+Defínase
+\[
+D_t:=D_{\mathrm{KL}}(\mathcal P\Vert X_t).
+\]
+Si existe \(t_0\geq 0\) tal que
+\[
+X_{t_0}=\mathcal P,
+\]
+entonces, por definición de la trayectoria,
+\[
+X_t=\mathcal P
+\qquad
+\text{para todo }t\geq t_0.
+\]
+Por tanto,
+\[
+D_t=0
+\qquad
+\text{para todo }t\geq t_0,
+\]
+y la conclusión queda probada.
+
+Supóngase entonces que
+\[
+X_t\neq \mathcal P
+\qquad
+\text{para todo }t\geq 0.
+\]
+Como \(\mathcal P,X_t\in\Delta_n^\circ\), se tiene
+\[
+D_t>0
+\qquad
+\text{para todo }t\geq 0.
+\]
+Por definición del coeficiente de avance KL,
+\[
+\alpha_{\mathrm{KL}}(E_t^\star;X_t,\mathcal P)
+=
+1-
+\frac{
+D_{\mathrm{KL}}(\mathcal P\Vert X_{t+1})
+}{
+D_{\mathrm{KL}}(\mathcal P\Vert X_t)
+}.
+\]
+Con la notación \(D_t=D_{\mathrm{KL}}(\mathcal P\Vert X_t)\), esto equivale a
+\[
+\alpha_{\mathrm{KL}}(E_t^\star;X_t,\mathcal P)
+=
+1-\frac{D_{t+1}}{D_t}.
+\]
+Luego
+\[
+D_{t+1}
+=
+\left(
+1-\alpha_{\mathrm{KL}}(E_t^\star;X_t,\mathcal P)
+\right)D_t.
+\]
+Por hipótesis,
+\[
+\alpha_{\mathrm{KL}}(E_t^\star;X_t,\mathcal P)\geq \eta_t.
+\]
+Como \(\eta_t\in[0,1]\), se obtiene
+\[
+1-\alpha_{\mathrm{KL}}(E_t^\star;X_t,\mathcal P)
+\leq
+1-\eta_t.
+\]
+Por tanto,
+\[
+D_{t+1}
+\leq
+(1-\eta_t)D_t.
+\]
+Iterando esta desigualdad desde \(0\) hasta \(t-1\), se obtiene
+\[
+D_t
+\leq
+\left(
+\prod_{s=0}^{t-1}(1-\eta_s)
+\right)D_0.
+\]
+Como
+\[
+\prod_{s=0}^{\infty}(1-\eta_s)=0,
+\]
+se sigue que
+\[
+\prod_{s=0}^{t-1}(1-\eta_s)\longrightarrow 0.
+\]
+En consecuencia,
+\[
+D_t\longrightarrow 0.
+\]
+Es decir,
+\[
+D_{\mathrm{KL}}(\mathcal P\Vert X_t)\longrightarrow 0.
+\]
+
+Finalmente, por la desigualdad de Pinsker,
+\[
+\|\mathcal P-X_t\|_1^2
+\leq
+2D_{\mathrm{KL}}(\mathcal P\Vert X_t).
+\]
+Como el lado derecho converge a \(0\), se obtiene
+\[
+\|\mathcal P-X_t\|_1\longrightarrow 0.
+\]
+Por tanto,
+\[
+X_t\longrightarrow \mathcal P.
+\]
+\end{proof}
+
+
+%====================================================================
+\begin{ejercicio}[Priorización secuencial de pruebas para la confirmación de un patógeno causante de un brote]\label{ej:validacion_patogeno}
+\subsubsection*{Contexto}
+Un brote respiratorio puede deberse a tres patógenos posibles, $\Pi_H=\{H_1,H_2,H_3\}$, correspondientes a los patógenos $\alpha$, $\beta$ y $\gamma$. El estado $X_t\in\Delta_3^\circ$ no representa la causa biológica del brote, sino el estado de creencia institucional del equipo de vigilancia, actualizado con la evidencia de laboratorio disponible.
+
+\subsubsection*{Estado previo}
+La vigilancia histórica fija el estado previo
+\[
+X_0=(0.50,\,0.30,\,0.20)\in\Delta_3^\circ.
+\]
+
+\subsubsection*{Pruebas disponibles}
+El laboratorio puede aplicar una sola prueba por día, y el menú disponible cambia según el suministro de reactivos. El universo de pruebas es $\Pi_E=\{\mathrm{I,II,III}\}$, cada una caracterizada por estudios de validación previos (sensibilidad frente al patógeno objetivo, reactividad cruzada frente a los otros dos):
+\[
+\ell^{(\mathrm I)}=(0.8,0.1,0.1),\qquad
+\ell^{(\mathrm{II})}=(0.6,0.3,0.3),\qquad
+\ell^{(\mathrm{III})}=(0.5,0.5,0.1).
+\]
+
+\subsubsection*{Disponibilidad diaria}
+El día $0$: $\mathcal E_0=\{\mathrm I,\mathrm{II}\}$. El día $1$: se agota el reactivo de I y llega III, $\mathcal E_1=\{\mathrm{II},\mathrm{III}\}$.
+
+\subsubsection*{Criterio de decisión}
+Sin protocolo estandarizado para ordenar las pruebas, el equipo fija un objetivo interno $\mathcal P=(0.96,0.02,0.02)$ y aplica cada día la prueba que más reduce
+\[
+D_{\mathrm{KL}}(\mathcal P\Vert X_t).
+\]
+Cuando
+\[
+D_{\mathrm{KL}}(\mathcal P\Vert X_t)<\delta=0.01,
+\]
+se prioriza $H_1$ para remisión a confirmación de referencia.
+
+\subsubsection*{Pregunta}
+‘ ¿Qué prueba se aplica cada día, cuál es la trayectoria $(X_0,X_1,X_2)$, y se alcanza el umbral al final del día $1$?
+\end{ejercicio}
+
+\begin{proof}[Solución]
+\subsubsection*{Respuesta}
+$E_0^\star=\mathrm I$, $X_1=(8/9,1/15,2/45)\approx(0.8889,0.0667,0.0444)$, $D_{\mathrm{KL}}(\mathcal P\Vert X_1)\approx0.0338$.
+
+$E_1^\star=\mathrm{II}$, $X_2=(16/17,3/85,2/85)\approx(0.9412,0.0353,0.0235)$, $D_{\mathrm{KL}}(\mathcal P\Vert X_2)\approx0.0044<\delta$; $H_1$ alcanza el umbral al final del día $1$.
+
+\subsubsection*{Verosimilitud ideal}
+Por el Corolario de realización bayesiana del paso discreto determinista, llegar a $\mathcal P$ en un solo paso desde $X_0$ exigiría la verosimilitud ideal $\ell^{(1)}(X_0,\mathcal P)_i=\mathcal P_i/X_{0,i}$:
+\[
+\ell^{(1)}(X_0,\mathcal P)=\left(\frac{0.96}{0.5},\frac{0.02}{0.3},\frac{0.02}{0.2}\right)=(1.92,\,0.0667,\,0.1).
+\]
+Esto no coincide con $\ell^{(\mathrm I)}$ ni con $\ell^{(\mathrm{II})}$: el salto directo no es admisible en $\mathcal E_0$, así que se procede por selección observacional.
+
+\subsubsection*{Día 0}
+Con $\mathcal E_0=\{\mathrm I,\mathrm{II}\}$:
+\[
+X_0\circ\ell^{(\mathrm I)}=(0.40,0.03,0.02),\ \Sigma=0.45
+\ \Rightarrow\
+X_0^{\mathrm I}=\left(\tfrac{8}{9},\tfrac{1}{15},\tfrac{2}{45}\right)\approx(0.8889,0.0667,0.0444);
+\]
+\[
+X_0\circ\ell^{(\mathrm{II})}=(0.30,0.09,0.06),\ \Sigma=0.45
+\ \Rightarrow\
+X_0^{\mathrm{II}}=\left(\tfrac{2}{3},\tfrac{1}{5},\tfrac{2}{15}\right)\approx(0.6667,0.2,0.1333).
+\]
+\[
+D_{\mathrm{KL}}(\mathcal P\Vert X_0)=0.96\ln(1.92)+0.02\ln(0.0667)+0.02\ln(0.1)=0.6262-0.0542-0.0461=0.5260.
+\]
+\[
+D_{\mathrm{KL}}(\mathcal P\Vert X_0^{\mathrm I})=0.96\ln(1.08)+0.02\ln(0.30)+0.02\ln(0.45)=0.0739-0.0241-0.0160=0.0338.
+\]
+\[
+D_{\mathrm{KL}}(\mathcal P\Vert X_0^{\mathrm{II}})=0.96\ln(1.44)+0.02\ln(0.10)+0.02\ln(0.15)=0.3501-0.0461-0.0379=0.2661.
+\]
+\[
+\alpha_{\mathrm{KL}}(\mathrm I)=1-\tfrac{0.0338}{0.5260}=0.9357,\qquad
+\alpha_{\mathrm{KL}}(\mathrm{II})=1-\tfrac{0.2661}{0.5260}=0.4942.
+\]
+$E_0^\star=\mathrm I$. $X_1:=X_0^{\mathrm I}=\left(\tfrac{8}{9},\tfrac{1}{15},\tfrac{2}{45}\right)$.
+
+\subsubsection*{Día 1}
+Con $\mathcal E_1=\{\mathrm{II},\mathrm{III}\}$:
+\[
+X_1\circ\ell^{(\mathrm{II})}=\left(\tfrac{8}{15},\tfrac{1}{50},\tfrac{1}{75}\right),\ \Sigma=\tfrac{17}{30}
+\ \Rightarrow\
+X_1^{\mathrm{II}}=\left(\tfrac{16}{17},\tfrac{3}{85},\tfrac{2}{85}\right)\approx(0.9412,0.0353,0.0235);
+\]
+\[
+X_1\circ\ell^{(\mathrm{III})}=\left(\tfrac{4}{9},\tfrac{1}{30},\tfrac{1}{225}\right),\ \Sigma=\tfrac{217}{450}
+\ \Rightarrow\
+X_1^{\mathrm{III}}=\left(\tfrac{200}{217},\tfrac{15}{217},\tfrac{2}{217}\right)\approx(0.9217,0.0691,0.0092).
+\]
+\[
+D_{\mathrm{KL}}(\mathcal P\Vert X_1)=0.0338\ \text{(ya calculada)}.
+\]
+\[
+D_{\mathrm{KL}}(\mathcal P\Vert X_1^{\mathrm{II}})=0.96\ln(1.02)+0.02\ln(0.5667)+0.02\ln(0.85)=0.0190-0.0114-0.0033=0.0044.
+\]
+\[
+D_{\mathrm{KL}}(\mathcal P\Vert X_1^{\mathrm{III}})=0.96\ln(1.0416)+0.02\ln(0.2893)+0.02\ln(2.17)=0.0391-0.0248+0.0155=0.0298.
+\]
+\[
+\alpha_{\mathrm{KL}}(\mathrm{II})=1-\tfrac{0.0044}{0.0338}=0.8699,\qquad
+\alpha_{\mathrm{KL}}(\mathrm{III})=1-\tfrac{0.0298}{0.0338}=0.1187.
+\]
+$E_1^\star=\mathrm{II}$ ($\ell_1^{(\mathrm{III})}=\ell_2^{(\mathrm{III})}$ no separa $H_1$ de $H_2$). $X_2:=X_1^{\mathrm{II}}\approx(0.9412,0.0353,0.0235)$, $D_{\mathrm{KL}}(\mathcal P\Vert X_2)\approx0.0044<\delta$.
+
+\subsubsection*{Contraste: selección pasiva}
+Aplicando II el día $0$ y III el día $1$ sin comparar: $X_0^{\mathrm{II}}=(2/3,1/5,2/15)$; luego $X_0^{\mathrm{II}}\circ\ell^{(\mathrm{III})}=(1/3,1/10,1/75)$, $\Sigma=67/150$, da $X_2^{\text{pasiva}}=(50/67,15/67,2/67)\approx(0.7463,0.2239,0.0299)$, con $D_{\mathrm{KL}}(\mathcal P\Vert X_2^{\text{pasiva}})\approx0.1855$: $42$ veces más lejos del umbral. La prueba I solo estuvo disponible el día $0$; no priorizarla cuesta la oportunidad.
+
+\subsubsection*{Convergencia}
+El salto de un solo paso (Corolario, $\alpha=1$) no era admisible; en su lugar, $\alpha_{\mathrm{KL}}(E_0^\star)=0.9357\ge0.85$ y $\alpha_{\mathrm{KL}}(E_1^\star)=0.8699\ge0.85$. Con $\eta_t=0.85$, $\prod_t(1-\eta_t)=\lim 0.15^t=0$: el resultado de disipación y convergencia garantiza $X_t\to\mathcal P$ aunque el umbral no se alcance tan rápido en otra realización del proceso.
+\end{proof}
+
+%====================================================================
+\section{Sección 6 -- Semántica markoviana}
+%====================================================================
+
+Los fundamentos anteriores y la semántica bayesiana establecieron el marco de CI. Esta sección identifica, dentro del mismo marco, el caso particular que corresponde al operador de Markov clásico. El resultado estructural central es que las cadenas de Markov entran en CI a través del mecanismo de correcciones locales dependientes del estado, mientras que la actualización bayesiana entra por correcciones globales independientes del estado. Esta asimetría algebraica es la que hace no trivial el problema de ordenamiento del Proyecto~II.
+
+\begin{definicion}[Base discreta]\label{def:base_discreta_markov}
+Sea $(\Omega,\mathcal F,P)$ un espacio de probabilidad y sea
+\[
+\Pi=\{A_1,\dots,A_n\}
+\]
+una partición medible finita de $\Omega$ tal que
+\[
+P(A_i)>0,\qquad i=1,\dots,n.
+\]
+Identificamos cada celda $A_i$ con el índice $i$, y escribimos
+\[
+I:=\{1,\dots,n\}.
+\]
+Un estado discreto sobre $\Pi$ es un vector fila
+\[
+X=(X_1,\dots,X_n)\in\Delta_n,
+\]
+donde $X_i$ representa la masa asignada a la celda $A_i$.
+\end{definicion}
+
+\begin{lema}[Distribución inducida por una partición finita]\label{lem:distribucion_inducida_particion}
+Sea $(\Omega,\mathcal F,P)$ un espacio de probabilidad y sea
+\[
+\Pi=\{A_1,\dots,A_n\}
+\]
+una partición medible finita de $\Omega$ tal que
+\[
+P(A_i)>0,\qquad i=1,\dots,n.
+\]
+Defínase
+\[
+X^P=(X^P_1,\dots,X^P_n),
+\qquad
+X^P_i:=P(A_i).
+\]
+Entonces
+\[
+X^P\in\Delta_n^\circ.
+\]
+\end{lema}
+
+\begin{proof}
+Para cada $i=1,\dots,n$, por hipótesis,
+\[
+X^P_i=P(A_i)>0.
+\]
+Además, como $\Pi$ es una partición de $\Omega$, los conjuntos $A_1,\dots,A_n$ son disjuntos y satisfacen
+\[
+\bigcup_{i=1}^n A_i=\Omega.
+\]
+Por aditividad finita de $P$,
+\[
+\sum_{i=1}^n X^P_i
+=
+\sum_{i=1}^n P(A_i)
+=
+P\!\left(\bigcup_{i=1}^n A_i\right)
+=
+P(\Omega)
+=
+1.
+\]
+Por tanto,
+\[
+X^P_i>0\quad (i=1,\dots,n),
+\qquad
+\sum_{i=1}^n X^P_i=1,
+\]
+y en consecuencia
+\[
+X^P\in\Delta_n^\circ.
+\]
+\end{proof}
+
+\begin{definicion}[Matrices estocásticas por filas]\label{def:Sn_markov}
+Sea $n\in\mathbb N$ y sea
+\[
+I:=\{1,\dots,n\}.
+\]
+Se denota por $\mathcal S_n$ el conjunto de matrices estocásticas por filas de orden $n$:
+\[
+\mathcal S_n
+:=
+\left\{
+K=(K_{ab})_{a,b=1}^n\in\mathbb R^{n\times n}
+:
+K_{ab}\ge 0\ \forall a,b\in I,
+\quad
+\sum_{b=1}^n K_{ab}=1\ \forall a\in I
+\right\}.
+\]
+Para $K\in\mathcal S_n$, el operador markoviano asociado es
+\[
+M_K:\Delta_n\longrightarrow\mathbb R^n,
+\qquad
+M_K(X):=XK,
+\]
+donde $X$ se considera vector fila y el producto es el producto matricial usual.
+\end{definicion}
+
+\begin{observacion}[Lectura markoviana]
+Si $K\in\mathcal S_n$, entonces para cada $a\in I$ la fila
+\[
+(K_{a1},\dots,K_{an})
+\]
+es una distribución de probabilidad discreta sobre $I$. El número $K_{ab}$ se interpreta como la fracción de masa que, en un paso markoviano, se transporta desde el estado $a$ hacia el estado $b$.
+
+Esta lectura sólo usa la base discreta $I=\{1,\dots,n\}$. En particular, si más adelante una partición de hipótesis se identifica con una base discreta, el mismo operador $M_K$ podrá actuar sobre el símplex asociado a dicha partición.
+\end{observacion}
+
+\begin{proposicion}[El símplex es invariante bajo matrices estocásticas por filas]\label{prop:simplex_invariante_markov}
+Sea $K\in\mathcal S_n$ y sea $X\in\Delta_n$. Entonces
+\[
+M_K(X)=XK\in\Delta_n.
+\]
+En particular,
+\[
+M_K:\Delta_n\longrightarrow\Delta_n
+\]
+está bien definido.
+\end{proposicion}
+
+\begin{proof}
+Para cada $b=1,\dots,n$,
+\[
+(M_K(X))_b
+=
+(XK)_b
+=
+\sum_{a=1}^n X_aK_{ab}.
+\]
+Como
+\[
+X_a\ge 0
+\qquad\text{y}\qquad
+K_{ab}\ge 0,
+\]
+se tiene
+\[
+(M_K(X))_b\ge 0.
+\]
+Además,
+\[
+\sum_{b=1}^n(M_K(X))_b
+=
+\sum_{b=1}^n\sum_{a=1}^n X_aK_{ab}
+=
+\sum_{a=1}^n X_a\sum_{b=1}^n K_{ab}.
+\]
+Como $K\in\mathcal S_n$,
+\[
+\sum_{b=1}^n K_{ab}=1
+\qquad\text{para todo }a.
+\]
+Luego
+\[
+\sum_{b=1}^n(M_K(X))_b
+=
+\sum_{a=1}^n X_a
+=
+1.
+\]
+Por tanto,
+\[
+M_K(X)\in\Delta_n.
+\]
+\end{proof}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{observacion}[Interior del símplex y dominio de las correcciones locales]\label{obs:interior_markov}
+La Proposición~\ref{prop:simplex_invariante_markov} garantiza
+\[
+M_K(\Delta_n)\subseteq\Delta_n,
+\]
+pero no garantiza, en general,
+\[
+M_K(\Delta_n^\circ)\subseteq\Delta_n^\circ.
+\]
+Para preservar el interior basta imponer que ninguna columna de \(K\) sea nula, es decir, que para cada \(b\in I\) exista al menos un \(a\in I\) tal que
+\[
+K_{ab}>0.
+\]
+Esta es precisamente la condición de compatibilidad con el interior del símplex. La condición más fuerte
+\[
+K_{ab}>0\qquad\forall a,b\in I
+\]
+también preserva el interior, pero no es necesaria.
+
+La corrección local asociada a un paso markoviano se escribirá mediante cocientes de la forma
+\[
+\frac{(XK)_i}{X_i}.
+\]
+Por ello, para definir dicha corrección local se requiere
+\[
+X\in\Delta_n^\circ.
+\]
+Si además se desea que el estado transformado permanezca en \(\Delta_n^\circ\), se impondrá explícitamente la compatibilidad de \(K\) con el interior del símplex.
+\end{observacion}
+
+\begin{proposicion}[Representación local de un paso markoviano]\label{prop:markov_como_correccion_local}
+Sea \(K\in\mathcal S_n\) y sea \(X\in\Delta_n^\circ\). Defínase
+\[
+Y^K_i(X):=\frac{(M_K(X))_i}{X_i}-1,
+\qquad i=1,\dots,n.
+\]
+Entonces
+\[
+Y^K(X)\in C(X)
+\]
+y
+\[
+T^{\mathrm{loc}}_{Y^K(X)}(X)=M_K(X)=XK.
+\]
+\end{proposicion}
+
+\begin{proof}
+Como \(X\in\Delta_n^\circ\), se tiene
+\[
+X_i>0,\qquad i=1,\dots,n.
+\]
+Por tanto, los cocientes
+\[
+\frac{(M_K(X))_i}{X_i}
+\]
+están bien definidos.
+
+Para cada \(i=1,\dots,n\),
+\[
+1+Y^K_i(X)
+=
+\frac{(M_K(X))_i}{X_i}.
+\]
+Multiplicando por \(X_i\), se obtiene
+\[
+X_i(1+Y^K_i(X))
+=
+(M_K(X))_i.
+\]
+Por la Proposición~\ref{prop:simplex_invariante_markov},
+\[
+M_K(X)\in\Delta_n.
+\]
+En consecuencia,
+\[
+X_i(1+Y^K_i(X))\ge 0
+\qquad
+\text{para todo }i,
+\]
+y
+\[
+\sum_{i=1}^n X_i(1+Y^K_i(X))
+=
+\sum_{i=1}^n (M_K(X))_i
+=
+1.
+\]
+Por definición de \(C(X)\),
+\[
+Y^K(X)\in C(X).
+\]
+Además, por definición del operador local,
+\[
+T^{\mathrm{loc}}_{Y^K(X)}(X)_i
+=
+X_i(1+Y^K_i(X))
+=
+(M_K(X))_i.
+\]
+Como esto vale para todo \(i=1,\dots,n\), se concluye que
+\[
+T^{\mathrm{loc}}_{Y^K(X)}(X)=M_K(X)=XK.
+\]
+\end{proof}
+
+
+\begin{proposicion}[No globalidad de un operador markoviano no trivial]\label{prop:markov_no_global}
+Sea \(K\in\mathcal S_n\). Supóngase que existe un vector
+\[
+a=(a_1,\dots,a_n)\in\mathbb R_{>0}^n
+\]
+tal que
+\[
+T_a(X)=M_K(X)
+\qquad
+\text{para todo }X\in\Delta_n^\circ,
+\]
+donde
+\[
+T_a(X)_i
+=
+\frac{X_i a_i}{\sum_{k=1}^n X_k a_k}.
+\]
+Entonces
+\[
+K=I.
+\]
+En consecuencia, si \(K\neq I\), el operador markoviano \(M_K\) no puede representarse como un operador global con factor multiplicativo independiente de \(X\).
+\end{proposicion}
+
+\begin{proof}
+Sea \(r\in I\). Tomemos una sucesión
+\[
+(X^{(m)})_{m\ge1}\subset\Delta_n^\circ
+\]
+tal que
+\[
+X^{(m)}\to e_r,
+\]
+donde \(e_r\) denota el \(r\)-ésimo vector canónico.
+
+Por hipótesis,
+\[
+T_a(X^{(m)})=M_K(X^{(m)})=X^{(m)}K
+\qquad
+\text{para todo }m.
+\]
+Para cada \(i=1,\dots,n\),
+\[
+T_a(X^{(m)})_i
+=
+\frac{X_i^{(m)}a_i}{\sum_{k=1}^nX_k^{(m)}a_k}.
+\]
+Como \(X^{(m)}\to e_r\), se tiene
+\[
+\sum_{k=1}^nX_k^{(m)}a_k\to a_r>0.
+\]
+Además,
+\[
+X_r^{(m)}a_r\to a_r,
+\qquad
+X_i^{(m)}a_i\to 0
+\quad (i\neq r).
+\]
+Por tanto,
+\[
+T_a(X^{(m)})\to e_r.
+\]
+
+Por otro lado, como \(X\mapsto XK\) es lineal,
+\[
+X^{(m)}K\to e_rK.
+\]
+Al pasar al límite en
+\[
+T_a(X^{(m)})=X^{(m)}K,
+\]
+se obtiene
+\[
+e_r=e_rK.
+\]
+Esto significa que la fila \(r\)-ésima de \(K\) coincide con \(e_r\).
+
+Como \(r\in I\) fue arbitrario, todas las filas de \(K\) coinciden con las filas correspondientes de la matriz identidad. En consecuencia,
+\[
+K=I.
+\]
+Por tanto, si \(K\neq I\), no existe un vector \(a\in\mathbb R_{>0}^n\) tal que
+\[
+T_a(X)=M_K(X)
+\qquad
+\text{para todo }X\in\Delta_n^\circ.
+\]
+\end{proof}
+
+\begin{observacion}[Local frente a global]\label{obs:local_vs_global}
+La corrección \(Y^K(X)\) depende del estado base \(X\). Por tanto, el paso markoviano entra en el formalismo como una corrección local. En cambio, la verosimilitud bayesiana actúa mediante un factor multiplicativo positivo que no depende del estado base; por ello entra como corrección global.
+
+En términos estructurales, el operador markoviano mezcla coordenadas mediante una matriz estocástica por filas:
+\[
+X\longmapsto XK.
+\]
+El operador bayesiano reescala coordenadas por factores positivos y normaliza:
+\[
+X_i\longmapsto
+\frac{X_i\ell_i}{\sum_{k=1}^n X_k\ell_k}.
+\]
+Esta diferencia algebraica es la que permite formular posteriormente el problema de conmutación entre el paso markoviano y la actualización bayesiana.
+\end{observacion}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%% TERMINO 2
+
+
+\begin{definicion}[Distribución estacionaria]\label{def:estacionaria_markov}
+Sea \(K\in\mathcal S_n\). Una distribución \(\pi\in\Delta_n^\circ\) se llama estacionaria para \(K\) si
+\[
+\pi K=\pi.
+\]
+Equivalente, en términos del operador markoviano \(M_K\), esto significa que
+\[
+M_K(\pi)=\pi.
+\]
+\end{definicion}
+
+
+\begin{observacion}[Estacionariedad y corrección local nula]\label{obs:estacionaria_correccion_nula}
+Sea \(K\in\mathcal S_n\) y sea \(\pi\in\Delta_n^\circ\). Entonces \(\pi\) es estacionaria para \(K\) si y sólo si
+\[
+Y^K(\pi)=0.
+\]
+En efecto, para cada \(i=1,\dots,n\),
+\[
+Y_i^K(\pi)
+=
+\frac{(M_K(\pi))_i}{\pi_i}-1
+=
+\frac{(\pi K)_i}{\pi_i}-1.
+\]
+Como \(\pi_i>0\), se tiene
+\[
+Y_i^K(\pi)=0
+\quad\Longleftrightarrow\quad
+(\pi K)_i=\pi_i.
+\]
+Por tanto,
+\[
+Y^K(\pi)=0
+\quad\Longleftrightarrow\quad
+\pi K=\pi.
+\]
+Así, en el lenguaje local de CI, una distribución estacionaria es un estado cuya corrección markoviana local es nula.
+\end{observacion}
+
+
+
+\begin{lema}[Estacionariedad positiva y compatibilidad con el interior]\label{lem:estacionaria_implica_interior}
+Sea \(K\in\mathcal S_n\). Supóngase que existe una distribución estacionaria
+\[
+\pi\in\Delta_n^\circ
+\]
+para \(K\), es decir,
+\[
+\pi K=\pi.
+\]
+Entonces \(K\) es compatible con el interior del símplex. En consecuencia,
+\[
+M_K(\Delta_n^\circ)\subseteq \Delta_n^\circ.
+\]
+\end{lema}
+
+\begin{proof}
+Sea \(b\in I\). Como \(\pi\) es estacionaria para \(K\), se tiene
+\[
+\pi K=\pi.
+\]
+Por tanto,
+\[
+\pi_b=(\pi K)_b=\sum_{a=1}^n \pi_aK_{ab}.
+\]
+Como \(\pi\in\Delta_n^\circ\), se tiene
+\[
+\pi_b>0
+\qquad\text{y}\qquad
+\pi_a>0
+\quad\text{para todo }a\in I.
+\]
+Además, como \(K\in\mathcal S_n\),
+\[
+K_{ab}\ge 0
+\qquad\text{para todo }a,b\in I.
+\]
+Si se tuviera
+\[
+K_{ab}=0
+\qquad\text{para todo }a\in I,
+\]
+entonces
+\[
+\sum_{a=1}^n \pi_aK_{ab}=0,
+\]
+lo cual contradice que
+\[
+\pi_b=\sum_{a=1}^n \pi_aK_{ab}>0.
+\]
+Por tanto, existe al menos un \(a\in I\) tal que
+\[
+K_{ab}>0.
+\]
+Como \(b\in I\) fue arbitrario, para cada \(b\in I\) existe al menos un \(a\in I\) tal que
+\[
+K_{ab}>0.
+\]
+Así, \(K\) es compatible con el interior del símplex.
+
+La inclusión
+\[
+M_K(\Delta_n^\circ)\subseteq \Delta_n^\circ
+\]
+se sigue de la compatibilidad de \(K\) con el interior del símplex.
+\end{proof}
+
+
+\begin{proposicion}[Disipación de la divergencia KL hacia la estacionaria]\label{prop:disipacion_KL_markov}
+Sea \(K\in\mathcal S_n\) y sea \(\pi\in\Delta_n^\circ\) una distribución estacionaria para \(K\), es decir,
+\[
+\pi K=\pi.
+\]
+Defínase
+\[
+E_\pi(X):=D_{\mathrm{KL}}(\pi\|X),
+\qquad X\in\Delta_n^\circ.
+\]
+Entonces, para todo \(X\in\Delta_n^\circ\),
+\[
+E_\pi(M_K(X))
+=
+D_{\mathrm{KL}}(\pi\|XK)
+\le
+D_{\mathrm{KL}}(\pi\|X)
+=
+E_\pi(X).
+\]
+En particular, un paso markoviano no incrementa la divergencia KL hacia la distribución estacionaria.
+\end{proposicion}
+
+\begin{proof}
+Sea \(X\in\Delta_n^\circ\). Como \(\pi\in\Delta_n^\circ\) es estacionaria para \(K\), por el Lema~\ref{lem:estacionaria_implica_interior} se tiene
+\[
+M_K(X)=XK\in\Delta_n^\circ.
+\]
+Por tanto,
+\[
+D_{\mathrm{KL}}(\pi\|XK)
+\]
+está bien definida.
+
+Como \(\pi K=\pi\), para cada \(j=1,\dots,n\),
+\[
+\pi_j=(\pi K)_j=\sum_{i=1}^n\pi_iK_{ij}.
+\]
+Además,
+\[
+(XK)_j=\sum_{i=1}^n X_iK_{ij}.
+\]
+Entonces
+\[
+D_{\mathrm{KL}}(\pi\|XK)
+=
+\sum_{j=1}^n
+\pi_j
+\log\frac{\pi_j}{(XK)_j}.
+\]
+
+Fijemos \(j\in I\). Como \(\pi_j>0\), definimos
+\[
+w_{ij}:=\frac{\pi_iK_{ij}}{\pi_j},
+\qquad i=1,\dots,n.
+\]
+Entonces
+\[
+w_{ij}\ge 0,
+\]
+y, usando \(\pi_j=\sum_i\pi_iK_{ij}\),
+\[
+\sum_{i=1}^n w_{ij}
+=
+\frac{1}{\pi_j}
+\sum_{i=1}^n\pi_iK_{ij}
+=
+1.
+\]
+Además,
+\[
+(XK)_j
+=
+\sum_{i=1}^n X_iK_{ij}
+=
+\sum_{i=1}^n
+\pi_iK_{ij}\frac{X_i}{\pi_i}
+=
+\pi_j\sum_{i=1}^n w_{ij}\frac{X_i}{\pi_i}.
+\]
+Por tanto,
+\[
+\frac{\pi_j}{(XK)_j}
+=
+\left(
+\sum_{i=1}^n w_{ij}\frac{X_i}{\pi_i}
+\right)^{-1}.
+\]
+Luego
+\[
+\log\frac{\pi_j}{(XK)_j}
+=
+-\log\left(
+\sum_{i=1}^n w_{ij}\frac{X_i}{\pi_i}
+\right).
+\]
+Como la función \(u\mapsto-\log u\) es convexa en \((0,\infty)\), por la desigualdad de Jensen se obtiene
+\[
+-\log\left(
+\sum_{i=1}^n w_{ij}\frac{X_i}{\pi_i}
+\right)
+\le
+\sum_{i=1}^n
+w_{ij}
+\left(
+-\log\frac{X_i}{\pi_i}
+\right).
+\]
+Es decir,
+\[
+\log\frac{\pi_j}{(XK)_j}
+\le
+\sum_{i=1}^n
+w_{ij}
+\log\frac{\pi_i}{X_i}.
+\]
+Multiplicando por \(\pi_j\),
+\[
+\pi_j
+\log\frac{\pi_j}{(XK)_j}
+\le
+\sum_{i=1}^n
+\pi_iK_{ij}
+\log\frac{\pi_i}{X_i}.
+\]
+Sumando en \(j\), se obtiene
+\[
+D_{\mathrm{KL}}(\pi\|XK)
+=
+\sum_{j=1}^n
+\pi_j
+\log\frac{\pi_j}{(XK)_j}
+\le
+\sum_{j=1}^n
+\sum_{i=1}^n
+\pi_iK_{ij}
+\log\frac{\pi_i}{X_i}.
+\]
+Como las sumas son finitas,
+\[
+\sum_{j=1}^n
+\sum_{i=1}^n
+\pi_iK_{ij}
+\log\frac{\pi_i}{X_i}
+=
+\sum_{i=1}^n
+\pi_i
+\log\frac{\pi_i}{X_i}
+\sum_{j=1}^nK_{ij}.
+\]
+Como \(K\in\mathcal S_n\),
+\[
+\sum_{j=1}^nK_{ij}=1
+\qquad
+\text{para todo }i.
+\]
+Por tanto,
+\[
+D_{\mathrm{KL}}(\pi\|XK)
+\le
+\sum_{i=1}^n
+\pi_i
+\log\frac{\pi_i}{X_i}
+=
+D_{\mathrm{KL}}(\pi\|X).
+\]
+En consecuencia,
+\[
+E_\pi(M_K(X))\le E_\pi(X).
+\]
+\end{proof}
+
+
+\begin{proposicion}[Trayectoria markoviana como trayectoria local de CI]\label{prop:trayectoria_markov_CI}
+Sea \(K\in\mathcal S_n\) y sea \(X_0\in\Delta_n\). Defínase la trayectoria discreta
+\[
+X_{t+1}:=M_K(X_t)=X_tK,
+\qquad t\ge 0.
+\]
+Entonces
+\[
+X_t\in\Delta_n
+\qquad
+\text{para todo }t\ge 0,
+\]
+y
+\[
+X_t=X_0K^t
+\qquad
+\text{para todo }t\ge 0.
+\]
+
+Además, si \(X_t\in\Delta_n^\circ\), entonces el paso \(X_t\mapsto X_{t+1}\) admite la representación local
+\[
+X_{t+1}
+=
+T^{\mathrm{loc}}_{Y^K(X_t)}(X_t).
+\]
+
+En particular, si \(X_0\in\Delta_n^\circ\) y \(K\) es compatible con el interior del símplex, entonces
+\[
+X_t\in\Delta_n^\circ
+\qquad
+\text{para todo }t\ge 0,
+\]
+y cada paso de la trayectoria es una corrección local de CI.
+\end{proposicion}
+
+\begin{proof}
+Primero probamos que \(X_t\in\Delta_n\) para todo \(t\ge 0\). Para \(t=0\), esto se cumple por hipótesis, pues
+\[
+X_0\in\Delta_n.
+\]
+Supóngase ahora que
+\[
+X_t\in\Delta_n.
+\]
+Como \(K\in\mathcal S_n\), por la Proposición~\ref{prop:simplex_invariante_markov} se tiene
+\[
+M_K(X_t)=X_tK\in\Delta_n.
+\]
+Por definición de la trayectoria,
+\[
+X_{t+1}=X_tK,
+\]
+luego
+\[
+X_{t+1}\in\Delta_n.
+\]
+Por inducción,
+\[
+X_t\in\Delta_n
+\qquad
+\text{para todo }t\ge 0.
+\]
+
+Probamos ahora la forma cerrada. Para \(t=0\),
+\[
+X_0=X_0K^0.
+\]
+Supóngase que
+\[
+X_t=X_0K^t.
+\]
+Entonces
+\[
+X_{t+1}
+=
+X_tK
+=
+(X_0K^t)K
+=
+X_0K^{t+1}.
+\]
+Por inducción,
+\[
+X_t=X_0K^t
+\qquad
+\text{para todo }t\ge 0.
+\]
+
+Si \(X_t\in\Delta_n^\circ\), entonces, por la Proposición~\ref{prop:markov_como_correccion_local},
+\[
+M_K(X_t)
+=
+T^{\mathrm{loc}}_{Y^K(X_t)}(X_t).
+\]
+Como
+\[
+X_{t+1}=M_K(X_t),
+\]
+se obtiene
+\[
+X_{t+1}
+=
+T^{\mathrm{loc}}_{Y^K(X_t)}(X_t).
+\]
+
+Finalmente, supóngase que \(X_0\in\Delta_n^\circ\) y que \(K\) es compatible con el interior del símplex. En ese caso,
+\[
+M_K(\Delta_n^\circ)\subseteq\Delta_n^\circ.
+\]
+Como \(X_0\in\Delta_n^\circ\), se sigue por inducción que
+\[
+X_t\in\Delta_n^\circ
+\qquad
+\text{para todo }t\ge 0.
+\]
+Por lo demostrado en el párrafo anterior, cada paso de la trayectoria admite la representación local
+\[
+X_{t+1}
+=
+T^{\mathrm{loc}}_{Y^K(X_t)}(X_t).
+\]
+\end{proof}
+
+
+\begin{observacion}[Primitividad y convergencia a equilibrio]\label{obs:primitividad_convergencia_markov}
+La disipación de la divergencia KL hacia una distribución estacionaria no implica, por sí sola, la convergencia de la trayectoria markoviana hacia dicha distribución. Para obtener convergencia se requiere una hipótesis dinámica adicional sobre la matriz de transición.
+
+Una condición suficiente estándar es la primitividad: se dirá que \(K\in\mathcal S_n\) es primitiva si existe \(m\ge 1\) tal que
+\[
+(K^m)_{ij}>0
+\qquad
+\text{para todo }i,j\in I.
+\]
+Bajo esta hipótesis, el teorema de Perron--Frobenius para matrices estocásticas finitas garantiza la existencia de una única distribución estacionaria
+\[
+\pi\in\Delta_n^\circ
+\]
+y la convergencia
+\[
+K^t\longrightarrow \mathbf 1\pi,
+\qquad t\to\infty,
+\]
+donde \(\mathbf 1\pi\) denota la matriz cuyas filas son todas iguales a \(\pi\).
+
+En consecuencia, si \(X_0\in\Delta_n\), entonces
+\[
+X_0K^t\longrightarrow X_0(\mathbf 1\pi)=\pi.
+\]
+La proposición siguiente incorpora esta convergencia al lenguaje de trayectorias informacionales.
+\end{observacion}
+
+
+\begin{proposicion}[Convergencia hacia la estacionaria bajo primitividad]\label{prop:convergencia_primitiva_markov}
+Sea \(K\in\mathcal S_n\) una matriz primitiva, es decir, supóngase que existe \(m\ge 1\) tal que
+\[
+(K^m)_{ij}>0
+\qquad
+\text{para todo }i,j\in I.
+\]
+Entonces existe una única distribución estacionaria
+\[
+\pi\in\Delta_n^\circ
+\]
+para \(K\).
+
+Sea \(X_0\in\Delta_n^\circ\) y defínase la trayectoria markoviana
+\[
+X_{t+1}:=M_K(X_t)=X_tK,
+\qquad t\ge 0.
+\]
+Entonces
+\[
+X_t\longrightarrow \pi
+\qquad
+\text{cuando }t\to\infty.
+\]
+Además, si
+\[
+E_\pi(X):=D_{\mathrm{KL}}(\pi\|X),
+\]
+entonces
+\[
+E_\pi(X_{t+1})\le E_\pi(X_t)
+\qquad
+\text{para todo }t\ge 0,
+\]
+y
+\[
+\lim_{t\to\infty}E_\pi(X_t)=0.
+\]
+\end{proposicion}
+
+\begin{proof}
+Como \(K\) es primitiva, por la Observación~\ref{obs:primitividad_convergencia_markov} existe una única distribución estacionaria
+\[
+\pi\in\Delta_n^\circ
+\]
+y se tiene
+\[
+K^t\longrightarrow \mathbf 1\pi.
+\]
+Por la Proposición~\ref{prop:trayectoria_markov_CI}, la trayectoria satisface
+\[
+X_t=X_0K^t
+\qquad
+\text{para todo }t\ge 0.
+\]
+Por tanto,
+\[
+X_t=X_0K^t\longrightarrow X_0(\mathbf 1\pi).
+\]
+Como \(X_0\in\Delta_n\), se tiene
+\[
+\sum_{i=1}^n X_{0,i}=1.
+\]
+Luego
+\[
+X_0(\mathbf 1\pi)
+=
+\left(\sum_{i=1}^n X_{0,i}\right)\pi
+=
+\pi.
+\]
+Así,
+\[
+X_t\longrightarrow \pi.
+\]
+
+Ahora, como \(\pi\in\Delta_n^\circ\) es estacionaria para \(K\), por la Proposición~\ref{prop:disipacion_KL_markov} se tiene, para todo \(t\ge 0\),
+\[
+D_{\mathrm{KL}}(\pi\|X_{t+1})
+=
+D_{\mathrm{KL}}(\pi\|X_tK)
+\le
+D_{\mathrm{KL}}(\pi\|X_t).
+\]
+Es decir,
+\[
+E_\pi(X_{t+1})\le E_\pi(X_t).
+\]
+
+Finalmente, como \(X_t\to\pi\) y \(X_t\in\Delta_n^\circ\) para todo \(t\ge 0\), por continuidad de la divergencia KL en el interior del símplex se obtiene
+\[
+\lim_{t\to\infty}E_\pi(X_t)
+=
+\lim_{t\to\infty}D_{\mathrm{KL}}(\pi\|X_t)
+=
+D_{\mathrm{KL}}(\pi\|\pi)
+=
+0.
+\]
+\end{proof}
+
+\clearpage
+
+
+%%%%%%%%%%%% TERMINO 3 FINAL MARKOV
+\section{Sección 7 -- Control Óptimo Informacional y Defecto de Ordenamiento}
+
+\subsection{Comparación de órdenes Bayes--Markov}
+
+Esta sección compara dos composiciones de una corrección markoviana y una corrección bayesiana sobre un mismo estado informacional. En el orden Markov--Bayes se aplica primero la dinámica markoviana y después la actualización bayesiana; en el orden Bayes--Markov se actualiza primero por Bayes y después se propaga por Markov. Aunque ambas operaciones están definidas sobre el mismo símplex, en general no producen el mismo estado terminal.
+
+La diferencia entre estos dos órdenes será medida en términos de sus funciones de acción--valor. El objetivo formal de la sección es obtener una cota de la forma
+\[
+\left|
+Q_\tau^{M\to B}(X;K,L)-Q_\tau^{B\to M}(X;K,L)
+\right|
+\le
+C_\tau\left(
+\|\Gamma_{K,L}(X)\|_1+
+\|\mathcal D_{K,L}(X)\|_1
+\right),
+\]
+donde \(\Gamma_{K,L}(X)\) mide el desacoplamiento de primer paso entre la propagación markoviana y la corrección bayesiana, mientras que \(\mathcal D_{K,L}(X)\) mide el defecto producido por cambiar el orden de composición.
+
+Para que esta comparación sea estable, no basta con definir las dos composiciones de manera puntual. Es necesario trabajar en clases de operadores y ventanas de estados donde las constantes de regularidad sean uniformes. La positividad de los kernels markovianos evita pérdidas abruptas de soporte; las ventanas interiores del símplex evitan singularidades del funcional logarítmico; y las cotas sobre las verosimilitudes permiten controlar de forma uniforme las correcciones bayesianas. La siguiente definición fija precisamente ese marco admisible.
+
+%%%%%%%% COMPOSICI“N BAYES--MARKOV <-> MARKOV--BAYES
+
+
+
+
+\begin{observacion}[Base común e interpretación global--local del orden \(B\to M\)]
+\label{obs:base_comun_global_local_BM}
+Las composiciones \(B\to M\) y \(M\to B\) requieren una base probabilística común. La base markoviana común se toma de la formulación de cadenas de Markov de \citep{Norris1997}. La lectura bayesiana de estabilidad posterior se usa como referencia contextual en \citep{Sprungk2020}. En este marco, el estado inicial no se interpreta sólo como un vector abstracto del símplex, sino como la ley discreta inducida por una variable aleatoria finita.
+
+Sea \((\Omega,\mathcal F,\mathbb P)\) un espacio de probabilidad y sea
+\[
+Z_0:\Omega\longrightarrow I,
+\qquad
+I:=\{1,\dots,n\},
+\]
+una variable aleatoria discreta. Escribimos
+\[
+H_a^{(0)}:=\{Z_0=a\},
+\qquad a=1,\dots,n.
+\]
+Si
+\[
+\mathbb P(H_a^{(0)})>0,
+\qquad a=1,\dots,n,
+\]
+entonces la ley de \(Z_0\) define el estado interior
+\[
+X=(X_1,\dots,X_n)\in\Delta_n^\circ,
+\qquad
+X_a:=\mathbb P(Z_0=a).
+\]
+
+Un kernel \(K\in\mathcal S_n\) tiene lectura markoviana cuando sus entradas se interpretan como
+\[
+K_{ab}
+=
+\mathbb P(Z_1=b\mid Z_0=a),
+\qquad a,b\in I.
+\]
+Por otra parte, una observación finita en el tiempo \(t\) se modela mediante una variable
+\[
+O_t:\Omega\longrightarrow \mathcal E,
+\qquad
+\mathcal E:=\{e_1,\dots,e_m\}.
+\]
+Para cada \(e_j\in\mathcal E\), denotamos
+\[
+E_j^{(t)}:=\{O_t=e_j\}.
+\]
+
+De acuerdo con la Proposición~\ref{prop:bayes_como_TY}, la parte bayesiana actúa como una corrección global del estado. En cambio, de acuerdo con la Proposición~\ref{prop:markov_como_correccion_local}, la parte markoviana admite una representación local alrededor del estado sobre el cual se aplica.
+
+Así, el orden \(B\to M\) significa primero filtrar la ley de \(Z_0\) con una observación en \(t=0\) y después propagar localmente la ley posterior por \(K\):
+\[
+\text{filtrar la ley de }Z_0\text{ con }E_j^{(0)}
+\quad\longrightarrow\quad
+\text{propagar localmente la ley posterior por }K.
+\]
+El orden \(M\to B\), que será considerado después, invierte estos pasos: primero propaga la ley de \(Z_0\) hacia \(Z_1\) y luego aplica la corrección bayesiana sobre la ley propagada.
+\end{observacion}
+
+\begin{proposicion}[Composición efectiva del orden \(B\to M\)]
+\label{prop:composicion_BM_kolmogorov}
+En el marco de la Observación~\ref{obs:base_comun_global_local_BM}, supóngase que \(K\in\mathcal K_\varepsilon\) satisface
+\[
+K_{ab}
+=
+\mathbb P(Z_1=b\mid Z_0=a),
+\qquad a,b\in I.
+\]
+Fíjese una observación \(e_j\in\mathcal E\) en el tiempo \(t=0\), y escribamos
+\[
+L_a
+:=
+\mathbb P(O_0=e_j\mid Z_0=a),
+\qquad a=1,\dots,n.
+\]
+Supóngase que \(L=(L_1,\dots,L_n)\in\mathcal L_R\) y que la observación previa no altera la transición condicionada al estado:
+\[
+\mathbb P(Z_1=b\mid Z_0=a,\ O_0=e_j)
+=
+\mathbb P(Z_1=b\mid Z_0=a),
+\qquad a,b\in I.
+\]
+Si
+\[
+X^B_a
+:=
+\mathbb P(Z_0=a\mid O_0=e_j),
+\qquad a=1,\dots,n,
+\]
+entonces
+\[
+X^B=B_L(X).
+\]
+Además, la ley de \(Z_1\) condicionada por la observación \(O_0=e_j\) está dada por
+\[
+\mathbb P(Z_1=b\mid O_0=e_j)
+=
+\bigl(B_L(X)K\bigr)_b,
+\qquad b=1,\dots,n.
+\]
+Finalmente,
+\[
+Y^K(X^B)\in C(X^B)
+\]
+y
+\[
+T^{\mathrm{loc}}_{Y^K(X^B)}(X^B)
+=
+B_L(X)K.
+\]
+Por tanto, el orden \(B\to M\) se realiza como una corrección bayesiana global seguida de una corrección markoviana local:
+\[
+X
+\longmapsto
+B_L(X)
+\longmapsto
+T^{\mathrm{loc}}_{Y^K(B_L(X))}
+\bigl(B_L(X)\bigr).
+\]
+\end{proposicion}
+
+\begin{proof}
+Primero verificamos la actualización bayesiana. Como \(X_a=\mathbb P(Z_0=a)>0\) y los eventos \(\{Z_0=a\}\) forman una partición finita, se tiene \(X\in\Delta_n^\circ\). Además,
+\[
+\mathbb P(O_0=e_j)
+=
+\sum_{r=1}^n
+\mathbb P(Z_0=r)\mathbb P(O_0=e_j\mid Z_0=r)
+=
+\sum_{r=1}^nX_rL_r.
+\]
+Como \(L\in\mathcal L_R\), todas sus coordenadas son positivas; por tanto, \(\mathbb P(O_0=e_j)>0\). Por la fórmula de Bayes,
+\[
+X^B_a
+=
+\mathbb P(Z_0=a\mid O_0=e_j)
+=
+\frac{
+\mathbb P(Z_0=a)\mathbb P(O_0=e_j\mid Z_0=a)
+}{
+\mathbb P(O_0=e_j)
+}.
+\]
+Sustituyendo las definiciones de \(X\) y \(L\), obtenemos
+\[
+X^B_a
+=
+\frac{X_aL_a}{\sum_{r=1}^nX_rL_r}
+=
+B_L(X)_a.
+\]
+Así,
+\[
+X^B=B_L(X).
+\]
+
+Ahora calculamos la ley de \(Z_1\) condicionada por la observación previa. Por probabilidad total condicionada,
+\[
+\mathbb P(Z_1=b\mid O_0=e_j)
+=
+\sum_{a=1}^n
+\mathbb P(Z_1=b\mid Z_0=a,\ O_0=e_j)
+\mathbb P(Z_0=a\mid O_0=e_j).
+\]
+Usando la hipótesis de compatibilidad entre la observación previa y la transición,
+\[
+\mathbb P(Z_1=b\mid Z_0=a,\ O_0=e_j)
+=
+\mathbb P(Z_1=b\mid Z_0=a)
+=
+K_{ab}.
+\]
+Además, \(\mathbb P(Z_0=a\mid O_0=e_j)=X^B_a\). Por tanto,
+\[
+\mathbb P(Z_1=b\mid O_0=e_j)
+=
+\sum_{a=1}^nX^B_aK_{ab}
+=
+(X^BK)_b.
+\]
+Como \(X^B=B_L(X)\), se sigue que
+\[
+\mathbb P(Z_1=b\mid O_0=e_j)
+=
+\bigl(B_L(X)K\bigr)_b.
+\]
+
+Finalmente verificamos la representación local del paso markoviano. Como \(X^B=B_L(X)\in\Delta_n^\circ\), el campo
+\[
+Y_b^K(X^B)
+=
+\frac{(X^BK)_b}{X_b^B}-1
+\]
+está bien definido. Por definición,
+\[
+X_b^B\bigl(1+Y_b^K(X^B)\bigr)
+=
+(X^BK)_b.
+\]
+Como \(K\in\mathcal K_\varepsilon\subset\mathcal S_n\), el vector \(X^BK\) pertenece al símplex. De aquí se obtiene
+\[
+X_b^B\bigl(1+Y_b^K(X^B)\bigr)\ge 0,
+\qquad b=1,\dots,n,
+\]
+y
+\[
+\sum_{b=1}^n
+X_b^B\bigl(1+Y_b^K(X^B)\bigr)
+=
+\sum_{b=1}^n(X^BK)_b
+=
+1.
+\]
+Por definición de \(C(X^B)\),
+\[
+Y^K(X^B)\in C(X^B).
+\]
+Además, por definición del operador local,
+\[
+T^{\mathrm{loc}}_{Y^K(X^B)}(X^B)_b
+=
+X_b^B\bigl(1+Y_b^K(X^B)\bigr)
+=
+(X^BK)_b.
+\]
+Así,
+\[
+T^{\mathrm{loc}}_{Y^K(X^B)}(X^B)
+=
+X^BK
+=
+B_L(X)K.
+\]
+Esto prueba la composición efectiva del orden \(B\to M\).
+\end{proof}
+\begin{observacion}[Sentido Markov--Bayes]
+El orden Markov--Bayes no usa la observación para corregir la ley inicial. Primero forma la ley predictiva del estado siguiente mediante el operador markoviano. La descripción de una cadena por su ley inicial y su matriz de transición sigue a \citep{Norris1997}. La acción del operador markoviano sobre medidas y su control en norma de variación se relaciona con \citep{GaubertQu2014}.
+
+La actualización bayesiana posterior se aplica después a la ley de \(Z_1\). En la terminología bayesiana, se actualiza una distribución predictiva mediante una verosimilitud asociada al dato observado, y se obtiene una distribución posterior sobre los estados posibles después de observar \citep{Sprungk2020}. Por tanto, el orden Markov--Bayes tiene la lectura
+\[
+\text{predecir la ley de }Z_1\text{ por }K
+\quad\longrightarrow\quad
+\text{filtrar }Z_1\text{ con }E_j^{(1)}.
+\]
+Si el mecanismo observacional es homogéneo en el tiempo, el mismo vector \(\ell^{(j)}\) puede emplearse antes o después del paso markoviano. Si el mecanismo cambia con el tiempo, las dos composiciones deben escribirse con verosimilitudes distintas.
+\end{observacion}
+
+\begin{proposicion}[Composición Markov--Bayes sobre una cadena observada]
+\label{prop:composicion_MB_kolmogorov}
+Sea \(I=\{1,\dots,n\}\). Sean \(Z_0,Z_1:\Omega\to I\) variables aleatorias sobre un espacio de probabilidad \((\Omega,\mathcal F,\mathbb P)\). Supóngase que
+\[
+X_a:=\mathbb P(Z_0=a)>0,
+\qquad a=1,\dots,n,
+\]
+y que \(Z_0,Z_1\) forman un paso markoviano con núcleo \(K\in\mathcal K_\varepsilon\), es decir,
+\[
+\mathbb P(Z_1=b\mid Z_0=a)=K_{ab},
+\qquad a,b\in I.
+\]
+Sea \(O_1:\Omega\to\mathcal E\), con \(\mathcal E=\{e_1,\dots,e_m\}\), una observación emitida desde \(Z_1\). Fíjese \(e_j\in\mathcal E\) y supóngase que
+\[
+\ell_b^{(j)}
+:=
+\mathbb P(O_1=e_j\mid Z_1=b)>0,
+\qquad b=1,\dots,n.
+\]
+Defínase
+\[
+X^M:=XK,
+\qquad
+X_b^M=\sum_{a=1}^nX_aK_{ab}.
+\]
+Entonces \(X^M\in\Delta_n^\circ\). La ley de \(Z_1\) condicionada por la observación posterior \(O_1=e_j\) está dada por
+\[
+\mathbb P(Z_1=b\mid O_1=e_j)
+=
+B_{\ell^{(j)}}(XK)_b,
+\qquad b=1,\dots,n.
+\]
+Además, si
+\[
+Y_b^K(X):=
+\frac{(XK)_b}{X_b}-1,
+\qquad b=1,\dots,n,
+\]
+entonces
+\[
+Y^K(X)\in C(X),
+\qquad
+T^{\mathrm{loc}}_{Y^K(X)}(X)=XK,
+\]
+y
+\[
+B_{\ell^{(j)}}\!\left(T^{\mathrm{loc}}_{Y^K(X)}(X)\right)
+=
+B_{\ell^{(j)}}(XK).
+\]
+\end{proposicion}
+
+\begin{proof}
+Como \(X_a=\mathbb P(Z_0=a)>0\) para todo \(a\) y los eventos \(\{Z_0=a\}\) forman una partición de \(\Omega\), se tiene
+\[
+\sum_{a=1}^nX_a
+=
+\sum_{a=1}^n\mathbb P(Z_0=a)
+=
+\mathbb P(\Omega)
+=
+1.
+\]
+Por tanto,
+\[
+X\in\Delta_n^\circ.
+\]
+
+Primero se calcula la ley predictiva de \(Z_1\). Para cada \(b\in I\), la fórmula de probabilidad total da
+\[
+\mathbb P(Z_1=b)
+=
+\sum_{a=1}^n
+\mathbb P(Z_0=a)\mathbb P(Z_1=b\mid Z_0=a).
+\]
+Usando la ley inicial y el núcleo de transición,
+\[
+\mathbb P(Z_1=b)
+=
+\sum_{a=1}^nX_aK_{ab}
+=
+(XK)_b
+=
+X_b^M.
+\]
+Como \(K\in\mathcal K_\varepsilon\), para cada \(b\) se tiene
+\[
+X_b^M
+=
+\sum_{a=1}^nX_aK_{ab}
+\ge
+\sum_{a=1}^nX_a\varepsilon
+=
+\varepsilon.
+\]
+Además,
+\[
+\sum_{b=1}^nX_b^M
+=
+\sum_{b=1}^n\sum_{a=1}^nX_aK_{ab}
+=
+\sum_{a=1}^nX_a\sum_{b=1}^nK_{ab}
+=
+\sum_{a=1}^nX_a
+=
+1.
+\]
+Luego
+\[
+X^M\in\Delta_n^\circ.
+\]
+
+Como \(X_b>0\) para todo \(b\), el campo
+\[
+Y_b^K(X)
+=
+\frac{(XK)_b}{X_b}-1
+\]
+está bien definido. Además,
+\[
+1+Y_b^K(X)
+=
+\frac{(XK)_b}{X_b}.
+\]
+Multiplicando por \(X_b\),
+\[
+X_b(1+Y_b^K(X))
+=
+(XK)_b.
+\]
+Cada coordenada del lado derecho es no negativa y
+\[
+\sum_{b=1}^nX_b(1+Y_b^K(X))
+=
+\sum_{b=1}^n(XK)_b
+=
+1.
+\]
+Por definición de \(C(X)\),
+\[
+Y^K(X)\in C(X).
+\]
+Por definición del operador local,
+\[
+T^{\mathrm{loc}}_{Y^K(X)}(X)_b
+=
+X_b(1+Y_b^K(X))
+=
+(XK)_b.
+\]
+Así,
+\[
+T^{\mathrm{loc}}_{Y^K(X)}(X)=XK=X^M.
+\]
+
+Ahora se actualiza la ley predictiva \(X^M\) mediante la observación \(O_1=e_j\). Por la fórmula de Bayes,
+\[
+\mathbb P(Z_1=b\mid O_1=e_j)
+=
+\frac{\mathbb P(Z_1=b)\mathbb P(O_1=e_j\mid Z_1=b)}
+{\mathbb P(O_1=e_j)}.
+\]
+Como los eventos \(\{Z_1=r\}\) forman una partición,
+\[
+\mathbb P(O_1=e_j)
+=
+\sum_{r=1}^n
+\mathbb P(Z_1=r)\mathbb P(O_1=e_j\mid Z_1=r).
+\]
+Sustituyendo
+\[
+\mathbb P(Z_1=r)=X_r^M
+\qquad
+\text{y}
+\qquad
+\mathbb P(O_1=e_j\mid Z_1=r)=\ell_r^{(j)},
+\]
+se obtiene
+\[
+\mathbb P(O_1=e_j)
+=
+\sum_{r=1}^nX_r^M\ell_r^{(j)}
+>
+0.
+\]
+Por tanto,
+\[
+\mathbb P(Z_1=b\mid O_1=e_j)
+=
+\frac{X_b^M\ell_b^{(j)}}
+{\sum_{r=1}^nX_r^M\ell_r^{(j)}}.
+\]
+Como \(X^M=XK\), esta identidad se escribe
+\[
+\mathbb P(Z_1=b\mid O_1=e_j)
+=
+\frac{(XK)_b\ell_b^{(j)}}
+{\sum_{r=1}^n(XK)_r\ell_r^{(j)}}.
+\]
+Por definición del operador bayesiano,
+\[
+B_{\ell^{(j)}}(XK)_b
+=
+\frac{(XK)_b\ell_b^{(j)}}
+{\sum_{r=1}^n(XK)_r\ell_r^{(j)}}.
+\]
+Luego
+\[
+\mathbb P(Z_1=b\mid O_1=e_j)
+=
+B_{\ell^{(j)}}(XK)_b.
+\]
+
+Finalmente, como
+\[
+T^{\mathrm{loc}}_{Y^K(X)}(X)=XK,
+\]
+se tiene
+\[
+B_{\ell^{(j)}}\!\left(T^{\mathrm{loc}}_{Y^K(X)}(X)\right)
+=
+B_{\ell^{(j)}}(XK).
+\]
+\end{proof}
+
+\begin{proposicion}[Conmutación global bajo positividad uniforme]
+\label{prop:conmutacion_global_MB_BM}
+Sea \(n\ge 2\). Sea \(K\in\mathcal K_\varepsilon\) y sea \(L\in\mathbb R_{>0}^n\). Entonces las siguientes afirmaciones son equivalentes:
+\[
+B_L(XK)=B_L(X)K
+\qquad
+\text{para todo }X\in\Delta_n^\circ,
+\]
+y
+\[
+L_1=L_2=\cdots=L_n.
+\]
+En particular, bajo positividad uniforme de \(K\), las composiciones Markov--Bayes y Bayes--Markov coinciden globalmente si y sólo si la verosimilitud no distingue coordenadas.
+\end{proposicion}
+
+\begin{proof}
+Supóngase primero que
+\[
+L_1=L_2=\cdots=L_n.
+\]
+Entonces existe \(c>0\) tal que
+\[
+L=c\mathbf 1.
+\]
+Para todo \(X\in\Delta_n^\circ\) y todo \(i=1,\dots,n\), se tiene
+\[
+B_L(X)_i
+=
+\frac{X_iL_i}{\sum_{r=1}^nX_rL_r}
+=
+\frac{X_ic}{\sum_{r=1}^nX_rc}
+=
+\frac{X_ic}{c\sum_{r=1}^nX_r}
+=
+X_i.
+\]
+Por tanto,
+\[
+B_L(X)=X
+\qquad
+\text{para todo }X\in\Delta_n^\circ.
+\]
+Como \(K\in\mathcal K_\varepsilon\subset\mathcal S_n\), se tiene \(XK\in\Delta_n^\circ\). Aplicando la identidad anterior también al estado \(XK\), resulta
+\[
+B_L(XK)=XK.
+\]
+Además,
+\[
+B_L(X)K=XK.
+\]
+En consecuencia,
+\[
+B_L(XK)=B_L(X)K
+\qquad
+\text{para todo }X\in\Delta_n^\circ.
+\]
+
+Recíprocamente, supóngase que
+\[
+B_L(XK)=B_L(X)K
+\qquad
+\text{para todo }X\in\Delta_n^\circ.
+\]
+Fijemos \(a\in\{1,\dots,n\}\). Sea \((X^{(m)})_{m\ge1}\subset\Delta_n^\circ\) una sucesión tal que
+\[
+X^{(m)}\longrightarrow e_a,
+\]
+donde \(e_a\) denota el \(a\)-ésimo vector canónico. Por ejemplo, puede tomarse
+\[
+X^{(m)}
+=
+\left(1-\frac{n-1}{m}\right)e_a
++
+\frac{1}{m}\sum_{\substack{r=1\\ r\ne a}}^n e_r
+\]
+para \(m>n-1\).
+
+Como \(L\in\mathbb R_{>0}^n\), la aplicación
+\[
+X\longmapsto B_L(X)
+=
+\left(
+\frac{X_iL_i}{\sum_{r=1}^nX_rL_r}
+\right)_{i=1}^n
+\]
+es continua en todo \(\Delta_n\), pues
+\[
+\sum_{r=1}^nX_rL_r>0
+\qquad
+\text{para todo }X\in\Delta_n.
+\]
+Por tanto,
+\[
+B_L(X^{(m)})\longrightarrow B_L(e_a).
+\]
+Ahora bien,
+\[
+B_L(e_a)_i
+=
+\frac{(e_a)_iL_i}{\sum_{r=1}^n(e_a)_rL_r}.
+\]
+Si \(i\ne a\), entonces \((e_a)_i=0\), y si \(i=a\), entonces
+\[
+B_L(e_a)_a
+=
+\frac{L_a}{L_a}
+=
+1.
+\]
+Luego
+\[
+B_L(e_a)=e_a.
+\]
+De aquí,
+\[
+B_L(X^{(m)})\longrightarrow e_a.
+\]
+
+Por linealidad de la multiplicación por \(K\),
+\[
+B_L(X^{(m)})K\longrightarrow e_aK.
+\]
+Además,
+\[
+X^{(m)}K\longrightarrow e_aK.
+\]
+La continuidad de \(B_L\) en \(\Delta_n\) implica entonces
+\[
+B_L(X^{(m)}K)\longrightarrow B_L(e_aK).
+\]
+
+Usando la hipótesis de conmutación en \(X^{(m)}\),
+\[
+B_L(X^{(m)}K)=B_L(X^{(m)})K
+\qquad
+\text{para todo }m.
+\]
+Al pasar al límite se obtiene
+\[
+B_L(e_aK)=e_aK.
+\]
+
+Escribamos
+\[
+k^{(a)}:=e_aK=(K_{a1},\dots,K_{an}),
+\]
+la fila \(a\)-ésima de \(K\). Como \(K\in\mathcal K_\varepsilon\), se tiene
+\[
+K_{ab}\ge \varepsilon>0
+\qquad
+\text{para todo }b=1,\dots,n.
+\]
+La igualdad
+\[
+B_L(e_aK)=e_aK
+\]
+equivale, coordenada a coordenada, a
+\[
+\frac{K_{ab}L_b}{\sum_{r=1}^nK_{ar}L_r}
+=
+K_{ab},
+\qquad b=1,\dots,n.
+\]
+Como \(K_{ab}>0\), se puede dividir entre \(K_{ab}\), y queda
+\[
+\frac{L_b}{\sum_{r=1}^nK_{ar}L_r}
+=
+1.
+\]
+Por tanto,
+\[
+L_b
+=
+\sum_{r=1}^nK_{ar}L_r,
+\qquad b=1,\dots,n.
+\]
+El lado derecho no depende de \(b\). Luego, para todo \(b,c\in\{1,\dots,n\}\),
+\[
+L_b
+=
+\sum_{r=1}^nK_{ar}L_r
+=
+L_c.
+\]
+Así,
+\[
+L_1=L_2=\cdots=L_n.
+\]
+Esto concluye la equivalencia.
+\end{proof}
+
+
+\begin{corolario}[Falla de conmutación global para verosimilitudes no constantes]
+\label{cor:falla_conmutacion_global_L_no_constante}
+Sea \(n\ge 2\). Sea \(K\in\mathcal K_\varepsilon\) y sea \(L\in\mathbb R_{>0}^n\). Si \(L\) no es constante, entonces las composiciones Markov--Bayes y Bayes--Markov no conmutan globalmente. Es decir, existe \(X\in\Delta_n^\circ\) tal que
+\[
+B_L(XK)\neq B_L(X)K.
+\]
+Equivalente,
+\[
+B_L(XK)=B_L(X)K
+\qquad
+\text{para todo }X\in\Delta_n^\circ
+\]
+sólo puede ocurrir cuando
+\[
+L_1=L_2=\cdots=L_n.
+\]
+\end{corolario}
+
+\begin{proof}
+Supóngase que la identidad
+\[
+B_L(XK)=B_L(X)K
+\qquad
+\text{para todo }X\in\Delta_n^\circ
+\]
+sí se cumpliera. Consideremos la sucesión interior
+\[
+X^{(m)}
+:=
+\left(1-\frac{n-1}{m}\right)e_1
++
+\frac1m\sum_{r=2}^n e_r,
+\qquad m>n-1.
+\]
+Entonces \(X^{(m)}\in\Delta_n^\circ\) y \(X^{(m)}\to e_1\) cuando \(m\to\infty\). Como la multiplicación por \(K\) y la aplicación \(B_L\) son continuas en \(\Delta_n\), de la hipótesis se obtiene al pasar al límite
+\[
+B_L(e_1K)=e_1K.
+\]
+Ahora bien, como \(K\in\mathcal K_\varepsilon\), la fila \(e_1K\) tiene todas sus coordenadas estrictamente positivas; por tanto \(e_1K\in\Delta_n^\circ\). Escribamos
+\[
+y:=e_1K.
+\]
+La igualdad \(B_L(y)=y\) significa que, para cada \(b=1,\dots,n\),
+\[
+\frac{y_bL_b}{\langle y,L\rangle}
+=
+y_b.
+\]
+Como \(y_b>0\), se puede dividir entre \(y_b\) y queda
+\[
+L_b=\langle y,L\rangle
+\qquad
+\text{para todo }b=1,\dots,n.
+\]
+Luego
+\[
+L_1=L_2=\cdots=L_n,
+\]
+lo cual contradice que \(L\) no sea constante. Por tanto, la identidad no puede cumplirse para todo \(X\in\Delta_n^\circ\), y en consecuencia existe al menos un \(X\in\Delta_n^\circ\) tal que
+\[
+B_L(XK)\neq B_L(X)K.
+\]
+\end{proof}
+
+\begin{observacion}[De la falla global al defecto de ordenamiento]
+El corolario anterior no afirma que, para una verosimilitud no constante, las dos composiciones difieran en todo estado \(X\in\Delta_n^\circ\). Afirma únicamente que la igualdad no puede sostenerse de manera global en todo el símplex.
+
+Por tanto, la no conmutación debe medirse punto a punto. Para un estado fijo \(X\), puede ocurrir que
+\[
+B_L(XK)=B_L(X)K,
+\]
+aunque \(L\) no sea constante. En cambio, si existe un estado \(X\) para el cual
+\[
+B_L(XK)\neq B_L(X)K,
+\]
+entonces los dos protocolos producen estados finales distintos: observar después de propagar no coincide con propagar después de observar.
+
+Esto motiva introducir una cantidad vectorial que mida, en cada estado \(X\), la diferencia entre los dos órdenes. Dicha cantidad será el defecto de ordenamiento.
+\end{observacion}
+
+\begin{definicion}[Defecto de ordenamiento]
+\label{def:defecto_ordenamiento}
+Sea \(n\ge 2\). Sea \(K\in\mathcal K_\varepsilon\) y sea \(L\in\mathbb R_{>0}^n\). El defecto de ordenamiento asociado al par \((K,L)\) es la aplicación
+\[
+\mathcal D_{K,L}:\Delta_n^\circ\longrightarrow \mathbb R^n
+\]
+definida por
+\[
+\mathcal D_{K,L}(X)
+:=
+B_L(XK)-B_L(X)K.
+\]
+Equivalentemente,
+\[
+\mathcal D_{K,L}(X)
+=
+(B_L\circ M_K)(X)
+-
+(M_K\circ B_L)(X).
+\]
+
+En terminos de las transiciones ordenadas,
+\[
+\mathcal D_{K,L}(X)
+=
+T_{MB}^{K,L}(X)-T_{BM}^{K,L}(X).
+\]
+
+Coordenada a coordenada, para cada \(i=1,\dots,n\),
+\[
+\mathcal D_{K,L}(X)_i
+=
+\frac{(XK)_iL_i}{\sum_{j=1}^n (XK)_jL_j}
+-
+\sum_{r=1}^n
+\frac{X_rL_r}{\sum_{j=1}^n X_jL_j}K_{ri}.
+\]
+
+Como
+\[
+B_L(XK)\in\Delta_n^\circ
+\qquad
+\text{y}
+\qquad
+B_L(X)K\in\Delta_n^\circ,
+\]
+se tiene
+\[
+\sum_{i=1}^n \mathcal D_{K,L}(X)_i=0.
+\]
+Por tanto,
+\[
+\mathcal D_{K,L}(X)\in T\Delta_n,
+\]
+donde
+\[
+T\Delta_n
+:=
+\left\{
+v\in\mathbb R^n:
+\sum_{i=1}^n v_i=0
+\right\}.
+\]
+
+Se dira que el defecto se anula en \(X\) si
+\[
+\mathcal D_{K,L}(X)=0.
+\]
+En tal caso, las dos composiciones coinciden en el estado \(X\). Se dirá que el defecto es globalmente nulo si
+\[
+\mathcal D_{K,L}(X)=0
+\qquad
+\text{para todo }X\in\Delta_n^\circ.
+\]
+\end{definicion}
+
+\begin{observacion}[Del defecto de ordenamiento a las cotas de desplazamiento por paso]
+\label{obs:defecto_a_cotas_desplazamiento}
+El defecto de ordenamiento
+\[
+\mathcal D_{K,L}(X)=B_L(XK)-B_L(X)K
+\]
+mide la discrepancia entre dos estados finales producidos por órdenes distintos de aplicación. Para usar esta diferencia dentro de un problema de control, primero debe acotarse el desplazamiento elemental producido por cada operación admisible.
+
+Las cantidades
+\[
+\left|B_L(X)-X\right|_1,
+\qquad
+\left|M_K(X)-X\right|_1,
+\]
+son desplazamientos en el símplex medidos en norma \(\ell^1\). No describen derivadas temporales; describen el efecto de una sola operación bayesiana o markoviana.
+
+En lo que sigue se fijan las cotas uniformes
+\[
+v_B(R):=e^{2R}-1,
+\qquad
+v_M(\varepsilon):=2(1-\varepsilon),
+\]
+Estas cantidades son cotas uniformes de desplazamiento por operación admisible. La comparación válida es entre \(v_B(R)\) y \(v_M(\varepsilon)\), no entre \(R\) y \(\varepsilon\), porque ambas cotas viven en la misma escala métrica \(\ell^1\) del símplex.
+\end{observacion}
+
+\begin{observacion}[Cota de desplazamiento bayesiana por paso y control logarítmico de la verosimilitud]
+La referencia sobre estabilidad bayesiana \citep{Sprungk2020} se usa aquí solo como contexto. En el marco finito, la actualización posterior normalizada tiene la forma
+\[
+B_L(X)_i
+=
+\frac{X_iL_i}{\langle X,L\rangle},
+\]
+y la restricción
+\[
+\log L\in\mathcal U_R
+\]
+permite controlar algebraicamente el cociente
+\[
+\frac{B_L(X)_i}{X_i}
+=
+\frac{L_i}{\langle X,L\rangle}.
+\]
+La demostración del lema siguiente es completamente algebraica; la referencia solo justifica la lectura posterior de la corrección bayesiana.
+\end{observacion}
+
+\begin{lema}[Cota de desplazamiento bayesiano por paso]\label{lem:cota_desplazamiento_bayesiano}
+Sean \(n\ge2\), \(R>0\), \(X\in\Delta_n^\circ\) y \(L\in\mathbb R_{>0}^n\). Supóngase que
+\[
+\log L\in\mathcal U_R.
+\]
+Entonces
+\[
+\left|B_L(X)-X\right|_1
+\le
+e^{2R}-1.
+\]
+\end{lema}
+
+\begin{proof}
+Sea
+\[
+\beta:=\langle X,L\rangle=\sum_{j=1}^n X_jL_j.
+\]
+Como \(\log L\in\mathcal U_R\), se tiene
+\[
+-R\le \log L_i\le R
+\qquad\text{para todo }i,
+\]
+y por tanto
+\[
+e^{-R}\le L_i\le e^R
+\qquad\text{para todo }i.
+\]
+Dado que \(X\in\Delta_n^\circ\), se cumple \(X_i>0\) para todo \(i\) y
+\[
+\sum_{i=1}^n X_i=1.
+\]
+Luego
+\[
+\beta
+=
+\sum_{j=1}^n X_jL_j
+\ge
+\sum_{j=1}^n X_j e^{-R}
+=
+e^{-R},
+\]
+y también
+\[
+\beta
+=
+\sum_{j=1}^n X_jL_j
+\le
+\sum_{j=1}^n X_j e^R
+=
+e^R.
+\]
+Así,
+\[
+e^{-R}\le \beta\le e^R.
+\]
+
+Para cada \(i\),
+\[
+B_L(X)_i-X_i
+=
+\frac{X_iL_i}{\beta}-X_i
+=
+X_i\left(\frac{L_i}{\beta}-1\right).
+\]
+Por consiguiente,
+\[
+\left|B_L(X)-X\right|_1
+=
+\sum_{i=1}^n
+X_i\left|\frac{L_i}{\beta}-1\right|.
+\]
+Además,
+\[
+\frac{L_i}{\beta}
+\le
+\frac{e^R}{e^{-R}}
+=
+e^{2R}.
+\]
+Como \(\frac{L_i}{\beta}>0\), se tiene
+\[
+\left|\frac{L_i}{\beta}-1\right|
+\le
+e^{2R}-1
+\qquad\text{para todo }i.
+\]
+Por tanto,
+\[
+\left|B_L(X)-X\right|_1
+\le
+\sum_{i=1}^n
+X_i(e^{2R}-1)
+=
+(e^{2R}-1)\sum_{i=1}^n X_i
+=
+e^{2R}-1.
+\]
+\end{proof}
+
+\begin{observacion}[Cota de desplazamiento markoviana por paso y variación total]
+La referencia de Doeblin--Dobrushin \citep{GaubertQu2014} sólo se usa para justificar que la norma \(\ell^1\), equivalente a la variación total salvo el factor \(1/2\), es la escala natural para medir cambios de masa probabilística. La cota siguiente no se deduce del coeficiente de Dobrushin; se obtiene directamente de la positividad uniforme
+\[
+K_{ab}\ge\varepsilon
+\qquad\forall a,b.
+\]
+En particular,
+\[
+K_{aa}\ge\varepsilon
+\qquad\forall a.
+\]
+\end{observacion}
+
+\begin{lema}[Cota de desplazamiento markoviano por paso]\label{lem:cota_desplazamiento_markoviano}
+Sean \(n\ge2\), \(0<\varepsilon\le 1/n\), \(X\in\Delta_n\) y \(K\in\mathcal K_\varepsilon\). Entonces
+\[
+\left|M_K(X)-X\right|_1
+=
+\left|XK-X\right|_1
+\le
+2(1-\varepsilon).
+\]
+\end{lema}
+
+\begin{proof}
+Sea \(e_1,\dots,e_n\) la base canónica de \(\mathbb R^n\). Para cada \(a\in\{1,\dots,n\}\), el vector \(e_aK\) es la fila \(a\) de \(K\). Como \(K\) es estocástica por filas,
+\[
+\sum_{b=1}^n K_{ab}=1
+\qquad\text{y}\qquad
+K_{ab}\ge0.
+\]
+Luego \(e_aK\in\Delta_n\).
+
+Calculemos
+\[
+\left|e_aK-e_a\right|_1
+=
+\sum_{b=1}^n |K_{ab}-(e_a)_b|.
+\]
+Separando la coordenada \(a\),
+\[
+\left|e_aK-e_a\right|_1
+=
+|K_{aa}-1|+\sum_{b\ne a}|K_{ab}|.
+\]
+Como \(0\le K_{aa}\le1\) y \(K_{ab}\ge0\), queda
+\[
+\left|e_aK-e_a\right|_1
+=
+(1-K_{aa})+\sum_{b\ne a}K_{ab}.
+\]
+Ahora,
+\[
+\sum_{b\ne a}K_{ab}
+=
+1-K_{aa}.
+\]
+Por tanto,
+\[
+\left|e_aK-e_a\right|_1
+=
+2(1-K_{aa}).
+\]
+Dado que \(K\in\mathcal K_\varepsilon\), se tiene \(K_{aa}\ge\varepsilon\). Así,
+\[
+\left|e_aK-e_a\right|_1
+\le
+2(1-\varepsilon)
+\qquad\text{para todo }a.
+\]
+
+Como \(X\in\Delta_n\),
+\[
+X=\sum_{a=1}^n X_a e_a,
+\qquad
+XK=\sum_{a=1}^n X_a e_aK.
+\]
+Restando,
+\[
+XK-X
+=
+\sum_{a=1}^n X_a(e_aK-e_a).
+\]
+Por la desigualdad triangular,
+\[
+\left|XK-X\right|_1
+\le
+\sum_{a=1}^n X_a\left|e_aK-e_a\right|_1.
+\]
+Usando la cota anterior,
+\[
+\left|XK-X\right|_1
+\le
+\sum_{a=1}^n X_a\,2(1-\varepsilon)
+=
+2(1-\varepsilon)\sum_{a=1}^n X_a.
+\]
+Como \(\sum_{a=1}^n X_a=1\), se concluye
+\[
+\left|XK-X\right|_1
+\le
+2(1-\varepsilon).
+\]
+Finalmente, por definición \(M_K(X)=XK\), de modo que
+\[
+\left|M_K(X)-X\right|_1
+\le
+2(1-\varepsilon).
+\]
+\end{proof}
+
+\begin{observacion}[Control con variable de ordenamiento]
+Los lemas anteriores acotan el desplazamiento elemental producido por una correccion bayesiana admisible y por una correccion markoviana admisible. Por tanto, las dos composiciones ya construidas,
+\[
+B_L(XK)
+\qquad\text{y}\qquad
+B_L(X)K,
+\]
+pueden interpretarse como pasos compuestos formados por dos correcciones elementales admisibles.
+
+La proposicion de conmutacion global y su corolario muestran que, salvo el caso de verosimilitud constante, el orden de aplicacion no es neutro. En consecuencia, el orden puede incorporarse como una decision discreta dentro de la accion de control. Esta lectura es compatible con la formulacion estado--accion--transicion--costo de los problemas de decision en tiempo discreto, y con la interpretacion de costos probabilisticos mediante divergencias entre distribuciones \citep{Todorov2009EfficientComputationOptimalActions}. Asimismo, la separacion entre costo acumulado y costo terminal es consistente con la estructura usual de control optimo con contribucion de trayectoria y costo final \citep{Kappen2005LinearTheoryForControlOfNonLinearStochasticSystems}.
+
+En lo que sigue no se introduce un nuevo operador. Solamente se fija una variable de ordenamiento que selecciona, en cada paso, cual de las dos composiciones previamente definidas se aplica.
+\end{observacion}
+
+\begin{definicion}[Accion admisible con variable de ordenamiento]\label{def:accion_admisible_ordenamiento}
+Sean \(n\ge 2\), \(0<\varepsilon\le 1/n\) y \(R>0\). Se define el conjunto de acciones admisibles con variable de ordenamiento por
+\[
+\mathcal A_{\varepsilon,R}
+:=
+\left\{
+(K,L,\sigma):
+K\in\mathcal K_\varepsilon,\ 
+\log L\in\mathcal U_R,\ 
+\sigma\in\{MB,BM\}
+\right\}.
+\]
+Una accion en el tiempo \(t\) es una terna
+\[
+u_t=(K_t,L_t,\sigma_t)\in\mathcal A_{\varepsilon,R}.
+\]
+La componente \(K_t\) determina la correccion markoviana, la componente \(L_t\) determina la correccion bayesiana y la componente \(\sigma_t\) determina el orden de composicion.
+
+Si
+\[
+\sigma_t=MB,
+\]
+entonces primero se aplica la correccion markoviana y despues la correccion bayesiana. Si
+\[
+\sigma_t=BM,
+\]
+entonces primero se aplica la correccion bayesiana y despues la correccion markoviana.
+\end{definicion}
+
+\begin{definicion}[Transiciones controladas por orden]\label{def:transiciones_controladas_orden}
+Sean \(X\in\Delta_n^\circ\), \(K\in\mathcal K_\varepsilon\) y \(\log L\in\mathcal U_R\). Se definen las transiciones controladas por orden mediante
+\[
+T_{MB}^{K,L}(X)
+:=
+B_L(M_K(X))
+=
+B_L(XK),
+\]
+y
+\[
+T_{BM}^{K,L}(X)
+:=
+M_K(B_L(X))
+=
+B_L(X)K.
+\]
+Por tanto, si \(u=(K,L,\sigma)\in\mathcal A_{\varepsilon,R}\), la transicion inducida por \(u\) se define como
+\[
+T^u(X)
+:=
+\begin{cases}
+T_{MB}^{K,L}(X), & \text{si } \sigma=MB,\\[2mm]
+T_{BM}^{K,L}(X), & \text{si } \sigma=BM.
+\end{cases}
+\]
+Equivalentemente,
+\[
+T^u(X)
+=
+\begin{cases}
+B_L(XK), & \text{si } \sigma=MB,\\[2mm]
+B_L(X)K, & \text{si } \sigma=BM.
+\end{cases}
+\]
+Con esta notacion, el defecto de ordenamiento ya definido se escribe como
+\[
+\mathcal D_{K,L}(X)
+=
+T_{MB}^{K,L}(X)-T_{BM}^{K,L}(X).
+\]
+\end{definicion}
+
+\begin{proposicion}[Dirección terminal de KL bajo pérdida de soporte]
+\label{prop:direccion_terminal_KL}
+Sea \(n\ge 2\), sea \(P\in\Delta_n^\circ\) y sea \(\{X_k\}_{k\ge1}\subset\Delta_n\). Supóngase que existe \(j\in\{1,\ldots,n\}\) tal que
+\[
+X_{k,j}\longrightarrow 0.
+\]
+Entonces
+\[
+D_{\mathrm{KL}}(P\|X_k)\longrightarrow +\infty.
+\]
+Además, la sucesión \(\{D_{\mathrm{KL}}(X_k\|P)\}_{k\ge1}\) permanece acotada. En consecuencia, si el costo terminal debe excluir la pérdida de soporte respecto de \(P\), la dirección admisible es
+\[
+E_P(X)=D_{\mathrm{KL}}(P\|X).
+\]
+\end{proposicion}
+
+\begin{proof}
+Como \(P\in\Delta_n^\circ\), se tiene \(P_i>0\) para todo \(i\in\{1,\ldots,n\}\). En particular, \(P_j>0\). Por definición de la divergencia de Kullback--Leibler en el símplex,
+\[
+D_{\mathrm{KL}}(P\|X_k)
+=
+\sum_{i=1}^n P_i\log\frac{P_i}{X_{k,i}},
+\]
+con la convención de que el valor es \(+\infty\) si existe \(i\) tal que \(P_i>0\) y \(X_{k,i}=0\). Si \(X_{k,j}=0\) para infinitos valores de \(k\), entonces la divergencia vale \(+\infty\) en esa subsucesión. Por tanto basta considerar el caso en que, a partir de cierto índice, \(X_{k,j}>0\).
+
+Para esos índices se separa el sumando singular:
+\[
+D_{\mathrm{KL}}(P\|X_k)
+=
+P_j\log\frac{P_j}{X_{k,j}}
++
+\sum_{\substack{i=1\\ i\ne j}}^n
+P_i\log\frac{P_i}{X_{k,i}}.
+\]
+Como \(0<X_{k,i}\le 1\) para toda coordenada positiva de \(X_k\), se tiene
+\[
+\log X_{k,i}\le 0.
+\]
+De aquí se obtiene, para cada \(i\ne j\) con \(X_{k,i}>0\),
+\[
+P_i\log\frac{P_i}{X_{k,i}}
+=
+P_i\log P_i-P_i\log X_{k,i}
+\ge
+P_i\log P_i.
+\]
+Si \(X_{k,i}=0\) y \(P_i>0\), el sumando correspondiente es \(+\infty\), por lo cual la desigualdad anterior sigue siendo válida en el sentido extendido. Así,
+\[
+\sum_{\substack{i=1\\ i\ne j}}^n
+P_i\log\frac{P_i}{X_{k,i}}
+\ge
+\sum_{\substack{i=1\\ i\ne j}}^n
+P_i\log P_i
+=:C_P,
+\]
+donde \(C_P\in\mathbb R\) depende solo de \(P\). Por consiguiente,
+\[
+D_{\mathrm{KL}}(P\|X_k)
+\ge
+P_j\log\frac{P_j}{X_{k,j}}+C_P.
+\]
+Como \(X_{k,j}\to0\) y \(P_j>0\),
+\[
+\log\frac{P_j}{X_{k,j}}\longrightarrow+\infty.
+\]
+Multiplicando por \(P_j>0\), se concluye
+\[
+P_j\log\frac{P_j}{X_{k,j}}\longrightarrow+\infty,
+\]
+y por la cota inferior anterior se obtiene
+\[
+D_{\mathrm{KL}}(P\|X_k)\longrightarrow+\infty.
+\]
+
+Resta probar la acotación de la dirección inversa. Como \(P_i>0\) para todo \(i\), la función
+\[
+f_i:[0,1]\longrightarrow\mathbb R,
+\qquad
+f_i(x)=
+\begin{cases}
+x\log\frac{x}{P_i}, & x>0,\\
+0, & x=0,
+\end{cases}
+\]
+es continua en \([0,1]\). En efecto,
+\[
+\lim_{x\downarrow0}x\log x=0
+\quad\text{y}\quad
+\lim_{x\downarrow0}x\log P_i=0.
+\]
+Por compacidad de \([0,1]\), existe \(M_i<\infty\) tal que
+\[
+|f_i(x)|\le M_i
+\qquad
+\text{para todo }x\in[0,1].
+\]
+Para cada \(X\in\Delta_n\),
+\[
+D_{\mathrm{KL}}(X\|P)
+=
+\sum_{i=1}^n
+X_i\log\frac{X_i}{P_i}
+=
+\sum_{i=1}^n f_i(X_i).
+\]
+Luego
+\[
+\left|D_{\mathrm{KL}}(X\|P)\right|
+\le
+\sum_{i=1}^n M_i
+<\infty
+\qquad
+\text{para todo }X\in\Delta_n.
+\]
+Aplicando esta cota a \(X=X_k\), se obtiene que
+\[
+\{D_{\mathrm{KL}}(X_k\|P)\}_{k\ge1}
+\]
+permanece acotada. La diferencia entre ambas direcciones queda determinada por la singularidad de soporte del primer argumento frente al segundo.
+\end{proof}
+
+
+
+
+
+
+\begin{observacion}[Necesidad de costos de etapa y funciones de valor]\label{obs:necesidad_costos_valor_orden}
+Una vez que el orden de composicion se incorpora como componente de la accion,
+\[
+u_t=(K_t,L_t,\sigma_t),
+\qquad
+\sigma_t\in\{MB,BM\},
+\]
+la Sección 7 deja de considerar únicamente dos composiciones posibles y pasa a formular una elección controlada entre ellas. En este punto, no basta conocer las transiciones
+\[
+T_{MB}^{K,L}(X)=B_L(XK),
+\qquad
+T_{BM}^{K,L}(X)=B_L(X)K.
+\]
+Para comparar ambos ordenes se requiere medir, primero, el costo elemental de aplicar cada composicion y, segundo, el efecto que el estado resultante tendra sobre los pasos restantes.
+
+Esta separacion corresponde a la estructura usual de los problemas de control en tiempo discreto: un estado actual, una accion admisible, una transicion inducida por la accion, un costo de etapa y un costo futuro representado por una funcion de valor \citep{Todorov2009EfficientComputationOptimalActions}. En el presente marco, el estado es \(X\in\Delta_n^\circ\), la accion es \(u=(K,L,\sigma)\), y las transiciones inducidas son precisamente \(T_{MB}^{K,L}\) y \(T_{BM}^{K,L}\).
+
+La formulacion KL de los problemas de control muestra que una politica optima puede entenderse como una distribucion sobre trayectorias futuras y que el problema se convierte en una minimizacion de divergencia de Kullback--Leibler entre una politica y una referencia dinamica \citep{KappenGomezOpper2012OptimalControlAsAGraphicalModelInferenceProblem}. Esta lectura justifica que, en el presente marco, las cantidades \(Q_\tau^{MB}\) y \(Q_\tau^{BM}\) comparen no solo el costo inmediato, sino tambien el costo restante inducido por el estado alcanzado.
+
+Los costos de etapa deben respetar el orden de aplicación. Para el orden \(MB\), la trayectoria elemental es
+\[
+X
+\longmapsto
+XK
+\longmapsto
+B_L(XK),
+\]
+mientras que para el orden \(BM\), la trayectoria elemental es
+\[
+X
+\longmapsto
+B_L(X)
+\longmapsto
+B_L(X)K.
+\]
+Por ello, los costos \(c_{MB}\) y \(c_{BM}\) se definen como sumas de divergencias de Kullback--Leibler entre estados consecutivos dentro de cada composicion. Esta eleccion es coherente con formulaciones de control probabilistico donde el costo de trayectoria y el costo terminal aparecen separados \citep{Kappen2005LinearTheoryForControlOfNonLinearStochasticSystems}.
+
+Sin embargo, minimizar solamente el costo de etapa produciría una decisión local. El objetivo de la Sección 7 es construir trayectorias hacia un estado terminal \(P\in\Delta_n^\circ\), evaluadas por
+\[
+E_P(X)=D_{\mathrm{KL}}(P\|X).
+\]
+Por tanto, la comparacion entre ordenes debe incorporar tambien el costo futuro asociado al estado alcanzado. Esta es la funcion de las cantidades
+\[
+Q_\tau^{MB}
+\qquad\text{y}\qquad
+Q_\tau^{BM},
+\]
+las cuales suman el costo de etapa correspondiente al orden elegido y el valor restante despues de aplicar la transicion controlada. La funcion \(V_\tau\) recoge el menor costo total posible cuando quedan \(\tau\) pasos, con condicion terminal
+\[
+V_0(X)=E_P(X).
+\]
+Asi, la separacion entre costo acumulado y costo terminal queda alineada con la formulacion variacional de problemas de control con contribucion de trayectoria y costo final \citep{Kappen2005LinearTheoryForControlOfNonLinearStochasticSystems}.
+\end{observacion}
+
+\begin{definicion}[Costos de etapa ordenados]\label{def:costos_etapa_ordenados}
+Sean \(X\in\Delta_n^\circ\), \(K\in\mathcal K_\varepsilon\) y \(\log L\in\mathcal U_R\). El costo de etapa asociado al orden \(MB\) se define por
+\[
+c_{MB}(X;K,L)
+:=
+D_{\mathrm{KL}}(XK\|X)
++
+D_{\mathrm{KL}}\bigl(B_L(XK)\|XK\bigr).
+\]
+Este costo corresponde a la composicion
+\[
+X
+\longmapsto
+XK
+\longmapsto
+B_L(XK).
+\]
+
+El costo de etapa asociado al orden \(BM\) se define por
+\[
+c_{BM}(X;K,L)
+:=
+D_{\mathrm{KL}}\bigl(B_L(X)\|X\bigr)
++
+D_{\mathrm{KL}}\bigl(B_L(X)K\|B_L(X)\bigr).
+\]
+Este costo corresponde a la composicion
+\[
+X
+\longmapsto
+B_L(X)
+\longmapsto
+B_L(X)K.
+\]
+
+Para \(u=(K,L,\sigma)\in\mathcal A_{\varepsilon,R}\), se define
+\[
+c(X,u)
+:=
+\begin{cases}
+c_{MB}(X;K,L), & \text{si } \sigma=MB,\\[2mm]
+c_{BM}(X;K,L), & \text{si } \sigma=BM.
+\end{cases}
+\]
+\end{definicion}
+
+\begin{definicion}[Funcion de valor y funciones de accion--valor por orden]\label{def:valor_Q_ordenamiento}
+Sea \(P\in\Delta_n^\circ\). Se define el valor terminal por
+\[
+V_0(X)
+:=
+E_P(X)
+=
+D_{\mathrm{KL}}(P\|X),
+\qquad
+X\in\Delta_n^\circ.
+\]
+
+Para \(\tau\ge 1\), suponiendo definida \(V_{\tau-1}\), se definen las funciones de accion--valor por orden mediante
+\[
+Q_\tau^{MB}(X;K,L)
+:=
+c_{MB}(X;K,L)
++
+V_{\tau-1}\!\left(T_{MB}^{K,L}(X)\right),
+\]
+es decir,
+\[
+Q_\tau^{MB}(X;K,L)
+=
+c_{MB}(X;K,L)
++
+V_{\tau-1}\!\left(B_L(XK)\right),
+\]
+y
+\[
+Q_\tau^{BM}(X;K,L)
+:=
+c_{BM}(X;K,L)
++
+V_{\tau-1}\!\left(T_{BM}^{K,L}(X)\right),
+\]
+es decir,
+\[
+Q_\tau^{BM}(X;K,L)
+=
+c_{BM}(X;K,L)
++
+V_{\tau-1}\!\left(B_L(X)K\right).
+\]
+
+La funcion de valor con \(\tau\) pasos restantes se define por
+\[
+V_\tau(X)
+:=
+\inf_{\substack{K\in\mathcal K_\varepsilon\\ \log L\in\mathcal U_R}}
+\min
+\left\{
+Q_\tau^{MB}(X;K,L),
+Q_\tau^{BM}(X;K,L)
+\right\}.
+\]
+Equivalentemente,
+\[
+V_\tau(X)
+=
+\inf_{u\in\mathcal A_{\varepsilon,R}}
+\left[
+c(X,u)
++
+V_{\tau-1}\bigl(T^u(X)\bigr)
+\right].
+\]
+\end{definicion}
+
+\begin{observacion}[De la recurrencia de Bellman a la regularidad local]\label{obs:bellman_regularidad_local}
+La definicion de \(V_\tau\) convierte el problema de ordenamiento Bayes--Markov en una recurrencia de horizonte finito:
+\[
+V_\tau(X)
+=
+\inf_{u\in\mathcal A_{\varepsilon,R}}
+\left[
+c(X,u)+V_{\tau-1}\bigl(T^u(X)\bigr)
+\right].
+\]
+Esta forma separa la decision presente del costo restante. En el sentido de la programacion dinamica de Bellman, el problema de elegir una secuencia de operaciones se reduce, en cada etapa, a elegir una primera operacion y trasladar el resto del problema al estado alcanzado \citep{ref18}. En formulaciones de control probabilistico, esta separacion aparece como estado, accion, transicion, costo inmediato y costo futuro \citep{Todorov2009EfficientComputationOptimalActions}; en formulaciones de control KL, la recurrencia puede interpretarse como una propagacion hacia atras del costo optimo \citep{KappenGomezOpper2012OptimalControlAsAGraphicalModelInferenceProblem}.
+
+En la Sección 7 ya se fijaron las acciones
+\[
+u=(K,L,\sigma),
+\qquad
+\sigma\in\{MB,BM\},
+\]
+las transiciones
+\[
+T_{MB}^{K,L}(X)=B_L(XK),
+\qquad
+T_{BM}^{K,L}(X)=B_L(X)K,
+\]
+los costos de etapa \(c_{MB},c_{BM}\), y la condicion terminal
+\[
+V_0(X)=E_P(X)=D_{\mathrm{KL}}(P\|X).
+\]
+La pregunta ya no es solamente si la recurrencia esta bien definida, sino si su dependencia respecto del estado inicial es controlada. Por ello se busca probar una cota de la forma
+\[
+|V_\tau(X)-V_\tau(Y)|
+\le
+L_\tau(m)\|X-Y\|_1
+\]
+en regiones interiores del símplex.
+\end{observacion}
+
+\begin{observacion}[Fuentes de regularidad en la recurrencia]\label{obs:fuentes_regularidad_bellman}
+La regularidad de \(V_\tau\) no se obtiene directamente de la definicion recursiva. En la expresion
+\[
+c(X,u)+V_{\tau-1}\bigl(T^u(X)\bigr)
+\]
+intervienen tres dependencias respecto de \(X\): la transicion controlada, el costo de etapa y el valor futuro evaluado en el estado alcanzado.
+
+Por tanto, antes de estudiar \(V_\tau\), se deben controlar algebraicamente las piezas que alimentan la recurrencia:
+\[
+B_L,\qquad
+M_K,\qquad
+T_{MB}^{K,L},\qquad
+T_{BM}^{K,L},
+\qquad
+D_{\mathrm{KL}}.
+\]
+El uso de divergencias KL en los costos de etapa es coherente con formulaciones donde el costo mide la modificación de una distribución o de una trayectoria probabilística inducida por una acción. El uso de costos probabilísticos asociados a acciones es coherente con la formulación de control KL de \citep{Todorov2009EfficientComputationOptimalActions}. La interpretación del problema como inferencia sobre trayectorias se apoya en \citep{KappenGomezOpper2012OptimalControlAsAGraphicalModelInferenceProblem}. En este bloque las referencias solo motivan la estructura; las cotas se prueban directamente a partir de las definiciones de la Sección 7.
+\end{observacion}
+
+\begin{lema}[Regularidad Lipschitz de las transiciones ordenadas]\label{lem:lipschitz_transiciones_ordenadas}
+Sea
+\[
+\Lambda_B(R):=2e^{2R}.
+\]
+Si \(X,Y\in\Delta_n^\circ\), \(K\in\mathcal K_\varepsilon\) y \(\log L\in\mathcal U_R\), entonces
+\[
+\|B_L(X)-B_L(Y)\|_1
+\le
+\Lambda_B(R)\|X-Y\|_1.
+\]
+En consecuencia,
+\[
+\|T_{MB}^{K,L}(X)-T_{MB}^{K,L}(Y)\|_1
+\le
+\Lambda_B(R)\|X-Y\|_1,
+\]
+y
+\[
+\|T_{BM}^{K,L}(X)-T_{BM}^{K,L}(Y)\|_1
+\le
+\Lambda_B(R)\|X-Y\|_1.
+\]
+\end{lema}
+
+\begin{proof}
+Como \(\log L\in\mathcal U_R\), se tiene
+\[
+e^{-R}\le L_i\le e^R
+\qquad
+\text{para todo }i.
+\]
+Escribamos
+\[
+s_X:=\langle X,L\rangle.
+\]
+Entonces
+\[
+e^{-R}\le s_X\le e^R.
+\]
+La aplicacion bayesiana tiene coordenadas
+\[
+B_L(X)_i=\frac{X_iL_i}{s_X}.
+\]
+Para \(j\in\{1,\dots,n\}\),
+\[
+\frac{\partial}{\partial X_j}B_L(X)_i
+=
+\frac{\delta_{ij}L_i s_X-X_iL_iL_j}{s_X^2}.
+\]
+Por tanto, la suma de valores absolutos en la columna \(j\) del jacobiano es
+\[
+\sum_{i=1}^n
+\left|
+\frac{\partial}{\partial X_j}B_L(X)_i
+\right|
+=
+\frac{2L_j}{s_X^2}\sum_{i\neq j}X_iL_i.
+\]
+Como
+\[
+\sum_{i\neq j}X_iL_i\le s_X,
+\]
+se obtiene
+\[
+\sum_{i=1}^n
+\left|
+\frac{\partial}{\partial X_j}B_L(X)_i
+\right|
+\le
+\frac{2L_j}{s_X}
+\le
+2e^{2R}.
+\]
+Luego la norma inducida \(\ell^1\to\ell^1\) del jacobiano queda acotada por \(2e^{2R}\). Por el teorema del valor medio sobre el segmento que une \(X\) con \(Y\),
+\[
+\|B_L(X)-B_L(Y)\|_1
+\le
+2e^{2R}\|X-Y\|_1.
+\]
+
+Ademas, como \(K\) es estocastica,
+\[
+\|(X-Y)K\|_1\le \|X-Y\|_1.
+\]
+Por tanto,
+\[
+\|T_{MB}^{K,L}(X)-T_{MB}^{K,L}(Y)\|_1
+=
+\|B_L(XK)-B_L(YK)\|_1
+\le
+\Lambda_B(R)\|(X-Y)K\|_1
+\le
+\Lambda_B(R)\|X-Y\|_1.
+\]
+Asimismo,
+\[
+\|T_{BM}^{K,L}(X)-T_{BM}^{K,L}(Y)\|_1
+=
+\|(B_L(X)-B_L(Y))K\|_1
+\le
+\|B_L(X)-B_L(Y)\|_1
+\le
+\Lambda_B(R)\|X-Y\|_1.
+\]
+\end{proof}
+
+\begin{lema}[Invariancia interior uniforme de las transiciones ordenadas]\label{lem:invariancia_interior_transiciones_ordenadas}
+Sea
+\[
+\alpha:=\varepsilon e^{-2R}.
+\]
+Si \(X\in\Delta_n^\circ\), \(K\in\mathcal K_\varepsilon\) y \(\log L\in\mathcal U_R\), entonces
+\[
+T_{MB}^{K,L}(X)\in\Delta_n(\alpha),
+\qquad
+T_{BM}^{K,L}(X)\in\Delta_n(\alpha),
+\]
+donde
+\[
+\Delta_n(\alpha)
+:=
+\{Z\in\Delta_n^\circ:Z_i\ge \alpha\ \text{para todo }i\}.
+\]
+\end{lema}
+
+\begin{proof}
+Como \(K\in\mathcal K_\varepsilon\), se tiene \(K_{ij}\ge\varepsilon\). Por tanto,
+\[
+(XK)_j
+=
+\sum_{i=1}^n X_iK_{ij}
+\ge
+\varepsilon\sum_{i=1}^nX_i
+=
+\varepsilon.
+\]
+Luego \(XK\in\Delta_n(\varepsilon)\). Ademas,
+\[
+e^{-R}\le L_j\le e^R,
+\qquad
+\langle XK,L\rangle\le e^R.
+\]
+Asi,
+\[
+B_L(XK)_j
+=
+\frac{(XK)_jL_j}{\langle XK,L\rangle}
+\ge
+\frac{\varepsilon e^{-R}}{e^R}
+=
+\varepsilon e^{-2R}
+=
+\alpha.
+\]
+Por tanto,
+\[
+T_{MB}^{K,L}(X)=B_L(XK)\in\Delta_n(\alpha).
+\]
+
+Por otro lado, \(B_L(X)\in\Delta_n^\circ\). Al aplicar \(K\),
+\[
+(B_L(X)K)_j
+=
+\sum_{i=1}^n B_L(X)_iK_{ij}
+\ge
+\varepsilon\sum_{i=1}^n B_L(X)_i
+=
+\varepsilon.
+\]
+Como \(\alpha=\varepsilon e^{-2R}\le\varepsilon\), se concluye que
+\[
+T_{BM}^{K,L}(X)=B_L(X)K\in\Delta_n(\alpha).
+\]
+\end{proof}
+
+\begin{lema}[Cota local para la divergencia de Kullback--Leibler]\label{lem:cota_local_KL}
+Sea \(0<\eta\le 1/n\) y definamos
+\[
+\kappa(\eta)
+:=
+1+\log\frac1\eta+\frac1\eta.
+\]
+Si
+\[
+A,A',B,B'\in\Delta_n(\eta),
+\]
+entonces
+\[
+\left|
+D_{\mathrm{KL}}(A\|B)
+-
+D_{\mathrm{KL}}(A'\|B')
+\right|
+\le
+\kappa(\eta)
+\left(
+\|A-A'\|_1+\|B-B'\|_1
+\right).
+\]
+\end{lema}
+
+\begin{proof}
+Considérese la función
+\[
+F(A,B):=D_{\mathrm{KL}}(A\|B)
+=
+\sum_{i=1}^n A_i\log\frac{A_i}{B_i}.
+\]
+En \(\Delta_n(\eta)\times\Delta_n(\eta)\) se tiene
+\[
+\eta\le A_i,B_i\le 1.
+\]
+Las derivadas parciales son
+\[
+\frac{\partial F}{\partial A_i}
+=
+1+\log\frac{A_i}{B_i},
+\qquad
+\frac{\partial F}{\partial B_i}
+=
+-\frac{A_i}{B_i}.
+\]
+Como
+\[
+\frac{A_i}{B_i}\le \frac1\eta,
+\]
+se obtiene
+\[
+\left|
+\frac{\partial F}{\partial A_i}
+\right|
+\le
+1+\log\frac1\eta,
+\qquad
+\left|
+\frac{\partial F}{\partial B_i}
+\right|
+\le
+\frac1\eta.
+\]
+Por convexidad de \(\Delta_n(\eta)\), el segmento que une \((A,B)\) con \((A',B')\) permanece en \(\Delta_n(\eta)\times\Delta_n(\eta)\). Aplicando el teorema del valor medio,
+\[
+|F(A,B)-F(A',B')|
+\le
+\left(1+\log\frac1\eta\right)\|A-A'\|_1
++
+\frac1\eta\|B-B'\|_1.
+\]
+La cota afirmada se sigue de la definicion de \(\kappa(\eta)\).
+\end{proof}
+
+\begin{lema}[Regularidad Lipschitz de los costos de etapa]\label{lem:lipschitz_costos_etapa_ordenados}
+Sea \(m\in(0,1/n]\). Definamos
+\[
+\Lambda_B(R):=2e^{2R},
+\qquad
+\alpha:=\varepsilon e^{-2R},
+\qquad
+\beta_m:=me^{-2R}.
+\]
+Definamos ademas
+\[
+C_{MB}(m,\varepsilon,R)
+:=
+2\kappa(\min\{m,\varepsilon\})
++
+(\Lambda_B(R)+1)\kappa(\alpha),
+\]
+\[
+C_{BM}(m,\varepsilon,R)
+:=
+(\Lambda_B(R)+1)\kappa(\beta_m)
++
+2\Lambda_B(R)\kappa(\min\{\varepsilon,\beta_m\}),
+\]
+y
+\[
+C_c(m,\varepsilon,R)
+:=
+\max\{C_{MB}(m,\varepsilon,R),C_{BM}(m,\varepsilon,R)\}.
+\]
+Si
+\[
+X,Y\in\Delta_n(m),
+\qquad
+K\in\mathcal K_\varepsilon,
+\qquad
+\log L\in\mathcal U_R,
+\qquad
+\sigma\in\{MB,BM\},
+\]
+entonces
+\[
+|c_\sigma(X;K,L)-c_\sigma(Y;K,L)|
+\le
+C_c(m,\varepsilon,R)\|X-Y\|_1.
+\]
+\end{lema}
+
+\begin{proof}
+Primero consideremos el orden \(MB\). Se tiene
+\[
+c_{MB}(X;K,L)
+=
+D_{\mathrm{KL}}(XK\|X)
++
+D_{\mathrm{KL}}\bigl(B_L(XK)\|XK\bigr).
+\]
+Como \(X,Y\in\Delta_n(m)\) y \(K\in\mathcal K_\varepsilon\), entonces
+\[
+XK,YK\in\Delta_n(\varepsilon).
+\]
+Ademas,
+\[
+\|XK-YK\|_1\le \|X-Y\|_1.
+\]
+Aplicando el Lema~\ref{lem:cota_local_KL} con \(\eta=\min\{m,\varepsilon\}\), se obtiene
+\[
+\left|
+D_{\mathrm{KL}}(XK\|X)
+-
+D_{\mathrm{KL}}(YK\|Y)
+\right|
+\le
+2\kappa(\min\{m,\varepsilon\})\|X-Y\|_1.
+\]
+Por otra parte, por el Lema~\ref{lem:invariancia_interior_transiciones_ordenadas},
+\[
+B_L(XK),B_L(YK)\in\Delta_n(\alpha),
+\]
+y \(XK,YK\in\Delta_n(\varepsilon)\subseteq\Delta_n(\alpha)\). Ademas, por el Lema~\ref{lem:lipschitz_transiciones_ordenadas},
+\[
+\|B_L(XK)-B_L(YK)\|_1
+\le
+\Lambda_B(R)\|X-Y\|_1.
+\]
+Aplicando nuevamente el Lema~\ref{lem:cota_local_KL} con \(\eta=\alpha\), se obtiene
+\[
+\begin{aligned}
+&
+\left|
+D_{\mathrm{KL}}\bigl(B_L(XK)\|XK\bigr)
+-
+D_{\mathrm{KL}}\bigl(B_L(YK)\|YK\bigr)
+\right|
+\\
+&\qquad
+\le
+\kappa(\alpha)
+\left(
+\|B_L(XK)-B_L(YK)\|_1
++
+\|XK-YK\|_1
+\right)
+\\
+&\qquad
+\le
+(\Lambda_B(R)+1)\kappa(\alpha)\|X-Y\|_1.
+\end{aligned}
+\]
+Por tanto,
+\[
+|c_{MB}(X;K,L)-c_{MB}(Y;K,L)|
+\le
+C_{MB}(m,\varepsilon,R)\|X-Y\|_1.
+\]
+
+Ahora consideremos el orden \(BM\). Se tiene
+\[
+c_{BM}(X;K,L)
+=
+D_{\mathrm{KL}}\bigl(B_L(X)\|X\bigr)
++
+D_{\mathrm{KL}}\bigl(B_L(X)K\|B_L(X)\bigr).
+\]
+Como \(X,Y\in\Delta_n(m)\), entonces
+\[
+B_L(X),B_L(Y)\in\Delta_n(\beta_m),
+\qquad
+\beta_m=me^{-2R}.
+\]
+Ademas,
+\[
+\|B_L(X)-B_L(Y)\|_1
+\le
+\Lambda_B(R)\|X-Y\|_1.
+\]
+Aplicando el Lema~\ref{lem:cota_local_KL} con \(\eta=\beta_m\), se obtiene
+\[
+\begin{aligned}
+&
+\left|
+D_{\mathrm{KL}}\bigl(B_L(X)\|X\bigr)
+-
+D_{\mathrm{KL}}\bigl(B_L(Y)\|Y\bigr)
+\right|
+\\
+&\qquad
+\le
+\kappa(\beta_m)
+\left(
+\|B_L(X)-B_L(Y)\|_1+\|X-Y\|_1
+\right)
+\\
+&\qquad
+\le
+(\Lambda_B(R)+1)\kappa(\beta_m)\|X-Y\|_1.
+\end{aligned}
+\]
+Por otra parte,
+\[
+B_L(X)K,\ B_L(Y)K\in\Delta_n(\varepsilon),
+\]
+y
+\[
+B_L(X),B_L(Y)\in\Delta_n(\beta_m).
+\]
+Aplicando el Lema~\ref{lem:cota_local_KL} con
+\[
+\eta=\min\{\varepsilon,\beta_m\},
+\]
+se obtiene
+\[
+\begin{aligned}
+&
+\left|
+D_{\mathrm{KL}}\bigl(B_L(X)K\|B_L(X)\bigr)
+-
+D_{\mathrm{KL}}\bigl(B_L(Y)K\|B_L(Y)\bigr)
+\right|
+\\
+&\qquad
+\le
+\kappa(\min\{\varepsilon,\beta_m\})
+\left(
+\|(B_L(X)-B_L(Y))K\|_1
++
+\|B_L(X)-B_L(Y)\|_1
+\right)
+\\
+&\qquad
+\le
+2\Lambda_B(R)\kappa(\min\{\varepsilon,\beta_m\})\|X-Y\|_1.
+\end{aligned}
+\]
+Por tanto,
+\[
+|c_{BM}(X;K,L)-c_{BM}(Y;K,L)|
+\le
+C_{BM}(m,\varepsilon,R)\|X-Y\|_1.
+\]
+La conclusión se sigue tomando el máximo entre las dos constantes.
+\end{proof}
+
+\begin{observacion}[Propagacion de regularidad por Bellman]\label{obs:propagacion_regularidad_bellman}
+Los lemas anteriores separan las dos fuentes de variacion que aparecen en la recurrencia. La primera es el costo de etapa,
+\[
+c(X,u),
+\]
+que cambia con \(X\). La segunda es el estado alcanzado,
+\[
+T^u(X),
+\]
+donde se evalua el valor futuro. La recurrencia de Bellman combina ambas piezas en la forma
+\[
+c(X,u)+V_{\tau-1}\bigl(T^u(X)\bigr).
+\]
+
+La literatura de programación dinámica introduce precisamente esta separación entre decisión presente y subproblema restante \citep{ref18}. En control óptimo, esta estructura se interpreta como una contribución acumulada de trayectoria junto con un costo terminal \citep{Kappen2005LinearTheoryForControlOfNonLinearStochasticSystems}; en control KL, el costo probabilístico se expresa mediante divergencias y el problema se propaga hacia atrás por funciones de valor o mensajes \citep{KappenGomezOpper2012OptimalControlAsAGraphicalModelInferenceProblem}. En la Sección 7, esta lectura se concreta en el hecho de que la regularidad de \(V_{\tau-1}\), junto con las cotas uniformes para \(c\) y \(T^u\), produce regularidad de \(V_\tau\).
+
+Como las cotas anteriores son uniformes en la accion admisible \(u\in\mathcal A_{\varepsilon,R}\), el paso final consiste en verificar que el infimo sobre acciones conserva la misma cota Lipschitz.
+\end{observacion}
+
+\begin{proposicion}[Regularidad Lipschitz de \(V_\tau\)]\label{prop:lipschitz_V_tau_bellman}
+Sea \(P\in\Delta_n^\circ\), \(0<\varepsilon\le 1/n\), \(R>0\) y \(m\in(0,1/n]\). Definamos
+\[
+\Lambda_B(R):=2e^{2R},
+\qquad
+\alpha:=\varepsilon e^{-2R}.
+\]
+Sea
+\[
+L_0(m):=\frac1m.
+\]
+Para \(\tau\ge 1\), definamos recursivamente
+\[
+L_\tau(m)
+:=
+C_c(m,\varepsilon,R)
++
+\Lambda_B(R)L_{\tau-1}(\alpha).
+\]
+Entonces, para todo \(\tau\in\mathbb N\) y para cualesquiera \(X,Y\in\Delta_n(m)\), se cumple
+\[
+|V_\tau(X)-V_\tau(Y)|
+\le
+L_\tau(m)\|X-Y\|_1.
+\]
+En particular, sobre la region \(\Delta_n(\alpha)\),
+\[
+L_\tau(\alpha)
+=
+\Lambda_B(R)^\tau\frac1\alpha
++
+C_c(\alpha,\varepsilon,R)
+\sum_{j=0}^{\tau-1}\Lambda_B(R)^j.
+\]
+\end{proposicion}
+
+\begin{proof}
+Para \(\tau=0\),
+\[
+V_0(X)
+=
+D_{\mathrm{KL}}(P\|X)
+=
+\sum_{i=1}^n P_i\log\frac{P_i}{X_i}.
+\]
+Si \(X,Y\in\Delta_n(m)\), entonces
+\[
+\left|
+V_0(X)-V_0(Y)
+\right|
+=
+\left|
+\sum_{i=1}^n P_i\log\frac{Y_i}{X_i}
+\right|.
+\]
+Como \(X_i,Y_i\ge m\), la funcion \(x\mapsto \log x\) tiene derivada acotada por \(1/m\) sobre \([m,1]\). Por tanto,
+\[
+\left|
+\log Y_i-\log X_i
+\right|
+\le
+\frac1m|Y_i-X_i|.
+\]
+Luego
+\[
+|V_0(X)-V_0(Y)|
+\le
+\frac1m\sum_{i=1}^n P_i|X_i-Y_i|
+\le
+\frac1m\|X-Y\|_1.
+\]
+Asi,
+\[
+L_0(m)=\frac1m.
+\]
+
+Supongamos ahora que la afirmacion vale para \(\tau-1\) en la region \(\Delta_n(\alpha)\). Para \(u\in\mathcal A_{\varepsilon,R}\), escribamos
+\[
+F_u(X)
+:=
+c(X,u)+V_{\tau-1}\bigl(T^u(X)\bigr).
+\]
+Por el Lema~\ref{lem:lipschitz_costos_etapa_ordenados},
+\[
+|c(X,u)-c(Y,u)|
+\le
+C_c(m,\varepsilon,R)\|X-Y\|_1.
+\]
+Por el Lema~\ref{lem:invariancia_interior_transiciones_ordenadas},
+\[
+T^u(X),T^u(Y)\in\Delta_n(\alpha).
+\]
+Por hipotesis inductiva,
+\[
+\left|
+V_{\tau-1}\bigl(T^u(X)\bigr)
+-
+V_{\tau-1}\bigl(T^u(Y)\bigr)
+\right|
+\le
+L_{\tau-1}(\alpha)
+\|T^u(X)-T^u(Y)\|_1.
+\]
+Por el Lema~\ref{lem:lipschitz_transiciones_ordenadas},
+\[
+\|T^u(X)-T^u(Y)\|_1
+\le
+\Lambda_B(R)\|X-Y\|_1.
+\]
+Combinando estas cotas,
+\[
+|F_u(X)-F_u(Y)|
+\le
+\left[
+C_c(m,\varepsilon,R)
++
+\Lambda_B(R)L_{\tau-1}(\alpha)
+\right]
+\|X-Y\|_1.
+\]
+Es decir,
+\[
+|F_u(X)-F_u(Y)|
+\le
+L_\tau(m)\|X-Y\|_1
+\]
+uniformemente en \(u\in\mathcal A_{\varepsilon,R}\).
+
+Como
+\[
+V_\tau(X)=\inf_{u\in\mathcal A_{\varepsilon,R}}F_u(X),
+\]
+el infimo de una familia de funciones Lipschitz con la misma constante tambien es Lipschitz con esa constante. En efecto, dado \(\delta>0\), elijase \(u_\delta\in\mathcal A_{\varepsilon,R}\) tal que
+\[
+F_{u_\delta}(Y)
+\le
+V_\tau(Y)+\delta.
+\]
+Entonces
+\[
+V_\tau(X)-V_\tau(Y)
+\le
+F_{u_\delta}(X)-F_{u_\delta}(Y)+\delta
+\le
+L_\tau(m)\|X-Y\|_1+\delta.
+\]
+Haciendo \(\delta\downarrow0\),
+\[
+V_\tau(X)-V_\tau(Y)
+\le
+L_\tau(m)\|X-Y\|_1.
+\]
+Intercambiando \(X\) y \(Y\), se obtiene
+\[
+V_\tau(Y)-V_\tau(X)
+\le
+L_\tau(m)\|X-Y\|_1.
+\]
+Por tanto,
+\[
+|V_\tau(X)-V_\tau(Y)|
+\le
+L_\tau(m)\|X-Y\|_1.
+\]
+
+Finalmente, si \(m=\alpha\), la recurrencia queda
+\[
+L_\tau(\alpha)
+=
+C_c(\alpha,\varepsilon,R)
++
+\Lambda_B(R)L_{\tau-1}(\alpha),
+\qquad
+L_0(\alpha)=\frac1\alpha.
+\]
+Iterando,
+\[
+L_\tau(\alpha)
+=
+\Lambda_B(R)^\tau\frac1\alpha
++
+C_c(\alpha,\varepsilon,R)
+\sum_{j=0}^{\tau-1}\Lambda_B(R)^j.
+\]
+\end{proof}
+
+\begin{corolario}[Control del valor futuro por el defecto de ordenamiento]\label{cor:defecto_ordenamiento_valor_futuro}
+Bajo las hipotesis de la Proposicion~\ref{prop:lipschitz_V_tau_bellman}, si
+\[
+X\in\Delta_n^\circ,
+\qquad
+K\in\mathcal K_\varepsilon,
+\qquad
+\log L\in\mathcal U_R,
+\]
+entonces, para todo \(\tau\ge 1\),
+\[
+\left|
+V_{\tau-1}\!\left(T_{MB}^{K,L}(X)\right)
+-
+V_{\tau-1}\!\left(T_{BM}^{K,L}(X)\right)
+\right|
+\le
+L_{\tau-1}(\alpha)\|\mathcal D_{K,L}(X)\|_1.
+\]
+\end{corolario}
+
+\begin{proof}
+Por el Lema~\ref{lem:invariancia_interior_transiciones_ordenadas},
+\[
+T_{MB}^{K,L}(X),T_{BM}^{K,L}(X)\in\Delta_n(\alpha).
+\]
+Aplicando la Proposicion~\ref{prop:lipschitz_V_tau_bellman} en la region \(\Delta_n(\alpha)\), se obtiene
+\[
+\left|
+V_{\tau-1}\!\left(T_{MB}^{K,L}(X)\right)
+-
+V_{\tau-1}\!\left(T_{BM}^{K,L}(X)\right)
+\right|
+\le
+L_{\tau-1}(\alpha)
+\left\|
+T_{MB}^{K,L}(X)-T_{BM}^{K,L}(X)
+\right\|_1.
+\]
+Por la definicion del defecto de ordenamiento,
+\[
+\mathcal D_{K,L}(X)
+=
+T_{MB}^{K,L}(X)-T_{BM}^{K,L}(X).
+\]
+Sustituyendo,
+\[
+\left|
+V_{\tau-1}\!\left(T_{MB}^{K,L}(X)\right)
+-
+V_{\tau-1}\!\left(T_{BM}^{K,L}(X)\right)
+\right|
+\le
+L_{\tau-1}(\alpha)\|\mathcal D_{K,L}(X)\|_1.
+\]
+\end{proof}
+
+\begin{observacion}[De la regularidad de Bellman a la comparacion entre ordenes]\label{obs:regularidad_bellman_comparacion_ordenes}
+El corolario anterior controla unicamente la diferencia de valor futuro producida por los dos estados alcanzados. En efecto,
+\[
+\mathcal D_{K,L}(X)
+=
+T_{MB}^{K,L}(X)-T_{BM}^{K,L}(X),
+\]
+y la regularidad local de \(V_{\tau-1}\) da
+\[
+\left|
+V_{\tau-1}\!\left(T_{MB}^{K,L}(X)\right)
+-
+V_{\tau-1}\!\left(T_{BM}^{K,L}(X)\right)
+\right|
+\le
+L_{\tau-1}(\alpha)\|\mathcal D_{K,L}(X)\|_1.
+\]
+Esta estimacion no compara todavia las decisiones ordenadas completas, porque las funciones de accion--valor incorporan tambien el costo de etapa:
+\[
+Q_\tau^{MB}(X;K,L)
+=
+c_{MB}(X;K,L)
++
+V_{\tau-1}\!\left(T_{MB}^{K,L}(X)\right),
+\]
+\[
+Q_\tau^{BM}(X;K,L)
+=
+c_{BM}(X;K,L)
++
+V_{\tau-1}\!\left(T_{BM}^{K,L}(X)\right).
+\]
+Por tanto,
+\[
+Q_\tau^{MB}(X;K,L)-Q_\tau^{BM}(X;K,L)
+=
+\bigl(c_{MB}(X;K,L)-c_{BM}(X;K,L)\bigr)
++
+\bigl(
+V_{\tau-1}\!\left(T_{MB}^{K,L}(X)\right)
+-
+V_{\tau-1}\!\left(T_{BM}^{K,L}(X)\right)
+\bigr).
+\]
+La primera diferencia mide el cambio de costo producido por el orden de aplicacion; la segunda diferencia mide el cambio de valor futuro producido por los estados alcanzados.
+
+La justificacion estructural de separar costo presente y problema restante ya fue fijada en las Observaciones~\ref{obs:necesidad_costos_valor_orden}, \ref{obs:bellman_regularidad_local} y \ref{obs:propagacion_regularidad_bellman}. En este punto no se introduce una nueva lectura bibliografica; se usa esa separacion para aislar la cantidad que falta controlar:
+\[
+|c_{MB}(X;K,L)-c_{BM}(X;K,L)|.
+\]
+\end{observacion}
+
+\begin{definicion}[Defecto escalar de accion--valor por orden]\label{def:defecto_escalar_accion_valor_orden}
+Sea \(\tau\ge 1\). Sea \(X\in\Delta_n^\circ\), sea \(K\in\mathcal K_\varepsilon\) y sea \(L\in\mathbb R_{>0}^n\). El defecto escalar de accion--valor por orden asociado al par \((K,L)\) se define por
+\[
+\eta_\tau(X;K,L)
+:=
+Q_\tau^{MB}(X;K,L)-Q_\tau^{BM}(X;K,L).
+\]
+Equivalentemente, se introducen las diferencias
+\[
+\Delta\mathfrak c(X;K,L)
+:=
+c_{MB}(X;K,L)-c_{BM}(X;K,L),
+\]
+y
+\[
+\Delta\mathfrak v_\tau(X;K,L)
+:=
+V_{\tau-1}\!\left(T_{MB}^{K,L}(X)\right)
+-
+V_{\tau-1}\!\left(T_{BM}^{K,L}(X)\right).
+\]
+Con esta notacion,
+\[
+\eta_\tau(X;K,L)
+=
+\Delta\mathfrak c(X;K,L)
++
+\Delta\mathfrak v_\tau(X;K,L).
+\]
+La cantidad \(\eta_\tau(X;K,L)\) es firmada. Si
+\[
+\eta_\tau(X;K,L)>0,
+\]
+entonces el orden \(BM\) tiene menor accion--valor que el orden \(MB\) para el mismo par \((K,L)\). Si
+\[
+\eta_\tau(X;K,L)<0,
+\]
+entonces el orden \(MB\) tiene menor accion--valor que el orden \(BM\) para el mismo par \((K,L)\). Si
+\[
+\eta_\tau(X;K,L)=0,
+\]
+ambos ordenes tienen el mismo accion--valor en \(X\) para el par \((K,L)\).
+Por tanto, \(\eta_\tau(X;K,L)\) no mide diferencia de estados. La diferencia de estados esta dada por \(\mathcal D_{K,L}(X)\). El defecto \(\eta_\tau(X;K,L)\) mide la diferencia total entre las dos funciones de accion--valor ordenadas.
+\end{definicion}
+
+\begin{lema}[Control del defecto de costos de etapa]\label{lem:control_defecto_costos_etapa}
+Sea \(m\in(0,1/n]\). Sea
+\[
+X\in\Delta_n(m),
+\qquad
+K\in\mathcal K_\varepsilon,
+\qquad
+\log L\in\mathcal U_R.
+\]
+Definamos
+\[
+m_*:=e^{-2R}\min\{m,\varepsilon\}.
+\]
+Entonces
+\[
+|\Delta\mathfrak c(X;K,L)|
+\le
+\kappa(m_*)
+\left(
+2\|XK-B_L(X)\|_1
++
+\|\mathcal D_{K,L}(X)\|_1
+\right).
+\]
+\end{lema}
+
+\begin{proof}
+Por definicion,
+\[
+\Delta\mathfrak c(X;K,L)
+=
+c_{MB}(X;K,L)-c_{BM}(X;K,L).
+\]
+Usando las definiciones de \(c_{MB}\) y \(c_{BM}\), se tiene
+\[
+\begin{aligned}
+\Delta\mathfrak c(X;K,L)
+&=
+D_{\mathrm{KL}}(XK\|X)
+-
+D_{\mathrm{KL}}(B_L(X)\|X)
+\\
+&\quad+
+D_{\mathrm{KL}}(B_L(XK)\|XK)
+-
+D_{\mathrm{KL}}(B_L(X)K\|B_L(X)).
+\end{aligned}
+\]
+Como \(X\in\Delta_n(m)\), se tiene \(X\in\Delta_n(m_*)\). Como \(K\in\mathcal K_\varepsilon\), se tiene
+\[
+XK\in\Delta_n(\varepsilon)\subseteq\Delta_n(m_*).
+\]
+Como \(\log L\in\mathcal U_R\), se tiene
+\[
+B_L(X)\in\Delta_n(me^{-2R})\subseteq\Delta_n(m_*),
+\]
+y
+\[
+B_L(XK)\in\Delta_n(\varepsilon e^{-2R})\subseteq\Delta_n(m_*).
+\]
+Finalmente,
+\[
+B_L(X)K\in\Delta_n(\varepsilon)\subseteq\Delta_n(m_*).
+\]
+Por tanto, todos los argumentos de las divergencias anteriores pertenecen a \(\Delta_n(m_*)\).
+
+Aplicando el Lema~\ref{lem:cota_local_KL} a los pares
+\[
+(XK,X)
+\qquad\text{y}\qquad
+(B_L(X),X),
+\]
+se obtiene
+\[
+\left|
+D_{\mathrm{KL}}(XK\|X)
+-
+D_{\mathrm{KL}}(B_L(X)\|X)
+\right|
+\le
+\kappa(m_*)\|XK-B_L(X)\|_1.
+\]
+Aplicando nuevamente el Lema~\ref{lem:cota_local_KL} a los pares
+\[
+(B_L(XK),XK)
+\qquad\text{y}\qquad
+(B_L(X)K,B_L(X)),
+\]
+se obtiene
+\[
+\begin{aligned}
+&
+\left|
+D_{\mathrm{KL}}(B_L(XK)\|XK)
+-
+D_{\mathrm{KL}}(B_L(X)K\|B_L(X))
+\right|
+\\
+&\qquad
+\le
+\kappa(m_*)
+\left(
+\|B_L(XK)-B_L(X)K\|_1
++
+\|XK-B_L(X)\|_1
+\right).
+\end{aligned}
+\]
+Por la definicion del defecto de ordenamiento,
+\[
+B_L(XK)-B_L(X)K
+=
+\mathcal D_{K,L}(X).
+\]
+Sumando las dos estimaciones,
+\[
+|\Delta\mathfrak c(X;K,L)|
+\le
+\kappa(m_*)
+\left(
+2\|XK-B_L(X)\|_1
++
+\|\mathcal D_{K,L}(X)\|_1
+\right).
+\]
+\end{proof}
+
+\begin{proposicion}[Control del defecto escalar de accion--valor]\label{prop:control_defecto_escalar_accion_valor}
+Sea \(\tau\ge 1\). Sea \(m\in(0,1/n]\). Supongamos que
+\[
+X\in\Delta_n(m),
+\qquad
+K\in\mathcal K_\varepsilon,
+\qquad
+\log L\in\mathcal U_R.
+\]
+Definamos
+\[
+m_*:=e^{-2R}\min\{m,\varepsilon\},
+\qquad
+\alpha:=\varepsilon e^{-2R}.
+\]
+Entonces
+\[
+|\eta_\tau(X;K,L)|
+\le
+\kappa(m_*)
+\left(
+2\|XK-B_L(X)\|_1
++
+\|\mathcal D_{K,L}(X)\|_1
+\right)
++
+L_{\tau-1}(\alpha)\|\mathcal D_{K,L}(X)\|_1.
+\]
+Equivalentemente,
+\[
+|\eta_\tau(X;K,L)|
+\le
+2\kappa(m_*)\|XK-B_L(X)\|_1
++
+\bigl(\kappa(m_*)+L_{\tau-1}(\alpha)\bigr)
+\|\mathcal D_{K,L}(X)\|_1.
+\]
+\end{proposicion}
+
+\begin{proof}
+Por la Definicion~\ref{def:defecto_escalar_accion_valor_orden},
+\[
+\eta_\tau(X;K,L)
+=
+\Delta\mathfrak c(X;K,L)
++
+\Delta\mathfrak v_\tau(X;K,L).
+\]
+Por la desigualdad triangular,
+\[
+|\eta_\tau(X;K,L)|
+\le
+|\Delta\mathfrak c(X;K,L)|
++
+|\Delta\mathfrak v_\tau(X;K,L)|.
+\]
+El Lema~\ref{lem:control_defecto_costos_etapa} da
+\[
+|\Delta\mathfrak c(X;K,L)|
+\le
+\kappa(m_*)
+\left(
+2\|XK-B_L(X)\|_1
++
+\|\mathcal D_{K,L}(X)\|_1
+\right).
+\]
+Por el Corolario~\ref{cor:defecto_ordenamiento_valor_futuro}, aplicado a
+\[
+\mathcal D_{K,L}(X)=T_{MB}^{K,L}(X)-T_{BM}^{K,L}(X),
+\]
+se obtiene
+\[
+|\Delta\mathfrak v_\tau(X;K,L)|
+\le
+L_{\tau-1}(\alpha)\|\mathcal D_{K,L}(X)\|_1.
+\]
+Sustituyendo ambas cotas en la desigualdad triangular,
+\[
+|\eta_\tau(X;K,L)|
+\le
+\kappa(m_*)
+\left(
+2\|XK-B_L(X)\|_1
++
+\|\mathcal D_{K,L}(X)\|_1
+\right)
++
+L_{\tau-1}(\alpha)\|\mathcal D_{K,L}(X)\|_1.
+\]
+Agrupando los terminos con \(\|\mathcal D_{K,L}(X)\|_1\), resulta
+\[
+|\eta_\tau(X;K,L)|
+\le
+2\kappa(m_*)\|XK-B_L(X)\|_1
++
+\bigl(\kappa(m_*)+L_{\tau-1}(\alpha)\bigr)
+\|\mathcal D_{K,L}(X)\|_1.
+\]
+\end{proof}
+
+\begin{proposicion}[Suboptimalidad de un paso por eleccion de orden]\label{prop:suboptimalidad_un_paso_eleccion_orden}
+Sea \(\tau\ge 1\). Sea \(m\in(0,1/n]\). Supongamos que
+\[
+X\in\Delta_n(m),
+\qquad
+K\in\mathcal K_\varepsilon,
+\qquad
+\log L\in\mathcal U_R.
+\]
+Definamos
+\[
+m_*:=e^{-2R}\min\{m,\varepsilon\},
+\qquad
+\alpha:=\varepsilon e^{-2R}.
+\]
+Entonces
+\[
+0
+\le
+Q_\tau^{MB}(X;K,L)
+-
+\min\{Q_\tau^{MB}(X;K,L),Q_\tau^{BM}(X;K,L)\}
+\le
+|\eta_\tau(X;K,L)|,
+\]
+y
+\[
+0
+\le
+Q_\tau^{BM}(X;K,L)
+-
+\min\{Q_\tau^{MB}(X;K,L),Q_\tau^{BM}(X;K,L)\}
+\le
+|\eta_\tau(X;K,L)|.
+\]
+En particular,
+\[
+\begin{aligned}
+&Q_\tau^{MB}(X;K,L)
+-
+\min\{Q_\tau^{MB}(X;K,L),Q_\tau^{BM}(X;K,L)\}
+\\
+&\qquad\le
+2\kappa(m_*)\|XK-B_L(X)\|_1
++
+\bigl(\kappa(m_*)+L_{\tau-1}(\alpha)\bigr)
+\|\mathcal D_{K,L}(X)\|_1,
+\end{aligned}
+\]
+y
+\[
+\begin{aligned}
+&Q_\tau^{BM}(X;K,L)
+-
+\min\{Q_\tau^{MB}(X;K,L),Q_\tau^{BM}(X;K,L)\}
+\\
+&\qquad\le
+2\kappa(m_*)\|XK-B_L(X)\|_1
++
+\bigl(\kappa(m_*)+L_{\tau-1}(\alpha)\bigr)
+\|\mathcal D_{K,L}(X)\|_1.
+\end{aligned}
+\]
+\end{proposicion}
+
+\begin{proof}
+Pongamos
+\[
+a:=Q_\tau^{MB}(X;K,L),
+\qquad
+b:=Q_\tau^{BM}(X;K,L).
+\]
+Por definicion,
+\[
+\eta_\tau(X;K,L)=a-b.
+\]
+Si \(a\le b\), entonces
+\[
+a-\min\{a,b\}=a-a=0,
+\]
+y
+\[
+b-\min\{a,b\}=b-a=|\eta_\tau(X;K,L)|.
+\]
+Si \(b<a\), entonces
+\[
+b-\min\{a,b\}=b-b=0,
+\]
+y
+\[
+a-\min\{a,b\}=a-b=|\eta_\tau(X;K,L)|.
+\]
+En ambos casos,
+\[
+0
+\le
+a-\min\{a,b\}
+\le
+|\eta_\tau(X;K,L)|,
+\]
+y
+\[
+0
+\le
+b-\min\{a,b\}
+\le
+|\eta_\tau(X;K,L)|.
+\]
+Por la Proposicion~\ref{prop:control_defecto_escalar_accion_valor},
+\[
+|\eta_\tau(X;K,L)|
+\le
+2\kappa(m_*)\|XK-B_L(X)\|_1
++
+\bigl(\kappa(m_*)+L_{\tau-1}(\alpha)\bigr)
+\|\mathcal D_{K,L}(X)\|_1.
+\]
+Sustituyendo esta cota en las dos desigualdades anteriores, se obtienen las estimaciones afirmadas.
+\end{proof}
+
+\begin{definicion}[Trayectoria admisible ordenada y costo realizado]\label{def:trayectoria_admisible_ordenada_costo_realizado}
+Sea \(N\ge 1\). Sea \(X_0\in\Delta_n^\circ\) y sea
+\[
+u_t=(K_t,L_t,\sigma_t)\in\mathcal A_{\varepsilon,R},
+\qquad
+t=0,\dots,N-1.
+\]
+La trayectoria admisible ordenada generada por
+\[
+(X_0;u_0,\dots,u_{N-1})
+\]
+es la sucesion \((X_t)_{t=0}^N\subset\Delta_n^\circ\) definida recursivamente por
+\[
+X_{t+1}
+:=
+T^{u_t}(X_t),
+\qquad
+t=0,\dots,N-1.
+\]
+Equivalentemente, si \(u_t=(K_t,L_t,\sigma_t)\), entonces
+\[
+X_{t+1}
+=
+\begin{cases}
+T_{MB}^{K_t,L_t}(X_t), & \text{si } \sigma_t=MB,\\[2mm]
+T_{BM}^{K_t,L_t}(X_t), & \text{si } \sigma_t=BM.
+\end{cases}
+\]
+
+El costo realizado en \(N\) pasos por la sucesion de acciones
+\[
+u_0,\dots,u_{N-1}
+\]
+desde el estado inicial \(X_0\) se define por
+\[
+J_N(X_0;u_0,\dots,u_{N-1})
+:=
+\sum_{t=0}^{N-1}c(X_t,u_t)
++
+V_0(X_N).
+\]
+Como \(V_0=E_P\), tambien puede escribirse
+\[
+J_N(X_0;u_0,\dots,u_{N-1})
+=
+\sum_{t=0}^{N-1}c(X_t,u_t)
++
+E_P(X_N).
+\]
+\end{definicion}
+
+\begin{teorema}[Cota de suboptimalidad multi-paso (Q-función)]\label{teo:subopt_multi_paso}
+Sean \(\varepsilon>0\), \(R>0\) y \(\tau\ge 1\). Sean \(X\in\Delta_n^\circ\), \(K\in\mathcal K_\varepsilon\) y \(\log L\in\mathcal U_R\). Sea \(\mathcal C\subset\Delta_n^\circ\) un compacto que contenga a \(X\) y a las imágenes relevantes de \(X\) bajo las composiciones admisibles de \(B_L\) y \(M_K\) hasta el horizonte \(\tau\). Supóngase que existe una constante \(L_{\tau-1}(\mathcal C)\) tal que \(V_{\tau-1}\) es Lipschitz en \(\mathcal C\) con esa constante, y definamos
+\[
+m(\mathcal C):=\min_{Y\in\mathcal C}\min_{1\le i\le n}Y_i,
+\qquad
+m_{**}:=\min\{m(\mathcal C),\varepsilon\}e^{-2R}.
+\]
+Entonces
+\[
+\bigl|Q_\tau^{MB}(X;K,L)-Q_\tau^{BM}(X;K,L)\bigr|
+\le
+C_\tau(\mathcal C,\varepsilon,R)\Bigl(\|XK-B_L(X)\|_1+\|\mathcal D_{K,L}(X)\|_1\Bigr),
+\]
+donde
+\[
+C_\tau(\mathcal C,\varepsilon,R):=2\Lambda(m_{**})+L_{\tau-1}(\mathcal C).
+\]
+En particular, si \(XK=B_L(X)\) y \(\mathcal D_{K,L}(X)=0\), entonces
+\[
+Q_\tau^{MB}(X;K,L)=Q_\tau^{BM}(X;K,L).
+\]
+\end{teorema}
+
+\begin{proof}
+Se escribe
+\[
+Q_\tau^{MB}(X;K,L)-Q_\tau^{BM}(X;K,L)
+=
+\bigl[c_{MB}(X;K,L)-c_{BM}(X;K,L)\bigr]
++
+\bigl[V_{\tau-1}(B_L(XK))-V_{\tau-1}(B_L(X)K)\bigr].
+\]
+Para el primer corchete, la comparación local de las dos sumas de KL da
+\[
+\bigl|c_{MB}(X;K,L)-c_{BM}(X;K,L)\bigr|
+\le
+2\Lambda(m_{**})\Bigl(\|XK-B_L(X)\|_1+\|\mathcal D_{K,L}(X)\|_1\Bigr).
+\]
+Para el segundo corchete, la condición de Lipschitz de \(V_{\tau-1}\) en \(\mathcal C\) implica
+\[
+\bigl|V_{\tau-1}(B_L(XK))-V_{\tau-1}(B_L(X)K)\bigr|
+\le
+L_{\tau-1}(\mathcal C)\,\|B_L(XK)-B_L(X)K\|_1
+=
+L_{\tau-1}(\mathcal C)\,\|\mathcal D_{K,L}(X)\|_1.
+\]
+Sumando ambas cotas y absorbiendo el término de \(\|\mathcal D_{K,L}(X)\|_1\) en la constante \(C_\tau(\mathcal C,\varepsilon,R)\), se obtiene la desigualdad anunciada.
+\end{proof}
+
+%%%%%%%%%%%%%%%%% REVISAR BLLOQUE   %%%%%%%
+
+\bibliography{../Referencias/Bib/referencesFC}
+\end{document}

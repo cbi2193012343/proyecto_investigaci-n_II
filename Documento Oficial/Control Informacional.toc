@@ -1,0 +1,12 @@
+\babel@toc {spanish}{}\relax 
+\contentsline {section}{\numberline {1}Fundamentos probabilísticos y geométricos del control informacional}{4}{section.1}%
+\contentsline {subsection}{\numberline {1.1}Probabilidad, particiones y símplex}{4}{subsection.1.1}%
+\contentsline {subsection}{\numberline {1.2}Correcciones locales y cambio de medida}{5}{subsection.1.2}%
+\contentsline {subsection}{\numberline {1.3}Operadores globales multiplicativos y composición}{8}{subsection.1.3}%
+\contentsline {subsection}{\numberline {1.4}Divergencia KL, métrica de Fisher y dinámica inducida}{12}{subsection.1.4}%
+\contentsline {section}{\numberline {2}Sección 5 -- Semántica bayesiana}{19}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Modelos continuos como estados informacionales discretos}{23}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Trayectorias Bayesianas}{33}{subsection.2.2}%
+\contentsline {section}{\numberline {3}Sección 6 -- Semántica markoviana}{45}{section.3}%
+\contentsline {section}{\numberline {4}Sección 7 -- Control Óptimo Informacional y Defecto de Ordenamiento}{57}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Comparación de órdenes Bayes--Markov}{57}{subsection.4.1}%

@@ -1,0 +1,126 @@
+\begin{thebibliography}{18}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Aitchison(1986)]{Aitchison1986}
+John Aitchison.
+\newblock \emph{The Statistical Analysis of Compositional Data}.
+\newblock Chapman and Hall, London, 1986.
+\newblock Reprinted in 2003.
+
+\bibitem[Amari and Nagaoka(2000)]{AmariNagaoka2000}
+Shunichi Amari and Hiroshi Nagaoka.
+\newblock \emph{Methods of Information Geometry}, volume 191 of
+  \emph{Translations of Mathematical Monographs}.
+\newblock American Mathematical Society and Oxford University Press, 2000.
+
+\bibitem[Ambrosio et~al.(2005)Ambrosio, Gigli, and
+  Savar{\'e}]{AmbrosioGigliSavare2005}
+Luigi Ambrosio, Nicola Gigli, and Giuseppe Savar{\'e}.
+\newblock \emph{Gradient Flows in Metric Spaces and in the Space of Probability
+  Measures}.
+\newblock Lectures in Mathematics ETH Z{\"u}rich. Birkh{\"a}user, Basel, 2005.
+\newblock ISBN 978-3-7643-2428-5.
+
+\bibitem[Bellman(1952)]{ref18}
+Richard Bellman.
+\newblock On the theory of dynamic programming.
+\newblock \emph{Proceedings of the National Academy of Sciences of the United
+  States of America}, 38\penalty0 (8):\penalty0 716--719, 1952.
+
+\bibitem[Chentsov(1982)]{Chentsov1982}
+Nikolai~Nikolaevich Chentsov.
+\newblock \emph{Statistical Decision Rules and Optimal Inference}, volume~53 of
+  \emph{Translations of Mathematical Monographs}.
+\newblock American Mathematical Society, Providence, Rhode Island, 1982.
+\newblock ISBN 0-8218-4502-0.
+
+\bibitem[Cover and Thomas(1991)]{CoverThomas1991}
+Thomas~M. Cover and Joy~A. Thomas.
+\newblock \emph{Elements of Information Theory}.
+\newblock Wiley Series in Telecommunications. John Wiley \& Sons, New York,
+  1991.
+\newblock ISBN 0-471-06259-6.
+
+\bibitem[Csisz{\'a}r(1975)]{Csiszar1975}
+Imre Csisz{\'a}r.
+\newblock I-divergence geometry of probability distributions and minimization
+  problems.
+\newblock \emph{The Annals of Probability}, 3\penalty0 (1):\penalty0 146--158,
+  1975.
+
+\bibitem[Gaubert and Qu(2014)]{GaubertQu2014}
+Stephane Gaubert and Zheng Qu.
+\newblock Dobrushin's ergodicity coefficient for markov operators on cones,
+  2014.
+\newblock Preprint.
+
+\bibitem[ichi Amari(2016)]{Amari2016}
+Shun ichi Amari.
+\newblock \emph{Information Geometry and Its Applications}, volume 194 of
+  \emph{Applied Mathematical Sciences}.
+\newblock Springer Japan, Tokyo, 2016.
+\newblock ISBN 978-4-431-55977-1.
+\newblock Corrected publication 2020.
+
+\bibitem[Jordan et~al.(1998)Jordan, Kinderlehrer, and
+  Otto]{JordanKinderlehrerOtto1998}
+Richard Jordan, David Kinderlehrer, and Felix Otto.
+\newblock The variational formulation of the {Fokker-Planck} equation.
+\newblock \emph{SIAM Journal on Mathematical Analysis}, 29\penalty0
+  (1):\penalty0 1--17, 1998.
+\newblock \doi{10.1137/S0036141096303359}.
+
+\bibitem[Kappen(2005)]{Kappen2005LinearTheoryForControlOfNonLinearStochasticSystems}
+Hilbert~J. Kappen.
+\newblock A linear theory for control of non-linear stochastic systems.
+\newblock \emph{Physical Review Letters}, 95\penalty0 (20):\penalty0 200201,
+  2005.
+
+\bibitem[Kappen et~al.(2012)Kappen, Gomez, and
+  Opper]{KappenGomezOpper2012OptimalControlAsAGraphicalModelInferenceProblem}
+Hilbert~J. Kappen, Vicenc Gomez, and Manfred Opper.
+\newblock Optimal control as a graphical model inference problem, 2012.
+\newblock arXiv:0901.0633v3 [math.OC].
+
+\bibitem[Kivinen and Warmuth(1997)]{KivinenWarmuth1997}
+Jyrki Kivinen and Manfred~K. Warmuth.
+\newblock Exponentiated gradient versus gradient descent for linear predictors.
+\newblock \emph{Information and Computation}, 132\penalty0 (1):\penalty0 1--63,
+  1997.
+
+\bibitem[Kolmogorov(1933)]{Kolmogorov1933}
+Andrei~Nikolaevich Kolmogorov.
+\newblock \emph{Grundbegriffe der Wahrscheinlichkeitsrechnung}.
+\newblock Springer, Berlin, 1933.
+\newblock English translation: \textit{Foundations of the Theory of
+  Probability}, Chelsea Publishing, New York, 1956.
+
+\bibitem[Kullback and Leibler(1951)]{KullbackLeibler1951}
+Solomon Kullback and Richard~A. Leibler.
+\newblock On information and sufficiency.
+\newblock \emph{Annals of Mathematical Statistics}, 22\penalty0 (1):\penalty0
+  79--86, 1951.
+\newblock \doi{10.1214/aoms/1177729694}.
+
+\bibitem[Norris(1997)]{Norris1997}
+J.~R. Norris.
+\newblock \emph{Markov Chains}.
+\newblock Cambridge University Press, Cambridge, 1997.
+\newblock Cambridge Series in Statistical and Probabilistic Mathematics.
+
+\bibitem[Sprungk(2020)]{Sprungk2020}
+Bjoern Sprungk.
+\newblock On the local lipschitz stability of bayesian inverse problems, 2020.
+\newblock Preprint.
+
+\bibitem[Todorov(2009)]{Todorov2009EfficientComputationOptimalActions}
+Emanuel Todorov.
+\newblock Efficient computation of optimal actions.
+\newblock \emph{Proceedings of the National Academy of Sciences of the United
+  States of America}, 106\penalty0 (28):\penalty0 11478--11483, 2009.
+
+\end{thebibliography}
