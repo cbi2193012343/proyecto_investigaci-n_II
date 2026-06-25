@@ -320,24 +320,31 @@ de celdas de $\Pi$. Por tanto, una probabilidad sobre $\sigma(\Pi)$ queda
 determinada por sus valores sobre $E_1,\dots,E_n$.
 \end{proof}
 
-\begin{corolario}[Compatibilidad entre el operador local y el cambio de medida]
-\label{prop:compatibilidadCambioMedida}
-Bajo las hipótesis de la Proposición~\ref{prop:QYprobabilidad}, la probabilidad
-$Q_Y^\Pi$ construida allí satisface
+\begin{corolario}[Compatibilidad del cambio de medida inducido con el operador local]
+\label{cor:compatibilidadCambioMedida}
+Sea $(\Omega,\mathcal F,P)$ un espacio de probabilidad y sea
+$\Pi=\{E_1,\dots,E_n\}$ una partición medible finita. Sea
+$X\in\Delta_n$ el estado inducido por $\Pi$, es decir,
+$X_i=P(E_i)$. Si $Y\in C(X)$ y $Q_Y^\Pi$ denota la única probabilidad
+sobre $\sigma(\Pi)$ determinada por
+\[
+Q_Y^\Pi(E_i)=P(E_i)(1+Y_i),
+\qquad i=1,\dots,n,
+\]
+entonces
 \[
 \bigl(Q_Y^\Pi(E_1),\dots,Q_Y^\Pi(E_n)\bigr)
 =
 T_Y^{\mathrm{loc}}(X).
 \]
-En particular,
+Equivalentemente, para cada $i=1,\dots,n$,
 \[
 Q_Y^\Pi(E_i)=T_Y^{\mathrm{loc}}(X)_i,
-\qquad i=1,\dots,n.
 \]
 \end{corolario}
 
 \begin{proof}
-Por construcción de $Q_Y^\Pi$,
+Por la definición de las masas de $Q_Y^\Pi$ sobre las celdas de la partición,
 \[
 Q_Y^\Pi(E_i)=P(E_i)(1+Y_i).
 \]
@@ -345,15 +352,15 @@ Como $X_i=P(E_i)$, se obtiene
 \[
 Q_Y^\Pi(E_i)=X_i(1+Y_i).
 \]
-Por la definición del operador local,
+Por definición del operador local,
 \[
 T_Y^{\mathrm{loc}}(X)_i=X_i(1+Y_i).
 \]
-Por lo tanto,
+Por tanto,
 \[
 Q_Y^\Pi(E_i)=T_Y^{\mathrm{loc}}(X)_i
 \]
-para cada $i=1,\dots,n$.
+para todo $i=1,\dots,n$. Esto prueba la igualdad vectorial.
 \end{proof}
 
 \begin{observacion}
@@ -363,48 +370,39 @@ El corolario anterior identifica la actualización local con la redistribución 
 
 Esta subsección pasa del mecanismo local de la subsección anterior a una familia de operadores definida de manera uniforme sobre el interior del símplex. Se consideran correcciones multiplicativas positivas y se normaliza el resultado para conservar la suma unitaria. Esto da lugar a operadores globales sobre $\Delta_n^\circ$ y permite describir su composición de forma explícita.
 
-\begin{definicion}[Correcciones globales]\label{def:Cglob}
-Se define el conjunto de \emph{correcciones globales} por
+\begin{definicion}[Corrección global y operador multiplicativo normalizado]
+\label{def:Cglob}
+\label{def:Tglobal}
+Una corrección global es un vector $Y\in\mathbb R^n$ tal que
+\[
+1+Y_i>0,\qquad i=1,\dots,n.
+\]
+Denotamos por
 \[
 C_{\mathrm{glob}}
-:=
-\Bigl\{
-Y=(Y_1,\dots,Y_n)\in\mathbb{R}^n
-\;\Big|\;
-1+Y_i>0 \ \text{para todo } i
-\Bigr\}.
+=
+\{Y\in\mathbb R^n:\ 1+Y_i>0\ \text{para todo } i\}
 \]
-Para cada $Y\in C_{\mathrm{glob}}$, el vector de factores multiplicativos asociado viene dado por
+al conjunto de correcciones globales. Para cada $Y\in C_{\mathrm{glob}}$, el vector de factores multiplicativos asociado viene dado por
 \[
 a(Y):=(1+Y_1,\dots,1+Y_n)\in\mathbb{R}_{>0}^n.
 \]
-\end{definicion}
 
-\begin{definicion}[Operador informacional global]\label{def:Tglobal}
-Sea $Y\in C_{\mathrm{glob}}$. El \emph{operador informacional global} asociado a $Y$ es la aplicación
-\[
-T_Y:\Delta_n^\circ\to\Delta_n^\circ,
-\qquad
-T_Y(X)
-:=
-\frac{X\circ a(Y)}{\sum_{j=1}^n X_j a_j(Y)},
-\]
-donde $\circ$ denota el producto coordenada a coordenada. En forma explícita,
+Si $Y\in C_{\mathrm{glob}}$, definimos el operador multiplicativo normalizado
+$T_Y:\Delta_n\to\Delta_n$ por
 \[
 T_Y(X)_i
 =
-\frac{X_i(1+Y_i)}{\sum_{j=1}^n X_j(1+Y_j)},
+\frac{X_i(1+Y_i)}
+{\sum_{k=1}^n X_k(1+Y_k)},
 \qquad i=1,\dots,n.
 \]
+El denominador es estrictamente positivo para todo $X\in\Delta_n$, porque
+$X$ tiene masa total uno y todos los factores $1+Y_k$ son positivos.
+En particular, la fórmula está definida también en la frontera de $\Delta_n$;
+sin embargo, la estructura algebraica de estos operadores se estudiará
+principalmente sobre $\Delta_n^\circ$.
 \end{definicion}
-
-\begin{observacion}\label{obs:Tglobal-frontera}
-La fórmula de $T_Y$ tiene sentido también para $X\in\Delta_n$, no sólo para $X\in\Delta_n^\circ$. En efecto, si $Y\in C_{\mathrm{glob}}$, entonces $1+Y_i>0$ para todo $i$, y por tanto
-\[
-\sum_{j=1}^n X_j(1+Y_j)>0
-\]
-para todo $X\in\Delta_n$. Así, $T_Y(X)$ está bien definido en todo $\Delta_n$. No obstante, la restricción a $\Delta_n^\circ$ será el dominio estructural cuando se estudie la composición e inversión de estos operadores.
-\end{observacion}
 \begin{proposicion}[Preservación del interior del símplex]\label{prop:interiorGlobal}
 Sea $Y\in C_{\mathrm{glob}}$. Entonces, para todo $X\in\Delta_n^\circ$,
 \[

@@ -97,12 +97,12 @@ Convención usada:
 - **Hipótesis -> Consecuencias:** si `(\Omega,\mathcal F,P)` es un espacio de probabilidad, `\Pi=\{E_1,\dots,E_n\}` es una partición medible finita, `X_i=P(E_i)` y `Y\in C(X)`, entonces existe una única probabilidad `Q_Y^\Pi` sobre `\sigma(\Pi)` con masas `Q_Y^\Pi(E_i)=P(E_i)(1+Y_i)`.
 - **Idea breve de demostración:** definir `Q_Y^\Pi` por suma sobre las celdas contenidas en cada elemento de `\sigma(\Pi)`, verificar no negatividad, masa total uno, aditividad finita y unicidad por determinación sobre las celdas de la partición.
 
-#### Corolario `prop:compatibilidadCambioMedida` -- Compatibilidad entre el operador local y el cambio de medida
+#### Corolario `cor:compatibilidadCambioMedida` -- Compatibilidad del cambio de medida inducido con el operador local
 
 - **Función:** identificar las masas de la probabilidad construida con las coordenadas del operador local.
 - **Elementos:** `Q_Y^\Pi(E_i)`, `T_Y^{\mathrm{loc}}(X)_i`, `X_i=P(E_i)`.
-- **Hipótesis -> Consecuencias:** bajo las hipótesis y la construcción de la Proposición `prop:QYprobabilidad`, se cumple `(Q_Y^\Pi(E_1),\dots,Q_Y^\Pi(E_n))=T_Y^{\mathrm{loc}}(X)`.
-- **Idea breve de demostración:** usar la construcción de `Q_Y^\Pi`, sustituir `P(E_i)=X_i` y comparar con la definición coordenada a coordenada de `T_Y^{\mathrm{loc}}`.
+- **Hipótesis -> Consecuencias:** si `(\Omega,\mathcal F,P)` es un espacio de probabilidad, `\Pi=\{E_1,\dots,E_n\}` es una partición medible finita, `X_i=P(E_i)`, `Y\in C(X)` y `Q_Y^\Pi` es la probabilidad determinada por la Proposición `prop:QYprobabilidad`, entonces `(Q_Y^\Pi(E_1),\dots,Q_Y^\Pi(E_n))=T_Y^{\mathrm{loc}}(X)`.
+- **Idea breve de demostración:** usar la definición de las masas de `Q_Y^\Pi`, sustituir `P(E_i)=X_i` y comparar con la definición coordenada a coordenada de `T_Y^{\mathrm{loc}}`.
 
 #### Observación final de la subsección
 
@@ -111,20 +111,12 @@ Convención usada:
 
 ### Subsección 1.3 -- Operadores globales multiplicativos y composición
 
-#### Definición `def:Cglob` -- Correcciones globales
+#### Definición `def:Cglob` / `def:Tglobal` -- Corrección global y operador multiplicativo normalizado
 
-- **Función:** definir factores multiplicativos positivos independientes del estado base.
-- **Elementos:** `C_{\mathrm{glob}}`, `Y`, condición `1+Y_i>0`.
-
-#### Definición `def:Tglobal` -- Operador informacional global
-
-- **Función:** introducir la actualización multiplicativa normalizada.
-- **Elementos:** `T_Y(X)`, `X_i(1+Y_i)/\sum_k X_k(1+Y_k)`, `X\in\Delta_n^\circ`.
-
-#### Observación `obs:Tglobal-frontera` -- Extensión a la frontera
-
-- **Función:** señalar que la fórmula tiene sentido en `\Delta_n`, aunque la estructura algebraica se estudie en el interior.
-- **Elementos:** `\Delta_n`, `\Delta_n^\circ`, factores positivos.
+- **Función:** introducir simultáneamente los factores multiplicativos positivos y el operador global normalizado que inducen sobre el símplex.
+- **Elementos:** `C_{\mathrm{glob}}`, condición `1+Y_i>0`, operador `T_Y`, fórmula `T_Y(X)_i=X_i(1+Y_i)/\sum_k X_k(1+Y_k)`, dominio `\Delta_n`, interior `\Delta_n^\circ`.
+- **Hipótesis -> Consecuencias:** si `Y\in C_{\mathrm{glob}}`, entonces la fórmula de `T_Y` está bien definida en `\Delta_n`; sobre `\Delta_n^\circ` se estudiará la estructura algebraica de estos operadores.
+- **Observación integrada:** la fórmula también tiene sentido en la frontera de `\Delta_n`, pero las propiedades algebraicas e informacionales principales se desarrollan en el interior.
 
 #### Proposición `prop:interiorGlobal` -- Preservación del interior
 
