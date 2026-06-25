@@ -278,119 +278,86 @@ T_Y^{\mathrm{loc}}(X)\in\Delta_n.
 \]
 \end{proof}
 
-\begin{proposicion}[Cambio de medida discreto inducido por una corrección local]\label{prop:QYprobabilidad}
+\begin{proposicion}[Cambio de medida discreto inducido por una corrección local]
+\label{prop:QYprobabilidad}
 Sea $(\Omega,\mathcal F,P)$ un espacio de probabilidad y sea
+$\Pi=\{E_1,\dots,E_n\}$ una partición medible finita. Sea
+$X\in\Delta_n$ el estado inducido por $\Pi$, es decir,
+$X_i=P(E_i)$. Si $Y\in C(X)$, entonces existe una única probabilidad
+$Q_Y^\Pi$ sobre la álgebra finita generada por $\Pi$ tal que
 \[
-\Pi=\{E_1,\dots,E_n\}\subset\mathcal F
+Q_Y^\Pi(E_i)=P(E_i)(1+Y_i),
+\qquad i=1,\dots,n.
 \]
-una partición medible finita no degenerada. Defínase
-\[
-X_i:=P(E_i),\qquad i=1,\dots,n,
-\]
-de modo que $X=(X_1,\dots,X_n)\in\Delta_n^\circ$.
-
-Sea $Y\in C(X)$ y defínase
-\[
-h:\Omega\to[0,\infty),
-\qquad
-h(\omega):=1+Y_i
-\quad\text{si }\omega\in E_i.
-\]
-Sea además
-\[
-Q_Y:\mathcal F\to[0,\infty],
-\qquad
-Q_Y(A):=\int_A h(\omega)\,dP(\omega),
-\qquad A\in\mathcal F.
-\]
-Entonces $Q_Y$ es una medida de probabilidad sobre $(\Omega,\mathcal F)$.
 \end{proposicion}
 
 \begin{proof}
-Como $Y\in C(X)$, se tiene
+Construimos $Q_Y^\Pi$ sobre $\sigma(\Pi)$ de la siguiente manera. Si
+$A\in\sigma(\Pi)$, entonces $A$ es unión finita de celdas de la partición, y definimos
 \[
-X_i(1+Y_i)\ge 0,\qquad i=1,\dots,n.
+Q_Y^\Pi(A)
+=
+\sum_{\{i:\,E_i\subset A\}} P(E_i)(1+Y_i).
 \]
-Puesto que $X_i=P(E_i)>0$, se sigue que
-\[
-1+Y_i\ge 0,\qquad i=1,\dots,n.
-\]
-Por tanto,
-\[
-h(\omega)\ge 0,\qquad \omega\in\Omega.
-\]
-En consecuencia, la aplicación
-\[
-A\mapsto \int_A h\,dP
-\]
-define una medida no negativa sobre $(\Omega,\mathcal F)$.
+Como $Y\in C(X)$, se tiene $X_i(1+Y_i)\ge 0$ para todo $i$. Dado que
+$X_i=P(E_i)$, todas las masas asignadas por $Q_Y^\Pi$ son no negativas.
 
-Además, usando que $\Pi=\{E_1,\dots,E_n\}$ es una partición de $\Omega$ y que $h$ es constante en cada sección ,
+Además,
 \[
-Q_Y(\Omega)
+Q_Y^\Pi(\Omega)
 =
-\int_\Omega h\,dP
-=
-\sum_{i=1}^n \int_{E_i} h\,dP
-=
-\sum_{i=1}^n (1+Y_i)P(E_i)
+\sum_{i=1}^n P(E_i)(1+Y_i)
 =
 \sum_{i=1}^n X_i(1+Y_i)
 =
-1.
+1,
 \]
-Por tanto, $Q_Y$ es una medida de probabilidad.
+por la condición de admisibilidad de $Y$. Por tanto, $Q_Y^\Pi$ tiene masa total uno.
+La aditividad finita se sigue directamente de que las celdas de $\Pi$ son disjuntas.
+
+Finalmente, la unicidad se obtiene porque todo elemento de $\sigma(\Pi)$ es unión
+de celdas de $\Pi$. Por tanto, una probabilidad sobre $\sigma(\Pi)$ queda
+determinada por sus valores sobre $E_1,\dots,E_n$.
 \end{proof}
 
-\begin{proposicion}[Compatibilidad entre $T_Y^{\mathrm{loc}}$ y el cambio de medida]\label{prop:compatibilidadCambioMedida}
-Sea $(\Omega,\mathcal F,P)$ un espacio de probabilidad y sea
+\begin{corolario}[Compatibilidad entre el operador local y el cambio de medida]
+\label{prop:compatibilidadCambioMedida}
+Bajo las hipótesis de la Proposición~\ref{prop:QYprobabilidad}, la probabilidad
+$Q_Y^\Pi$ construida allí satisface
 \[
-\Pi=\{E_1,\dots,E_n\}\subset\mathcal F
+\bigl(Q_Y^\Pi(E_1),\dots,Q_Y^\Pi(E_n)\bigr)
+=
+T_Y^{\mathrm{loc}}(X).
 \]
-una partición medible finita no degenerada. Defínase
+En particular,
 \[
-X_i:=P(E_i),\qquad i=1,\dots,n,
+Q_Y^\Pi(E_i)=T_Y^{\mathrm{loc}}(X)_i,
+\qquad i=1,\dots,n.
 \]
-de modo que $X=(X_1,\dots,X_n)\in\Delta_n^\circ$.
-
-Sea $\omega \in \Omega$. Sea $Y \in C(X)$ y defínase $h:\Omega \to (0,\infty)$ por
-\[
-h(\omega):=1+Y_i \quad \text{si } \omega \in E_i.
-\]
-Sea además
-\[
-Q_Y(A):=\int_A h(\omega)\,dP(\omega),
-\qquad A\in\mathcal F.
-\]
-Entonces, para cada $i=1,\dots,n$, se cumple
-\[
-Q_Y(E_i)=T_Y^{\mathrm{loc}}(X)_i.
-\]
-\end{proposicion}
+\end{corolario}
 
 \begin{proof}
-Como $h$ es constante sobre cada sección  $E_i$ y vale $1+Y_i$ en dicho sección ,
+Por construcción de $Q_Y^\Pi$,
 \[
-Q_Y(E_i)
-=
-\int_{E_i} h(\omega)\,dP(\omega)
-=
-(1+Y_i)P(E_i)
-=
-(1+Y_i)X_i.
+Q_Y^\Pi(E_i)=P(E_i)(1+Y_i).
+\]
+Como $X_i=P(E_i)$, se obtiene
+\[
+Q_Y^\Pi(E_i)=X_i(1+Y_i).
 \]
 Por la definición del operador local,
 \[
-(1+Y_i)X_i=T_Y^{\mathrm{loc}}(X)_i.
+T_Y^{\mathrm{loc}}(X)_i=X_i(1+Y_i).
 \]
-Por tanto,
+Por lo tanto,
 \[
-Q_Y(E_i)=T_Y^{\mathrm{loc}}(X)_i.
+Q_Y^\Pi(E_i)=T_Y^{\mathrm{loc}}(X)_i
 \]
+para cada $i=1,\dots,n$.
 \end{proof}
 
 \begin{observacion}
-La proposición anterior identifica la actualización local con la redistribución de probabilidad inducida por la medida $Q_Y$ sobre la partición original. En este sentido, el operador $T_Y^{\mathrm{loc}}$ no actúa sólo como transformación algebraica sobre el símplex, sino como representación discreta de un cambio de medida por sección s.
+El corolario anterior identifica la actualización local con la redistribución de probabilidad inducida por la medida $Q_Y^\Pi$ sobre la partición original. En este sentido, el operador $T_Y^{\mathrm{loc}}$ no actúa sólo como transformación algebraica sobre el símplex, sino como representación discreta de un cambio de medida por sección s.
 \end{observacion}
 \subsection{Operadores globales multiplicativos y composición}
 

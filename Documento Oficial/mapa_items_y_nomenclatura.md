@@ -90,24 +90,24 @@ Convención usada:
 - **Hipótesis -> Consecuencias:** si `X\in\Delta_n` y `Y\in C(X)`, entonces `T_Y^{\mathrm{loc}}(X)\in\Delta_n`.
 - **Idea breve de demostración:** las desigualdades de admisibilidad dan coordenadas no negativas y la condición de normalización da suma uno.
 
-#### Proposición `prop:QYprobabilidad` -- Cambio de medida discreto inducido
+#### Proposición `prop:QYprobabilidad` -- Cambio de medida discreto inducido por una corrección local
 
-- **Función:** construir una nueva medida discreta a partir de una corrección local.
-- **Elementos:** `Q_Y`, partición `\Pi`, masas `Q_Y(E_i)=P(E_i)(1+Y_i)`.
-- **Hipótesis -> Consecuencias:** si `Y\in C(X)` y `X_i=P(E_i)`, entonces `Q_Y` define una probabilidad sobre la partición.
-- **Idea breve de demostración:** verificar no negatividad y suma total uno; extender por aditividad finita sobre uniones de celdas.
+- **Función:** construir, por existencia y unicidad, una probabilidad discreta sobre el álgebra finita generada por la partición.
+- **Elementos:** `Q_Y^\Pi`, `\Pi`, `\sigma(\Pi)`, masas `Q_Y^\Pi(E_i)=P(E_i)(1+Y_i)`.
+- **Hipótesis -> Consecuencias:** si `(\Omega,\mathcal F,P)` es un espacio de probabilidad, `\Pi=\{E_1,\dots,E_n\}` es una partición medible finita, `X_i=P(E_i)` y `Y\in C(X)`, entonces existe una única probabilidad `Q_Y^\Pi` sobre `\sigma(\Pi)` con masas `Q_Y^\Pi(E_i)=P(E_i)(1+Y_i)`.
+- **Idea breve de demostración:** definir `Q_Y^\Pi` por suma sobre las celdas contenidas en cada elemento de `\sigma(\Pi)`, verificar no negatividad, masa total uno, aditividad finita y unicidad por determinación sobre las celdas de la partición.
 
-#### Proposición `prop:compatibilidadCambioMedida` -- Compatibilidad entre operador local y cambio de medida
+#### Corolario `prop:compatibilidadCambioMedida` -- Compatibilidad entre el operador local y el cambio de medida
 
-- **Función:** identificar la actualización local con las masas de la medida `Q_Y`.
-- **Elementos:** `T_Y^{\mathrm{loc}}(X)`, `Q_Y(E_i)`, partición.
-- **Hipótesis -> Consecuencias:** si `Q_Y` se construye con `Y`, entonces `T_Y^{\mathrm{loc}}(X)_i=Q_Y(E_i)`.
-- **Idea breve de demostración:** comparar directamente las dos fórmulas coordenada a coordenada.
+- **Función:** identificar las masas de la probabilidad construida con las coordenadas del operador local.
+- **Elementos:** `Q_Y^\Pi(E_i)`, `T_Y^{\mathrm{loc}}(X)_i`, `X_i=P(E_i)`.
+- **Hipótesis -> Consecuencias:** bajo las hipótesis y la construcción de la Proposición `prop:QYprobabilidad`, se cumple `(Q_Y^\Pi(E_1),\dots,Q_Y^\Pi(E_n))=T_Y^{\mathrm{loc}}(X)`.
+- **Idea breve de demostración:** usar la construcción de `Q_Y^\Pi`, sustituir `P(E_i)=X_i` y comparar con la definición coordenada a coordenada de `T_Y^{\mathrm{loc}}`.
 
 #### Observación final de la subsección
 
 - **Función:** interpretar el operador local como representación discreta de cambio de medida.
-- **Elementos:** `Q_Y`, `T_Y^{\mathrm{loc}}`, partición original.
+- **Elementos:** `Q_Y^\Pi`, `T_Y^{\mathrm{loc}}`, partición original.
 
 ### Subsección 1.3 -- Operadores globales multiplicativos y composición
 
